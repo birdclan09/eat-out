@@ -41,7 +41,12 @@ module.exports = async (req, res) => {
       const up = await fetch(url, { headers: { "X-API-Key": key } });
       const text = await up.text();
       let json; try { json = JSON.parse(text); } catch { json = null; }
-      if (req.query.raw) return res.status(200).json({ url, status: up.status, body: json ?? text.slice(0, 2000) });
+      if (req.query.raw) {
+        const out = { url, status: up.status, firstItem: json && (Array.isArray(json) ? json[0] : (json.data || json.results || json.foods || [])[0]), keys: json && Object.keys(json) };
+        const id = out.firstItem && (out.firstItem.id ?? out.firstItem.food_id);
+        if (id != null) { try { const d = await fetch(`${base}/api/v1/foods/${id}`, { headers: { "X-API-Key": key } }); const dt = await d.text(); out.detailStatus = d.status; out.detail = dt.slice(0, 1500); } catch (e) { out.detail = String(e); } }
+        return res.status(200).json(out);
+      }
       if (json === null) { errs.push(`${base}: not JSON (${up.status})`); continue; }
       if (!up.ok) return res.status(502).json({ error: `Calorie API returned ${up.status}`, detail: (json.detail || json.error || "").toString().slice(0, 300) });
       const list = Array.isArray(json) ? json : json.data || json.results || json.foods || [];

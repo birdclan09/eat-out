@@ -260,13 +260,15 @@ R:{n:"Rumbi Island Grill",a:"7251 S Plz Ctr Dr, West Jordan",la:40.6195,lo:-111.
 L:{n:"LongHorn Steakhouse",a:"11346 S River Heights Dr, South Jordan",la:40.5454,lo:-111.9823,note:"Steaks only. Sides are not included."}};
 const ITEMS=RAW.split("\n").filter(Boolean).map(l=>{const a=l.split("|"),p=+a[3],c=+a[4];return{k:a[0],r:R[a[0]].n,n:a[1],c:a[2],p,cal:c,cb:a[5]===""?"–":a[5],f:a[6],ra:+(p/c*100).toFixed(1)}});
 let HOME={la:40.60,lo:-112.00,label:"from 84084"};
-const st={tab:"picks",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
+const MODES={all:["Everything",()=>true],hp:["High protein (30 g+)",i=>i.p>=30],lt:["Light (under 400 cal)",i=>i.cal<400],hc:["High calorie (700+)",i=>i.cal>=700]};
+const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,"");
+const st={web:null,near:null,tab:"picks",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
 const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}
 function itemRow(i,showR){return `<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.n)}</span><span class="pp">${i.p} g</span></div>
 <div class="mu">${showR?esc(i.r)+" · ":""}${i.cal} cal · ${i.ra} g protein/100 cal</div>
-<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal</div></button>`}
+<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></button>`}
 const PICKS={
  lean:{t:"Best protein per calorie",s:"Most protein for the fewest calories",f:i=>i.p>=20,o:(a,b)=>b.ra-a.ra},
  meal:{t:"Big protein meals",s:"40 g+ protein, under 700 calories",f:i=>i.p>=40&&i.cal<700,o:(a,b)=>b.p-a.p},
@@ -280,25 +282,43 @@ function render(){
   else h=`<h1>Eat out, hit your protein</h1><div class="sub">Goal: 180 g protein a day</div>`+Object.keys(PICKS).map(k=>`<button class="big" onclick="st.pick='${k}';render()"><b>${PICKS[k].t}</b><span>${PICKS[k].s}</span></button>`).join("")+`<div class="foot">Numbers come from each restaurant's own published nutrition. Menus change, so double-check if it matters.</div>`;
  }
  if(st.tab==="rest"){
-  if(st.view){const r=R[st.view],cats=["All",...new Set(ITEMS.filter(i=>i.k===st.view).map(i=>i.c))];
+  if(st.web){h=`<button class="back" onclick="st.web=null;render()">‹ Restaurants</button><h1>${esc(st.web.name)}</h1><div class="sub">Online menu data, not hand-checked</div><div class="bar"><select id="wmode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select><select id="wsrt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option><option value="hcal">Most cal</option></select></div><div id="items"><div class="empty">Loading menu…</div></div><div class="foot" id="wf"></div>`}
+  else if(st.view){const r=R[st.view],cats=["All",...new Set(ITEMS.filter(i=>i.k===st.view).map(i=>i.c))];
    let L=ITEMS.filter(i=>i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button><h1>${esc(r.n)}</h1><div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
-   <input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div id="items"></div>`;
+   <input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div class="bar"><select id="mode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select></div><div id="items"></div>`;
   }else{
-   h=`<h1>Restaurants</h1><div class="sub">Sorted by distance ${HOME.label}</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">Use my location</button></div><div id="rl"></div>`;
+   h=`<h1>Restaurants</h1><div class="sub">Sorted by distance ${HOME.label}</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">Use my location</button><button id="nb">Find nearby</button></div><div id="rl"></div><div id="ol"></div><div id="nl"></div>`;
   }
  }
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Find a food across every restaurant</div><input class="search" id="fq" placeholder="Try chicken, burrito, shake" value="${esc(st.iq)}"><div id="fr"></div><div id="wr"></div>`}
  app.innerHTML=h;wire();window.scrollTo(0,0);
 }
 function wire(){
- if(st.tab==="rest"&&!st.view){const draw=()=>{const q=st.rq.toLowerCase();const L=Object.keys(R).filter(k=>!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q)).sort((a,b)=>dist(R[a])-dist(R[b]));
+ if(st.tab==="rest"&&!st.view&&!st.web){const draw=()=>{const q=st.rq.toLowerCase();const L=Object.keys(R).filter(k=>!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q)).sort((a,b)=>dist(R[a])-dist(R[b]));
    $("#rl").innerHTML=L.length?L.map(k=>`<button class="row" onclick="st.view='${k}';render()"><div class="t"><span class="nm">${esc(R[k].n)}</span><span class="mu">${dist(R[k]).toFixed(1)} mi</span></div><div class="mu">${esc(R[k].a)} · ${ITEMS.filter(i=>i.k===k).length} items</div></button>`).join(""):'<div class="empty">No restaurant found. Send me its name and I\'ll add it.</div>'};
-   draw();$("#rq").oninput=e=>{st.rq=e.target.value;draw()};
+   const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Pulls its menu from the nutrition database</span></button>`:""};
+   const nl=()=>{const box=$("#nl");if(!st.near){box.innerHTML="";return}
+    if(st.near.err){box.innerHTML='<div class="empty">'+esc(st.near.err)+'</div>';return}
+    const have=new Set(Object.keys(R).map(k=>norm(R[k].n))),q=st.rq.toLowerCase();
+    const L=st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q)));
+    box.innerHTML='<div class="sub" style="margin-top:14px">Nearby (menus from online database)</div>'+L.map(x=>`<button class="row" data-n="${esc(x.name)}"><div class="t"><span class="nm">${esc(x.name)}</span><span class="mu">${x.mi} mi</span></div><div class="mu">${esc(x.addr||x.cuisine||"")}</div></button>`).join("")+'<div class="foot">Places from OpenStreetMap. Not every restaurant has menu data online.</div>';
+    box.querySelectorAll("button[data-n]").forEach(b=>b.onclick=()=>{st.web={name:b.dataset.n};render()})};
+   draw();ol();nl();$("#rq").oninput=e=>{st.rq=e.target.value;draw();ol();nl()};
+   $("#nb").onclick=()=>{const b=$("#nb"),go=()=>{b.textContent="Searching…";fetch(`/api/nearby?lat=${HOME.la}&lon=${HOME.lo}`).then(r=>r.json().then(j=>({r,j}))).then(({r,j})=>{b.textContent="Find nearby";st.near=r.ok?j:{err:j.error||"Lookup failed"};nl()}).catch(()=>{b.textContent="Find nearby";st.near={err:"Nearby lookup only works on the Vercel version."};nl()})};
+    try{navigator.geolocation.getCurrentPosition(p=>{HOME={la:p.coords.latitude,lo:p.coords.longitude,label:"from you"};go()},()=>go(),{timeout:6000})}catch(e){go()}};
    $("#loc").onclick=()=>{const b=$("#loc");try{navigator.geolocation.getCurrentPosition(p=>{HOME={la:p.coords.latitude,lo:p.coords.longitude,label:"from you"};render()},()=>{b.textContent="Location blocked here; using 84084"},{timeout:6000})}catch(e){b.textContent="Location blocked here; using 84084"}}}
- if(st.tab==="rest"&&st.view){let sort="ra";const draw=()=>{let L=ITEMS.filter(i=>i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
+ if(st.tab==="rest"&&st.web){let all=[],mode="all",sort="ra";const draw=()=>{let L=all.filter(i=>MODES[mode][1](i));L.sort((a,b)=>sort==="cal"?a.cal-b.cal:sort==="hcal"?b.cal-a.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
+   $("#wmode").onchange=e=>{mode=e.target.value;draw()};$("#wsrt").onchange=e=>{sort=e.target.value;draw()};
+   const nm=st.web.name;fetch("/api/search?q="+encodeURIComponent(nm)).then(r=>r.json().then(j=>({r,j}))).then(({r,j})=>{
+    if(!r.ok){$("#items").innerHTML='<div class="empty">'+esc(j.error||"Lookup failed")+'</div>';return}
+    const n=v=>v==null?0:Math.round(v*10)/10,key=norm(nm);
+    all=j.items.filter(i=>i.brand&&(norm(i.brand).includes(key)||key.includes(norm(i.brand)))&&i.n.cal>0).map(i=>({n:i.name,r:i.brand,c:"",p:n(i.n.p),cal:n(i.n.cal),cb:n(i.n.c),f:n(i.n.f),ra:+(n(i.n.p)/n(i.n.cal)*100).toFixed(1),b:i.basis,u:!i.verified}));
+    if(!all.length){$("#items").innerHTML='<div class="empty">No menu items found under that restaurant name.</div>';return}
+    draw();$("#wf").innerHTML='Powered by <a href="https://www.fatsecret.com" style="color:inherit">fatsecret</a>. Up to 50 matches per lookup, so the menu may be incomplete. Check for oddities.'}).catch(()=>{$("#items").innerHTML='<div class="empty">Online lookup only works on the Vercel version.</div>'})}
+ if(st.tab==="rest"&&st.view){let sort="ra",mode="all";const draw=()=>{let L=ITEMS.filter(i=>MODES[mode][1](i)&&i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    L.sort((a,b)=>sort==="cal"?a.cal-b.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
-   draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()};$("#srt").onchange=e=>{sort=e.target.value;draw()}}
+   draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()};$("#srt").onchange=e=>{sort=e.target.value;draw()};$("#mode").onchange=e=>{mode=e.target.value;draw()}}
  if(st.tab==="find"){const draw=()=>{const q=st.iq;if(q.length<2){$("#fr").innerHTML='<div class="empty">Type at least two letters.</div>';return}
    const L=ITEMS.filter(i=>(i.n+" "+i.r+" "+i.c).toLowerCase().includes(q)).sort((a,b)=>b.ra-a.ra).slice(0,40);$("#fr").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty" style="padding:8px 0">No hand-checked match.</div>'};
    let tm=null,seq=0;

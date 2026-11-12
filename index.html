@@ -288,26 +288,27 @@ function render(){
    h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button><h1>${esc(r.n)}</h1><div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
    <input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div class="bar"><select id="mode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select></div><div id="items"></div>`;
   }else{
-   h=`<h1>Restaurants</h1><div class="sub">Sorted by distance ${HOME.label}</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">Use my location</button><button id="nb">Find nearby</button><select id="rad"><option value="8047">5 miles</option><option value="4828">3 miles</option></select></div><div id="rl"></div><div id="ol"></div><div id="nl"></div>`;
+   h=`<h1>Restaurants</h1><div class="sub">All restaurants within 5 miles, nearest first</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">Use my location</button><button id="nb">Refresh</button><select id="rad"><option value="8047">5 miles</option><option value="4828">3 miles</option></select></div><div id="ol"></div><div id="rl"></div>`;
   }
  }
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Find a food across every restaurant</div><input class="search" id="fq" placeholder="Try chicken, burrito, shake" value="${esc(st.iq)}"><div id="fr"></div><div id="wr"></div>`}
  app.innerHTML=h;wire();window.scrollTo(0,0);
 }
 function wire(){
- if(st.tab==="rest"&&!st.view&&!st.web){const draw=()=>{const q=st.rq.toLowerCase();const L=Object.keys(R).filter(k=>!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q)).sort((a,b)=>dist(R[a])-dist(R[b]));
-   $("#rl").innerHTML=L.length?L.map(k=>`<button class="row" onclick="st.view='${k}';render()"><div class="t"><span class="nm">${esc(R[k].n)}</span><span class="mu">${dist(R[k]).toFixed(1)} mi</span></div><div class="mu">${esc(R[k].a)} · ${ITEMS.filter(i=>i.k===k).length} items</div></button>`).join(""):'<div class="empty">No restaurant found. Send me its name and I\'ll add it.</div>'};
-   const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Pulls its menu from the nutrition database</span></button>`:""};
-   const nl=()=>{const box=$("#nl");if(!st.near){box.innerHTML="";return}
-    if(st.near.err){box.innerHTML='<div class="empty">'+esc(st.near.err)+'</div>';return}
-    const have=new Set(Object.keys(R).map(k=>norm(R[k].n))),q=st.rq.toLowerCase();
-    const L=st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q)));
-    box.innerHTML='<div class="sub" style="margin-top:14px">Nearby: '+L.length+' restaurants (menus from online database)</div>'+L.map(x=>`<button class="row" data-n="${esc(x.name)}"><div class="t"><span class="nm">${esc(x.name)}</span><span class="mu">${x.mi} mi</span></div><div class="mu">${esc(x.addr||x.cuisine||"")}</div></button>`).join("")+'<div class="foot">Places from OpenStreetMap. Not every restaurant has menu data online.</div>';
-    box.querySelectorAll("button[data-n]").forEach(b=>b.onclick=()=>{st.web={name:b.dataset.n};render()})};
-   draw();ol();nl();$("#rq").oninput=e=>{st.rq=e.target.value;draw();ol();nl()};
-   $("#nb").onclick=()=>{const b=$("#nb"),go=()=>{b.textContent="Searching…";fetch(`/api/nearby?lat=${HOME.la}&lon=${HOME.lo}&r=${$("#rad").value}`).then(r=>r.json().then(j=>({r,j}))).then(({r,j})=>{b.textContent="Find nearby";st.near=r.ok?j:{err:j.error||"Lookup failed"};nl()}).catch(()=>{b.textContent="Find nearby";st.near={err:"Nearby lookup only works on the Vercel version."};nl()})};
-    try{navigator.geolocation.getCurrentPosition(p=>{HOME={la:p.coords.latitude,lo:p.coords.longitude,label:"from you"};go()},()=>go(),{timeout:6000})}catch(e){go()}};
-   $("#loc").onclick=()=>{const b=$("#loc");try{navigator.geolocation.getCurrentPosition(p=>{HOME={la:p.coords.latitude,lo:p.coords.longitude,label:"from you"};render()},()=>{b.textContent="Location blocked here; using 84084"},{timeout:6000})}catch(e){b.textContent="Location blocked here; using 84084"}}}
+ if(st.tab==="rest"&&!st.view&&!st.web){
+   const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
+    const E=Object.keys(R).filter(k=>!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q)).map(k=>({k,name:R[k].n,mi:dist(R[k]),sub:R[k].a+" · "+ITEMS.filter(i=>i.k===k).length+" hand-checked items",ok:1}));
+    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>E.push({name:x.name,mi:x.mi,sub:(x.addr||x.cuisine||"")+" · online menu",ok:0}));
+    E.sort((a,b)=>a.mi-b.mi);
+    const status=!st.near?'<div class="empty" style="padding:8px 0">Loading nearby restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
+    $("#rl").innerHTML=status+'<div class="mu" style="margin:6px 0">'+E.length+' restaurants · green check = hand-checked from the restaurant\'s own nutrition</div>'+E.map((x,n)=>`<button class="row" data-e="${n}"><div class="t"><span class="nm">${x.ok?"✓ ":""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></button>`).join("");
+    $("#rl").querySelectorAll("button[data-e]").forEach(b=>b.onclick=()=>{const x=E[+b.dataset.e];if(x.ok){st.view=x.k}else{st.web={name:x.name}}render()})};
+   const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Not in the list? Pull its menu from the nutrition database</span></button>`:""};
+   const load=()=>{const b=$("#nb");st.near=null;draw();fetch(`/api/nearby?lat=${HOME.la}&lon=${HOME.lo}&r=${$("#rad").value}`).then(r=>r.json().then(j=>({r,j}))).then(({r,j})=>{st.near=r.ok?j:{err:j.error||"Lookup failed"};draw()}).catch(()=>{st.near={err:"Nearby lookup only works on the Vercel version."};draw()})};
+   draw();ol();if(!st.near)load();
+   $("#rq").oninput=e=>{st.rq=e.target.value;draw();ol()};
+   $("#rad").onchange=load;$("#nb").onclick=load;
+   $("#loc").onclick=()=>{const b=$("#loc");try{navigator.geolocation.getCurrentPosition(p=>{HOME={la:p.coords.latitude,lo:p.coords.longitude,label:"from you"};load()},()=>{b.textContent="Location blocked here; using 84084"},{timeout:6000})}catch(e){b.textContent="Location blocked here; using 84084"}}}
  if(st.tab==="rest"&&st.web){let all=[],mode="all",sort="ra";const draw=()=>{let L=all.filter(i=>MODES[mode][1](i));L.sort((a,b)=>sort==="cal"?a.cal-b.cal:sort==="hcal"?b.cal-a.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
    $("#wmode").onchange=e=>{mode=e.target.value;draw()};$("#wsrt").onchange=e=>{sort=e.target.value;draw()};
    const nm=st.web.name;fetch("/api/search?q="+encodeURIComponent(nm)).then(r=>r.json().then(j=>({r,j}))).then(({r,j})=>{

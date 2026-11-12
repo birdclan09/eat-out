@@ -5,8 +5,16 @@ module.exports = async (req, res) => {
   if (!Number.isFinite(la) || !Number.isFinite(lo)) return res.status(400).json({ error: "Missing location." });
   const q = `[out:json][timeout:20];nwr["amenity"~"^(restaurant|fast_food)$"]["name"](around:${rad},${la},${lo});out center 800;`;
   try {
-    const r = await fetch("https://overpass-api.de/api/interpreter", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: "data=" + encodeURIComponent(q) });
-    if (!r.ok) return res.status(502).json({ error: `Map service returned ${r.status}` });
+    const hosts = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
+    let r = null, last = 0;
+    for (const u of hosts) {
+      try {
+        r = await fetch(u, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", "Accept": "application/json", "User-Agent": "eat-out-app/1.0 (personal nutrition finder)" }, body: "data=" + encodeURIComponent(q) });
+        last = r.status;
+        if (r.ok) break;
+      } catch (e) { last = 0; r = null; }
+    }
+    if (!r || !r.ok) return res.status(502).json({ error: `Map service returned ${last}` });
     const j = await r.json();
     const t = Math.PI / 180, seen = new Map();
     for (const e of j.elements || []) {

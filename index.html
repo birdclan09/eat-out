@@ -268,13 +268,15 @@ const hasGet=n=>{const v=HAS[norm(n)];return v&&Date.now()-v.t<864e5?v.n:null};
 const hasSet=(n,c)=>{HAS[norm(n)]={t:Date.now(),n:c};try{localStorage.setItem("eo_has",JSON.stringify(HAS))}catch(e){}};
 async function hasMenu(nm){const r=await fetch("/api/search?q="+encodeURIComponent(nm));if(!r.ok)throw 0;const j=await r.json(),key=norm(nm);const c=j.items.filter(i=>i.brand&&(norm(i.brand).includes(key)||key.includes(norm(i.brand)))&&i.n.cal>0).length;hasSet(nm,c);return c}
 const OV=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://overpass.private.coffee/api/interpreter"];
-async function nearby(la,lo,rad){const q=`[out:json][timeout:15];nwr["amenity"~"^(restaurant|fast_food)$"]["name"](around:${rad},${la},${lo});out center 800;`;
- for(const u of OV){try{const c=new AbortController(),tm=setTimeout(()=>c.abort(),15000);const r=await fetch(u+"?data="+encodeURIComponent(q),{signal:c.signal});clearTimeout(tm);if(!r.ok)continue;const j=await r.json(),t=Math.PI/180,seen=new Map();
-   for(const e of j.elements||[]){const y=e.lat??(e.center&&e.center.lat),x=e.lon??(e.center&&e.center.lon);if(y==null||x==null||!e.tags||!e.tags.name)continue;
-    const dx=(x-lo)*t*Math.cos(la*t),dy=(y-la)*t,mi=Math.sqrt(dx*dx+dy*dy)*3958.8,key=norm(e.tags.name),addr=[e.tags["addr:housenumber"],e.tags["addr:street"]].filter(Boolean).join(" ");
-    if(!seen.has(key)||seen.get(key).mi>mi)seen.set(key,{name:e.tags.name,mi,addr,cuisine:e.tags.cuisine||"",la:y,lo:x})}
-   return{items:[...seen.values()].sort((a,b)=>a.mi-b.mi)}}catch(e){}}
- throw new Error("map")}
+async function nearby(la,lo,rad){const dl=rad/111320,dn=rad/(111320*Math.cos(la*Math.PI/180));
+ const q=`[out:json][timeout:25];(node["amenity"~"^(restaurant|fast_food)$"]["name"](${la-dl},${lo-dn},${la+dl},${lo+dn});way["amenity"~"^(restaurant|fast_food)$"]["name"](${la-dl},${lo-dn},${la+dl},${lo+dn}););out center 1000;`;
+ const one=async u=>{const c=new AbortController(),tm=setTimeout(()=>c.abort(),30000);try{const r=await fetch(u+"?data="+encodeURIComponent(q),{signal:c.signal});if(!r.ok)throw new Error(String(r.status));return await r.json()}finally{clearTimeout(tm)}};
+ const j=await Promise.any(OV.map(one)),t=Math.PI/180,seen=new Map();
+ for(const e of j.elements||[]){const y=e.lat??(e.center&&e.center.lat),x=e.lon??(e.center&&e.center.lon);if(y==null||x==null||!e.tags||!e.tags.name)continue;
+  const dx=(x-lo)*t*Math.cos(la*t),dy=(y-la)*t,mi=Math.sqrt(dx*dx+dy*dy)*3958.8;if(mi*1609.34>rad)continue;
+  const key=norm(e.tags.name),addr=[e.tags["addr:housenumber"],e.tags["addr:street"]].filter(Boolean).join(" ");
+  if(!seen.has(key)||seen.get(key).mi>mi)seen.set(key,{name:e.tags.name,mi,addr,cuisine:e.tags.cuisine||"",la:y,lo:x})}
+ return{items:[...seen.values()].sort((a,b)=>a.mi-b.mi)}}
 const st={run:0,rad:8047,web:null,near:null,tab:"picks",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
 const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -325,7 +327,7 @@ function wire(){
       const b=document.createElement("button");b.textContent="Open menu";b.style.cssText="margin-top:6px;padding:6px 12px;border-radius:8px;border:0;background:#22c55e;color:#000;font-size:14px";b.onclick=()=>open(x);d.appendChild(b);m.bindPopup(d)})}};
    const scan=async()=>{const T=E.filter(x=>!x.ok&&x.has==null).slice(0,25);let k=0;for(const x of T){if(my!==st.run)return;try{await hasMenu(x.name)}catch(e){return}if(++k%5===0&&my===st.run)draw()}if(my===st.run&&k)draw()};
    const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Not in the list? Pull its menu from the nutrition database</span></button>`:""};
-   const load=()=>{st.near=null;if(map)map.setView([HOME.la,HOME.lo],13);draw();nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(my!==st.run)return;st.near=j;draw();scan()}).catch(()=>{if(my!==st.run)return;st.near={err:"Couldn't reach the map service. Tap Refresh to try again."};draw()})};
+   const load=()=>{st.near=null;if(map)map.setView([HOME.la,HOME.lo],13);draw();nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(my!==st.run)return;st.near=j;draw();scan()}).catch(e=>{if(my!==st.run)return;st.near={err:"Couldn't reach the map service ("+String(e&&e.errors?e.errors.map(x=>x.message).join(", "):e&&e.message||e).slice(0,80)+"). Tap Refresh to try again."};draw()})};
    ol();if(!st.near||st.near.err)load();else{draw();scan()}
    $("#rq").oninput=e=>{st.rq=e.target.value;draw();ol()};
    $("#rad").onchange=e=>{st.rad=+e.target.value;load()};$("#nb").onclick=load;

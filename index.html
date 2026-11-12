@@ -41,7 +41,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 </head><body><div id="app"></div>
 <nav class="tabs" id="tabs">
 <button data-t="rest"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Restaurants</button>
-<button data-t="picks"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg>Picks</button>
+<button data-t="picks"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg>Nearby</button>
 <button data-t="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search</button>
 </nav>
 <script>
@@ -315,13 +315,11 @@ const PICKS={
  cal:{sh:"High cal",t:"High calorie",s:"700+ calories, most protein first",f:i=>i.cal>=700,o:(a,b)=>b.p-a.p},
  light:{sh:"Light",t:"Light bites",s:"Under 400 calories, 25 g+ protein",f:i=>i.cal<400&&i.p>=25,o:(a,b)=>b.ra-a.ra}};
 function render(){
+ if(st.tab==="picks"){st.pnv=true;const k=ME.la.toFixed(3)+","+ME.lo.toFixed(3);if(st.pcKey!==k){st.pcKey=k;st.pc=null}}
  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===st.tab));
  let h="";
  if(st.tab==="picks"){
-  if(st.pnv){h=`<button class="back" onclick="st.pnv=false;render()">‹ Picks</button><h1>Nearby picks</h1><div class="sub" id="psub">Finding restaurants within 2 miles…</div><div id="pchips"></div><div class="seg" id="pseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="pcs"></div><div id="pitems"></div><div class="foot">Tap a restaurant above to leave it out. Online items come from FatSecret and are not hand-checked. Only the 30 nearest places are checked, so a few may be missing.</div>`}
-  else if(st.pick){const P=PICKS[st.pick],L=ITEMS.filter(P.f).sort(P.o).slice(0,15);
-   h=`<button class="back" onclick="st.pick=null;render()">‹ Picks</button><h1>${P.t}</h1><div class="sub">${P.s}</div>`+L.map(i=>itemRow(i,true)).join("");}
-  else h=`<h1>Eat out, hit your protein</h1><div class="sub">Goal: 180 g protein a day</div><button class="big" onclick="st.pnv=true;st.pc=null;render()"><b>📍 Nearby</b><span>Best foods within 2 miles, from places that have menus</span></button><div class="sub" style="margin:6px 0 10px">Hand-checked restaurants only</div>`+Object.keys(PICKS).map(k=>`<button class="big" onclick="st.pick='${k}';render()"><b>${PICKS[k].t}</b><span>${PICKS[k].s}</span></button>`).join("")+`<div class="foot">Numbers come from each restaurant's own published nutrition. Menus change, so double-check if it matters.</div>`;
+  {h=`<h1>Nearby</h1><div class="sub" id="psub">Finding restaurants within 2 miles…</div><div id="pchips"></div><div class="seg" id="pseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="pcs"></div><div id="pitems"></div><div class="foot">Tap a restaurant above to leave it out. Online items come from FatSecret and are not hand-checked. Only the 30 nearest places are checked, so a few may be missing.</div>`}
  }
  if(st.tab==="rest"){
   if(st.cv){h=`<button class="back" onclick="st.cv=false;render()">‹ Restaurants</button><h1>Compare</h1><div class="sub">Best foods across the places you picked</div><div id="chips"></div><div class="seg" id="cseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="csub"></div><div id="citems"></div><div class="foot">Hand-checked items come from the restaurant's own nutrition. Online items come from FatSecret and are not hand-checked.</div>`}

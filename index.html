@@ -36,6 +36,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .chip{display:inline-flex;align-items:center;gap:6px;padding:6px 6px 6px 12px;margin:0 6px 6px 0;border-radius:20px;border:1px solid var(--line);background:var(--card);font-size:14px}
 .chip button{border:0;background:none;color:var(--mute);font-size:15px;padding:2px 6px}.chip.add{padding:6px 12px;color:var(--accent);border-color:var(--accent);background:none}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:130px;background:#000d;color:#fff;padding:10px 16px;border-radius:20px;z-index:2000;font-size:14px}
+.chip.offc{opacity:.4;text-decoration:line-through}.chip[data-c]{padding:7px 12px;cursor:pointer}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head><body><div id="app"></div>
 <nav class="tabs" id="tabs">
@@ -301,7 +302,7 @@ async function nearbyOSM(la,lo,rad){const dl=rad/111320,dn=rad/(111320*Math.cos(
   if(!seen.has(key)||seen.get(key).mi>mi)seen.set(key,{name:e.tags.name,mi,addr,cuisine:e.tags.cuisine||"",la:y,lo:x})}
  return{items:[...seen.values()].sort((a,b)=>a.mi-b.mi)}}
 let ME={la:HOME.la,lo:HOME.lo};
-const st={cmp:[],cv:false,cpick:"lean",run:0,rad:1609,web:null,near:null,tab:"rest",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
+const st={pnv:false,pcat:"lean",pc:null,poff:new Set(),cmp:[],cv:false,cpick:"lean",run:0,rad:1609,web:null,near:null,tab:"rest",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
 const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}
@@ -317,9 +318,10 @@ function render(){
  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===st.tab));
  let h="";
  if(st.tab==="picks"){
-  if(st.pick){const P=PICKS[st.pick],L=ITEMS.filter(P.f).sort(P.o).slice(0,15);
+  if(st.pnv){h=`<button class="back" onclick="st.pnv=false;render()">‹ Picks</button><h1>Nearby picks</h1><div class="sub" id="psub">Finding restaurants within 2 miles…</div><div id="pchips"></div><div class="seg" id="pseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="pcs"></div><div id="pitems"></div><div class="foot">Tap a restaurant above to leave it out. Online items come from FatSecret and are not hand-checked. Only the 30 nearest places are checked, so a few may be missing.</div>`}
+  else if(st.pick){const P=PICKS[st.pick],L=ITEMS.filter(P.f).sort(P.o).slice(0,15);
    h=`<button class="back" onclick="st.pick=null;render()">‹ Picks</button><h1>${P.t}</h1><div class="sub">${P.s}</div>`+L.map(i=>itemRow(i,true)).join("");}
-  else h=`<h1>Eat out, hit your protein</h1><div class="sub">Goal: 180 g protein a day</div>`+Object.keys(PICKS).map(k=>`<button class="big" onclick="st.pick='${k}';render()"><b>${PICKS[k].t}</b><span>${PICKS[k].s}</span></button>`).join("")+`<div class="foot">Numbers come from each restaurant's own published nutrition. Menus change, so double-check if it matters.</div>`;
+  else h=`<h1>Eat out, hit your protein</h1><div class="sub">Goal: 180 g protein a day</div><button class="big" onclick="st.pnv=true;st.pc=null;render()"><b>📍 Nearby</b><span>Best foods within 2 miles, from places that have menus</span></button><div class="sub" style="margin:6px 0 10px">Hand-checked restaurants only</div>`+Object.keys(PICKS).map(k=>`<button class="big" onclick="st.pick='${k}';render()"><b>${PICKS[k].t}</b><span>${PICKS[k].s}</span></button>`).join("")+`<div class="foot">Numbers come from each restaurant's own published nutrition. Menus change, so double-check if it matters.</div>`;
  }
  if(st.tab==="rest"){
   if(st.cv){h=`<button class="back" onclick="st.cv=false;render()">‹ Restaurants</button><h1>Compare</h1><div class="sub">Best foods across the places you picked</div><div id="chips"></div><div class="seg" id="cseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="csub"></div><div id="citems"></div><div class="foot">Hand-checked items come from the restaurant's own nutrition. Online items come from FatSecret and are not hand-checked.</div>`}
@@ -370,6 +372,24 @@ function wire(){
    $("#rad").onchange=e=>{st.rad=+e.target.value;load()};$("#nb").onclick=()=>load();
    $("#sa").onclick=()=>{if(!map)return;const c=map.getCenter();HOME={la:c.lat,lo:c.lng,label:"map area"};$("#sa").style.display="none";load(false)};
    $("#loc").onclick=locate}
+ if(st.tab==="picks"&&st.pnv){const my=++st.run,RADM=3219;let C=st.pc;
+   const dmi=(la,lo)=>{const t=Math.PI/180,dx=(lo-ME.lo)*t*Math.cos(ME.la*t),dy=(la-ME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8};
+   const itemsOf=c=>c.k?ITEMS.filter(i=>i.k===c.k):(MENU.get(c.id)||null);
+   const draw=()=>{if(!C)return;const ok=C.filter(c=>{const L=itemsOf(c);return L&&L.length}),pend=C.filter(c=>itemsOf(c)==null).length;
+    $("#psub").textContent=`Within 2 miles of you · ${ok.length} with menus`+(pend?` · checking ${pend} more…`:"");
+    $("#pchips").innerHTML=ok.map(c=>`<span class="chip${st.poff.has(c.id)?" offc":""}" data-c="${c.id}">🍴 ${esc(c.name)}</span>`).join("");
+    $("#pchips").querySelectorAll("[data-c]").forEach(s=>s.onclick=()=>{st.poff.has(s.dataset.c)?st.poff.delete(s.dataset.c):st.poff.add(s.dataset.c);draw()});
+    $("#pseg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===st.pcat));
+    const P=PICKS[st.pcat];let all=[];ok.filter(c=>!st.poff.has(c.id)).forEach(c=>{all=all.concat(itemsOf(c))});
+    const L=all.filter(P.f).sort(P.o).slice(0,20);$("#pcs").textContent=P.s;
+    $("#pitems").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):`<div class="empty">${pend?"Checking menus…":"Nothing fits this category."}</div>`};
+   $("#pseg").querySelectorAll("button").forEach(b=>b.onclick=()=>{st.pcat=b.dataset.k;draw()});
+   (async()=>{try{if(!C){const j=await nearby(ME.la,ME.lo,RADM);if(my!==st.run)return;const have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
+      const A=Object.keys(R).map(k=>({id:norm(R[k].n),name:R[k].n,k,mi:dmi(R[k].la,R[k].lo)})).filter(c=>c.mi*1609.34<=RADM);
+      const B=j.items.filter(x=>!have.has(norm(x.name))&&x.mi*1609.34<=RADM).slice(0,30).map(x=>({id:norm(x.name),name:x.name,k:null,mi:x.mi}));
+      C=st.pc=A.concat(B).sort((a,b)=>a.mi-b.mi)}
+     draw();let n=0;for(const c of C.filter(c=>!c.k&&!MENU.has(c.id))){if(my!==st.run)return;try{await fetchMenu(c.name)}catch(e){MENU.set(c.id,[])}if(++n%3===0&&my===st.run)draw()}
+     if(my===st.run)draw()}catch(e){if(my===st.run)$("#psub").textContent="Couldn't find nearby restaurants ("+String(e&&e.message||e).slice(0,120)+"). Go back and try again."}})()}
  if(st.tab==="rest"&&st.cv){const itemsOf=c=>c.k?ITEMS.filter(i=>i.k===c.k):(MENU.get(c.id)||null);
    const draw=()=>{if(!st.cmp.length){st.cv=false;render();return}
     $("#chips").innerHTML=st.cmp.map(c=>{const L=itemsOf(c);return `<span class="chip">${esc(c.name)} · ${L==null?"loading…":L.length+" items"}<button data-x="${c.id}" aria-label="Remove">✕</button></span>`}).join("")+'<button class="chip add" id="more">+ Add more</button>';

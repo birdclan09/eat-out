@@ -28,7 +28,8 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .seg{display:flex;gap:6px;margin-bottom:14px}.seg button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px}.seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .empty{text-align:center;color:var(--mute);padding:34px 10px}
 .foot{font-size:12px;color:var(--mute);margin-top:20px}
-</style></head><body><div id="app"></div>
+</style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head><body><div id="app"></div>
 <nav class="tabs" id="tabs">
 <button data-t="picks"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg>Picks</button>
 <button data-t="rest"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Restaurants</button>
@@ -262,7 +263,19 @@ const ITEMS=RAW.split("\n").filter(Boolean).map(l=>{const a=l.split("|"),p=+a[3]
 let HOME={la:40.60,lo:-112.00,label:"from 84084"};
 const MODES={all:["Everything",()=>true],hp:["High protein (30 g+)",i=>i.p>=30],lt:["Light (under 400 cal)",i=>i.cal<400],hc:["High calorie (700+)",i=>i.cal>=700]};
 const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,"");
-const st={web:null,near:null,tab:"picks",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
+const HAS=(()=>{try{return JSON.parse(localStorage.getItem("eo_has")||"{}")}catch(e){return{}}})();
+const hasGet=n=>{const v=HAS[norm(n)];return v&&Date.now()-v.t<864e5?v.n:null};
+const hasSet=(n,c)=>{HAS[norm(n)]={t:Date.now(),n:c};try{localStorage.setItem("eo_has",JSON.stringify(HAS))}catch(e){}};
+async function hasMenu(nm){const r=await fetch("/api/search?q="+encodeURIComponent(nm));if(!r.ok)throw 0;const j=await r.json(),key=norm(nm);const c=j.items.filter(i=>i.brand&&(norm(i.brand).includes(key)||key.includes(norm(i.brand)))&&i.n.cal>0).length;hasSet(nm,c);return c}
+const OV=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://overpass.private.coffee/api/interpreter"];
+async function nearby(la,lo,rad){const q=`[out:json][timeout:15];nwr["amenity"~"^(restaurant|fast_food)$"]["name"](around:${rad},${la},${lo});out center 800;`;
+ for(const u of OV){try{const c=new AbortController(),tm=setTimeout(()=>c.abort(),15000);const r=await fetch(u+"?data="+encodeURIComponent(q),{signal:c.signal});clearTimeout(tm);if(!r.ok)continue;const j=await r.json(),t=Math.PI/180,seen=new Map();
+   for(const e of j.elements||[]){const y=e.lat??(e.center&&e.center.lat),x=e.lon??(e.center&&e.center.lon);if(y==null||x==null||!e.tags||!e.tags.name)continue;
+    const dx=(x-lo)*t*Math.cos(la*t),dy=(y-la)*t,mi=Math.sqrt(dx*dx+dy*dy)*3958.8,key=norm(e.tags.name),addr=[e.tags["addr:housenumber"],e.tags["addr:street"]].filter(Boolean).join(" ");
+    if(!seen.has(key)||seen.get(key).mi>mi)seen.set(key,{name:e.tags.name,mi,addr,cuisine:e.tags.cuisine||"",la:y,lo:x})}
+   return{items:[...seen.values()].sort((a,b)=>a.mi-b.mi)}}catch(e){}}
+ throw new Error("map")}
+const st={run:0,rad:8047,web:null,near:null,tab:"picks",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
 const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}
@@ -288,7 +301,7 @@ function render(){
    h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button><h1>${esc(r.n)}</h1><div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
    <input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div class="bar"><select id="mode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select></div><div id="items"></div>`;
   }else{
-   h=`<h1>Restaurants</h1><div class="sub">All restaurants within 5 miles, nearest first</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">Use my location</button><button id="nb">Refresh</button><select id="rad"><option value="8047">5 miles</option><option value="4828">3 miles</option></select></div><div id="ol"></div><div id="rl"></div>`;
+   h=`<h1>Restaurants</h1><div class="sub">Everything nearby, nearest first</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">Use my location</button><button id="nb">Refresh</button><select id="rad"><option value="8047"${st.rad==8047?" selected":""}>5 miles</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option></select></div><div id="map" style="height:260px;border-radius:14px;margin-top:10px;overflow:hidden"></div><div id="ol"></div><div id="rl"></div>`;
   }
  }
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Find a food across every restaurant</div><input class="search" id="fq" placeholder="Try chicken, burrito, shake" value="${esc(st.iq)}"><div id="fr"></div><div id="wr"></div>`}
@@ -296,18 +309,26 @@ function render(){
 }
 function wire(){
  if(st.tab==="rest"&&!st.view&&!st.web){
+   const my=++st.run;let E=[],map=null,layer=null;
+   if(window.L){map=L.map("map",{zoomControl:false}).setView([HOME.la,HOME.lo],13);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);layer=L.layerGroup().addTo(map)}else $("#map").style.display="none";
+   const open=x=>{if(x.ok)st.view=x.k;else st.web={name:x.name};render()};
    const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
-    const E=Object.keys(R).filter(k=>!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q)).map(k=>({k,name:R[k].n,mi:dist(R[k]),sub:R[k].a+" · "+ITEMS.filter(i=>i.k===k).length+" hand-checked items",ok:1}));
-    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>E.push({name:x.name,mi:x.mi,sub:(x.addr||x.cuisine||"")+" · online menu",ok:0}));
+    E=Object.keys(R).filter(k=>!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q)).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,sub:R[k].a+" · "+ITEMS.filter(i=>i.k===k).length+" hand-checked items",ok:1}));
+    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?c+" items online":c===0?"no menu found online":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
     E.sort((a,b)=>a.mi-b.mi);
     const status=!st.near?'<div class="empty" style="padding:8px 0">Loading nearby restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
-    $("#rl").innerHTML=status+'<div class="mu" style="margin:6px 0">'+E.length+' restaurants · green check = hand-checked from the restaurant\'s own nutrition</div>'+E.map((x,n)=>`<button class="row" data-e="${n}"><div class="t"><span class="nm">${x.ok?"✓ ":""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></button>`).join("");
-    $("#rl").querySelectorAll("button[data-e]").forEach(b=>b.onclick=()=>{const x=E[+b.dataset.e];if(x.ok){st.view=x.k}else{st.web={name:x.name}}render()})};
+    $("#rl").innerHTML=status+'<div class="mu" style="margin:6px 0">'+E.length+' restaurants · ✓ hand-checked · ◆ menu found online</div>'+E.map((x,n)=>`<button class="row" data-e="${n}"><div class="t"><span class="nm">${x.ok?"✓ ":x.has>0?"◆ ":""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></button>`).join("");
+    $("#rl").querySelectorAll("button[data-e]").forEach(b=>b.onclick=()=>open(E[+b.dataset.e]));
+    if(layer){layer.clearLayers();L.circleMarker([HOME.la,HOME.lo],{radius:7,color:"#fff",weight:2,fillColor:"#3b82f6",fillOpacity:1}).addTo(layer);
+     E.forEach(x=>{if(x.la==null)return;const big=x.ok||x.has>0,m=L.circleMarker([x.la,x.lo],{radius:big?9:6,color:"#111",weight:1,fillColor:x.ok?"#22c55e":x.has>0?"#f59e0b":"#9ca3af",fillOpacity:.95}).addTo(layer);
+      const d=document.createElement("div");d.innerHTML=`<b>${esc(x.name)}</b><br>${Math.round(x.mi*10)/10} mi · ${x.ok?"hand-checked":x.has>0?"menu online":x.has===0?"no menu found":"not looked up yet"}<br>`;
+      const b=document.createElement("button");b.textContent="Open menu";b.style.cssText="margin-top:6px;padding:6px 12px;border-radius:8px;border:0;background:#22c55e;color:#000;font-size:14px";b.onclick=()=>open(x);d.appendChild(b);m.bindPopup(d)})}};
+   const scan=async()=>{const T=E.filter(x=>!x.ok&&x.has==null).slice(0,25);let k=0;for(const x of T){if(my!==st.run)return;try{await hasMenu(x.name)}catch(e){return}if(++k%5===0&&my===st.run)draw()}if(my===st.run&&k)draw()};
    const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Not in the list? Pull its menu from the nutrition database</span></button>`:""};
-   const load=()=>{const b=$("#nb");st.near=null;draw();fetch(`/api/nearby?lat=${HOME.la}&lon=${HOME.lo}&r=${$("#rad").value}`).then(r=>r.json().then(j=>({r,j}))).then(({r,j})=>{st.near=r.ok?j:{err:j.error||"Lookup failed"};draw()}).catch(()=>{st.near={err:"Nearby lookup only works on the Vercel version."};draw()})};
-   draw();ol();if(!st.near)load();
+   const load=()=>{st.near=null;if(map)map.setView([HOME.la,HOME.lo],13);draw();nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(my!==st.run)return;st.near=j;draw();scan()}).catch(()=>{if(my!==st.run)return;st.near={err:"Couldn't reach the map service. Tap Refresh to try again."};draw()})};
+   ol();if(!st.near||st.near.err)load();else{draw();scan()}
    $("#rq").oninput=e=>{st.rq=e.target.value;draw();ol()};
-   $("#rad").onchange=load;$("#nb").onclick=load;
+   $("#rad").onchange=e=>{st.rad=+e.target.value;load()};$("#nb").onclick=load;
    $("#loc").onclick=()=>{const b=$("#loc");try{navigator.geolocation.getCurrentPosition(p=>{HOME={la:p.coords.latitude,lo:p.coords.longitude,label:"from you"};load()},()=>{b.textContent="Location blocked here; using 84084"},{timeout:6000})}catch(e){b.textContent="Location blocked here; using 84084"}}}
  if(st.tab==="rest"&&st.web){let all=[],mode="all",sort="ra";const draw=()=>{let L=all.filter(i=>MODES[mode][1](i));L.sort((a,b)=>sort==="cal"?a.cal-b.cal:sort==="hcal"?b.cal-a.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
    $("#wmode").onchange=e=>{mode=e.target.value;draw()};$("#wsrt").onchange=e=>{sort=e.target.value;draw()};
@@ -315,7 +336,7 @@ function wire(){
     if(!r.ok){$("#items").innerHTML='<div class="empty">'+esc(j.error||"Lookup failed")+'</div>';return}
     const n=v=>v==null?0:Math.round(v*10)/10,key=norm(nm);
     all=j.items.filter(i=>i.brand&&(norm(i.brand).includes(key)||key.includes(norm(i.brand)))&&i.n.cal>0).map(i=>({n:i.name,r:i.brand,c:"",p:n(i.n.p),cal:n(i.n.cal),cb:n(i.n.c),f:n(i.n.f),ra:+(n(i.n.p)/n(i.n.cal)*100).toFixed(1),b:i.basis,u:!i.verified}));
-    if(!all.length){$("#items").innerHTML='<div class="empty">No menu items found under that restaurant name.</div>';return}
+    hasSet(nm,all.length);if(!all.length){$("#items").innerHTML='<div class="empty">No menu items found under that restaurant name.</div>';return}
     draw();$("#wf").innerHTML='Powered by <a href="https://www.fatsecret.com" style="color:inherit">fatsecret</a>. Up to 50 matches per lookup, so the menu may be incomplete. Check for oddities.'}).catch(()=>{$("#items").innerHTML='<div class="empty">Online lookup only works on the Vercel version.</div>'})}
  if(st.tab==="rest"&&st.view){let sort="ra",mode="all";const draw=()=>{let L=ITEMS.filter(i=>MODES[mode][1](i)&&i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    L.sort((a,b)=>sort==="cal"?a.cal-b.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};

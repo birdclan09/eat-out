@@ -28,6 +28,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .seg{display:flex;gap:6px;margin-bottom:14px}.seg button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px}.seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .empty{text-align:center;color:var(--mute);padding:34px 10px}
 .foot{font-size:12px;color:var(--mute);margin-top:20px}
+.pin{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;border:2px solid #f59e0b;background:#fff;box-shadow:0 1px 4px #0006}.pin.off{border-color:#888;background:#777;filter:grayscale(1);opacity:.75}.pin.me{width:16px;height:16px;background:#3b82f6;border:3px solid #fff}#sa{position:absolute;z-index:1000;top:10px;left:50%;transform:translateX(-50%);padding:9px 16px;border-radius:20px;border:0;background:#22c55e;color:#000;font-size:14px;font-weight:600;box-shadow:0 2px 8px #0008;display:none}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head><body><div id="app"></div>
 <nav class="tabs" id="tabs">
@@ -280,7 +281,8 @@ async function nearbyOSM(la,lo,rad){const dl=rad/111320,dn=rad/(111320*Math.cos(
   const key=norm(e.tags.name),addr=[e.tags["addr:housenumber"],e.tags["addr:street"]].filter(Boolean).join(" ");
   if(!seen.has(key)||seen.get(key).mi>mi)seen.set(key,{name:e.tags.name,mi,addr,cuisine:e.tags.cuisine||"",la:y,lo:x})}
  return{items:[...seen.values()].sort((a,b)=>a.mi-b.mi)}}
-const st={run:0,rad:8047,web:null,near:null,tab:"picks",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
+let ME={la:HOME.la,lo:HOME.lo};
+const st={run:0,rad:1609,web:null,near:null,tab:"picks",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
 const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}
@@ -306,7 +308,7 @@ function render(){
    h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button><h1>${esc(r.n)}</h1><div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
    <input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div class="bar"><select id="mode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select></div><div id="items"></div>`;
   }else{
-   h=`<h1>Restaurants</h1><div class="sub">Everything nearby, nearest first</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">Use my location</button><button id="nb">Refresh</button><select id="rad"><option value="8047"${st.rad==8047?" selected":""}>5 miles</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option></select></div><div id="map" style="height:260px;border-radius:14px;margin-top:10px;overflow:hidden"></div><div id="ol"></div><div id="rl"></div>`;
+   h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, nearest first</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="ol"></div><div id="rl"></div>`;
   }
  }
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Find a food across every restaurant</div><input class="search" id="fq" placeholder="Try chicken, burrito, shake" value="${esc(st.iq)}"><div id="fr"></div><div id="wr"></div>`}
@@ -314,27 +316,35 @@ function render(){
 }
 function wire(){
  if(st.tab==="rest"&&!st.view&&!st.web){
-   const my=++st.run;let E=[],map=null,layer=null;
-   if(window.L){map=L.map("map",{zoomControl:false}).setView([HOME.la,HOME.lo],13);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);layer=L.layerGroup().addTo(map)}else $("#map").style.display="none";
+   const my=++st.run;let E=[],map=null,layer=null,prog=false;
+   const zoomFor=()=>st.rad<=1609?15:st.rad<=4828?13:12;
+   const icon=(on,me)=>L.divIcon({className:"",html:`<div class="pin ${me?"me":on?"":"off"}">${me?"":"🍴"}</div>`,iconSize:me?[16,16]:[30,30],iconAnchor:me?[8,8]:[15,15]});
+   const center=(la,lo)=>{if(!map)return;prog=true;map.setView([la,lo],zoomFor());setTimeout(()=>{prog=false},600);$("#sa").style.display="none"};
+   if(window.L){map=L.map("map",{zoomControl:false}).setView([HOME.la,HOME.lo],zoomFor());L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);layer=L.layerGroup().addTo(map);
+    map.on("moveend",()=>{if(!prog)$("#sa").style.display="block"})}else $("#map").style.display="none";
    const open=x=>{if(x.ok)st.view=x.k;else st.web={name:x.name};render()};
    const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
-    E=Object.keys(R).filter(k=>!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q)).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,sub:R[k].a+" · "+ITEMS.filter(i=>i.k===k).length+" hand-checked items",ok:1}));
-    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?c+" items online":c===0?"no menu found online":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
+    E=Object.keys(R).filter(k=>dist(R[k])*1609.34<=st.rad&&(!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q))).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,has:1,sub:R[k].a+" · "+ITEMS.filter(i=>i.k===k).length+" items",ok:1}));
+    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?c+" items online":c===0?"no menu found":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
     E.sort((a,b)=>a.mi-b.mi);
-    const status=!st.near?'<div class="empty" style="padding:8px 0">Loading nearby restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
-    $("#rl").innerHTML=status+'<div class="mu" style="margin:6px 0">'+E.length+' restaurants · ✓ hand-checked · ◆ menu found online</div>'+E.map((x,n)=>`<button class="row" data-e="${n}"><div class="t"><span class="nm">${x.ok?"✓ ":x.has>0?"◆ ":""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></button>`).join("");
+    const status=!st.near?'<div class="empty" style="padding:8px 0">Finding restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
+    $("#rl").innerHTML=status+'<div class="mu" style="margin:6px 0">'+E.length+' restaurants · 🍴 menu available · gray = no menu found</div>'+E.map((x,n)=>`<button class="row" data-e="${n}"><div class="t"><span class="nm">${x.has>0?"🍴 ":""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></button>`).join("");
     $("#rl").querySelectorAll("button[data-e]").forEach(b=>b.onclick=()=>open(E[+b.dataset.e]));
-    if(layer){layer.clearLayers();L.circleMarker([HOME.la,HOME.lo],{radius:7,color:"#fff",weight:2,fillColor:"#3b82f6",fillOpacity:1}).addTo(layer);
-     E.forEach(x=>{if(x.la==null)return;const big=x.ok||x.has>0,m=L.circleMarker([x.la,x.lo],{radius:big?9:6,color:"#111",weight:1,fillColor:x.ok?"#22c55e":x.has>0?"#f59e0b":"#9ca3af",fillOpacity:.95}).addTo(layer);
-      const d=document.createElement("div");d.innerHTML=`<b>${esc(x.name)}</b><br>${Math.round(x.mi*10)/10} mi · ${x.ok?"hand-checked":x.has>0?"menu online":x.has===0?"no menu found":"not looked up yet"}<br>`;
-      const b=document.createElement("button");b.textContent="Open menu";b.style.cssText="margin-top:6px;padding:6px 12px;border-radius:8px;border:0;background:#22c55e;color:#000;font-size:14px";b.onclick=()=>open(x);d.appendChild(b);m.bindPopup(d)})}};
-   const scan=async()=>{const T=E.filter(x=>!x.ok&&x.has==null).slice(0,25);let k=0;for(const x of T){if(my!==st.run)return;try{await hasMenu(x.name)}catch(e){return}if(++k%5===0&&my===st.run)draw()}if(my===st.run&&k)draw()};
+    if(layer){layer.clearLayers();L.marker([ME.la,ME.lo],{icon:icon(1,1),interactive:false}).addTo(layer);
+     E.forEach(x=>{if(x.la==null)return;const on=x.has>0,m=L.marker([x.la,x.lo],{icon:icon(on)}).addTo(layer);
+      const d=document.createElement("div");d.innerHTML=`<b>${esc(x.name)}</b><br>${Math.round(x.mi*10)/10} mi · ${on?"menu available":x.has===0?"no menu found":"not looked up yet"}<br>`;
+      const b=document.createElement("button");b.textContent=on?"Open menu":"Try menu lookup";b.style.cssText="margin-top:6px;padding:6px 12px;border-radius:8px;border:0;background:#22c55e;color:#000;font-size:14px";b.onclick=()=>open(x);d.appendChild(b);m.bindPopup(d)})}};
+   const scan=async()=>{const T=E.filter(x=>!x.ok&&x.has==null).slice(0,30);let k=0;for(const x of T){if(my!==st.run)return;try{await hasMenu(x.name)}catch(e){return}if(++k%5===0&&my===st.run)draw()}if(my===st.run&&k)draw()};
    const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Not in the list? Pull its menu from the nutrition database</span></button>`:""};
-   const load=()=>{st.near=null;if(map)map.setView([HOME.la,HOME.lo],13);draw();nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(my!==st.run)return;st.near=j;draw();scan()}).catch(e=>{if(my!==st.run)return;st.near={err:"Couldn't reach the map service ("+String(e&&e.message||e).slice(0,160)+"). Tap Refresh to try again."};draw()})};
-   ol();if(!st.near||st.near.err)load();else{draw();scan()}
+   const load=(recenter=true)=>{st.near=null;if(recenter)center(HOME.la,HOME.lo);draw();nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(my!==st.run)return;st.near=j;draw();scan()}).catch(e=>{if(my!==st.run)return;st.near={err:"Couldn't reach the map service ("+String(e&&e.message||e).slice(0,160)+"). Tap Refresh to try again."};draw()})};
+   const locate=()=>{draw();const ok=p=>{ME={la:p.coords.latitude,lo:p.coords.longitude};HOME={la:ME.la,lo:ME.lo,label:"from you"};if(my===st.run)load()};
+    try{navigator.geolocation.getCurrentPosition(ok,()=>{if(my===st.run)load()},{timeout:7000,maximumAge:60000})}catch(e){load()}};
+   ol();
+   if(!st.geoTried){st.geoTried=1;locate()}else if(!st.near||st.near.err)load();else{draw();scan()}
    $("#rq").oninput=e=>{st.rq=e.target.value;draw();ol()};
-   $("#rad").onchange=e=>{st.rad=+e.target.value;load()};$("#nb").onclick=load;
-   $("#loc").onclick=()=>{const b=$("#loc");try{navigator.geolocation.getCurrentPosition(p=>{HOME={la:p.coords.latitude,lo:p.coords.longitude,label:"from you"};load()},()=>{b.textContent="Location blocked here; using 84084"},{timeout:6000})}catch(e){b.textContent="Location blocked here; using 84084"}}}
+   $("#rad").onchange=e=>{st.rad=+e.target.value;load()};$("#nb").onclick=()=>load();
+   $("#sa").onclick=()=>{if(!map)return;const c=map.getCenter();HOME={la:c.lat,lo:c.lng,label:"map area"};$("#sa").style.display="none";load(false)};
+   $("#loc").onclick=locate}
  if(st.tab==="rest"&&st.web){let all=[],mode="all",sort="ra";const draw=()=>{let L=all.filter(i=>MODES[mode][1](i));L.sort((a,b)=>sort==="cal"?a.cal-b.cal:sort==="hcal"?b.cal-a.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
    $("#wmode").onchange=e=>{mode=e.target.value;draw()};$("#wsrt").onchange=e=>{sort=e.target.value;draw()};
    const nm=st.web.name;fetch("/api/search?q="+encodeURIComponent(nm)).then(r=>r.json().then(j=>({r,j}))).then(({r,j})=>{

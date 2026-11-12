@@ -5,26 +5,20 @@ const BASES = process.env.CALORIE_API_BASE ? [process.env.CALORIE_API_BASE] : ["
 const num = v => (typeof v === "number" ? v : v == null || v === "" ? null : Number.isFinite(+v) ? +v : null);
 
 function normalize(it) {
-  const per100 = it.nutrition_per_100g || {};
-  const perServ = it.nutrition_per_serving || null;
+  const m = (it.meal && it.meal.macros) || {};
   const pick = (...vals) => { for (const v of vals) { const n = num(v); if (n !== null) return n; } return null; };
   return {
-    id: it.id ?? it.food_id ?? null,
-    name: it.name ?? it.food_name ?? "",
-    brand: it.brand_name ?? it.brand ?? "",
-    per100: {
-      cal: pick(it.calories, it.energy_kcal, per100.energy_kcal, per100.calories),
-      p: pick(it.protein_g, per100.protein_g),
-      c: pick(it.carbohydrates_g, per100.carbohydrates_g),
-      f: pick(it.fat_g, per100.fat_g),
+    id: it.id ?? null,
+    name: it.name ?? "",
+    brand: it.brand_name ?? "",
+    verified: !!it.is_verified,
+    basis: it.serving || (it.default_portion && it.default_portion.label) || "100 g",
+    n: {
+      cal: pick(it.meal && it.meal.calories, it.calories_100g),
+      p: pick(m.protein, it.protein_100g),
+      c: pick(m.carbs, it.carbs_100g),
+      f: pick(m.fat, it.fat_100g),
     },
-    serving: perServ ? {
-      cal: pick(perServ.energy_kcal, perServ.calories),
-      p: pick(perServ.protein_g),
-      c: pick(perServ.carbohydrates_g),
-      f: pick(perServ.fat_g),
-    } : null,
-    servingLabel: it.serving_size ?? it.serving_label ?? (it.serving && it.serving.label) ?? null,
   };
 }
 
@@ -50,7 +44,8 @@ module.exports = async (req, res) => {
       if (json === null) { errs.push(`${base}: not JSON (${up.status})`); continue; }
       if (!up.ok) return res.status(502).json({ error: `Calorie API returned ${up.status}`, detail: (json.detail || json.error || "").toString().slice(0, 300) });
       const list = Array.isArray(json) ? json : json.data || json.results || json.foods || [];
-      return res.status(200).json({ items: list.map(normalize), source: "Calorie API" });
+      const items = list.map(normalize).sort((x, y) => Number(y.verified) - Number(x.verified));
+      return res.status(200).json({ items, source: "Calorie API" });
     } catch (e) {
       errs.push(`${base}: ${String(e.cause && e.cause.code || e.message || e).slice(0, 80)}`);
     }

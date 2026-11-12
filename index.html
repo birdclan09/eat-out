@@ -39,8 +39,8 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head><body><div id="app"></div>
 <nav class="tabs" id="tabs">
-<button data-t="picks"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg>Picks</button>
 <button data-t="rest"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Restaurants</button>
+<button data-t="picks"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg>Picks</button>
 <button data-t="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search</button>
 </nav>
 <script>
@@ -301,7 +301,7 @@ async function nearbyOSM(la,lo,rad){const dl=rad/111320,dn=rad/(111320*Math.cos(
   if(!seen.has(key)||seen.get(key).mi>mi)seen.set(key,{name:e.tags.name,mi,addr,cuisine:e.tags.cuisine||"",la:y,lo:x})}
  return{items:[...seen.values()].sort((a,b)=>a.mi-b.mi)}}
 let ME={la:HOME.la,lo:HOME.lo};
-const st={cmp:[],cv:false,cpick:"lean",run:0,rad:1609,web:null,near:null,tab:"picks",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
+const st={cmp:[],cv:false,cpick:"lean",run:0,rad:1609,web:null,near:null,tab:"rest",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
 const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}

@@ -289,7 +289,7 @@ function render(){
    h=`<h1>Restaurants</h1><div class="sub">Sorted by distance ${HOME.label}</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">Use my location</button></div><div id="rl"></div>`;
   }
  }
- if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Find a food across every restaurant</div><input class="search" id="fq" placeholder="Try chicken, burrito, shake" value="${esc(st.iq)}"><div id="fr"></div>`}
+ if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Find a food across every restaurant</div><input class="search" id="fq" placeholder="Try chicken, burrito, shake" value="${esc(st.iq)}"><div id="fr"></div><button class="big" id="web" style="margin-top:12px"><b>Search online database</b><span>Looks up other restaurants (not hand-checked)</span></button><div id="wr"></div>`}
  app.innerHTML=h;wire();window.scrollTo(0,0);
 }
 function wire(){
@@ -302,7 +302,14 @@ function wire(){
    draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()};$("#srt").onchange=e=>{sort=e.target.value;draw()}}
  if(st.tab==="find"){const draw=()=>{const q=st.iq;if(q.length<2){$("#fr").innerHTML='<div class="empty">Type at least two letters.</div>';return}
    const L=ITEMS.filter(i=>(i.n+" "+i.r+" "+i.c).toLowerCase().includes(q)).sort((a,b)=>b.ra-a.ra).slice(0,40);$("#fr").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty">No match.</div>'};
-   draw();$("#fq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()}}
+   draw();$("#fq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};
+   $("#web").onclick=async()=>{const q=st.iq;const box=$("#wr");if(q.length<2){box.innerHTML='<div class="empty">Type at least two letters first.</div>';return}
+    box.innerHTML='<div class="empty">Searching…</div>';
+    try{const r=await fetch("/api/search?q="+encodeURIComponent(q));const j=await r.json();
+     if(!r.ok){box.innerHTML='<div class="empty">'+esc(j.error||"Lookup failed")+(j.detail?" ("+esc(j.detail)+")":"")+'</div>';return}
+     const n=v=>v==null?"–":Math.round(v*10)/10;
+     box.innerHTML=(j.items.length?j.items.map(i=>`<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.name)}</span><span class="pp">${n((i.serving||i.per100).p)} g</span></div><div class="mu">${esc(i.brand)}${i.brand?" · ":""}${n((i.serving||i.per100).cal)} cal · ${i.serving?"per serving":"per 100 g"}</div><div class="det"><b>${n((i.serving||i.per100).p)} g</b> protein · <b>${n((i.serving||i.per100).c)}</b> g carbs · <b>${n((i.serving||i.per100).f)}</b> g fat · <b>${n((i.serving||i.per100).cal)}</b> cal<br>Source: Calorie API database, not the restaurant. ${i.serving?"":"Values are per 100 g, not a full portion."}</div></button>`).join(""):'<div class="empty">Nothing found in the online database.</div>')+'<div class="foot">Source: Calorie API. Not verified against the restaurant.</div>'
+    }catch(e){box.innerHTML='<div class="empty">Online lookup only works on the Vercel version of this app.</div>'}}}
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.view=null;st.pick=null;st.iq="";st.rq="";st.cat="All";render()});
 render();

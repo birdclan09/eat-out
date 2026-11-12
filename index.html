@@ -268,7 +268,10 @@ const hasGet=n=>{const v=HAS[norm(n)];return v&&Date.now()-v.t<864e5?v.n:null};
 const hasSet=(n,c)=>{HAS[norm(n)]={t:Date.now(),n:c};try{localStorage.setItem("eo_has",JSON.stringify(HAS))}catch(e){}};
 async function hasMenu(nm){const r=await fetch("/api/search?q="+encodeURIComponent(nm));if(!r.ok)throw 0;const j=await r.json(),key=norm(nm);const c=j.items.filter(i=>i.brand&&(norm(i.brand).includes(key)||key.includes(norm(i.brand)))&&i.n.cal>0).length;hasSet(nm,c);return c}
 const OV=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://overpass.private.coffee/api/interpreter"];
-async function nearby(la,lo,rad){const dl=rad/111320,dn=rad/(111320*Math.cos(la*Math.PI/180));
+async function nearby(la,lo,rad){
+ try{const r=await fetch(`/api/places?lat=${la}&lon=${lo}&r=${rad}`);if(r.ok){const j=await r.json();if(j.items)return j}}catch(e){}
+ return nearbyOSM(la,lo,rad)}
+async function nearbyOSM(la,lo,rad){const dl=rad/111320,dn=rad/(111320*Math.cos(la*Math.PI/180));
  const q=`[out:json][timeout:25];(node["amenity"~"^(restaurant|fast_food)$"]["name"](${la-dl},${lo-dn},${la+dl},${lo+dn});way["amenity"~"^(restaurant|fast_food)$"]["name"](${la-dl},${lo-dn},${la+dl},${lo+dn}););out center 1000;`;
  const one=async u=>{const c=new AbortController(),tm=setTimeout(()=>c.abort(),30000);try{const r=await fetch(u+"?data="+encodeURIComponent(q),{signal:c.signal});if(!r.ok)throw new Error(String(r.status));return await r.json()}finally{clearTimeout(tm)}};
  const j=await Promise.any(OV.map(one)),t=Math.PI/180,seen=new Map();

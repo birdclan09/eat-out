@@ -1,6 +1,6 @@
 // Vercel serverless function: looks up foods in Calorie API.
 // Key lives in the CALORIE_API_KEY environment variable (never in the repo).
-const BASE = process.env.CALORIE_API_BASE || "https://api.calorieapi.com";
+const BASES = process.env.CALORIE_API_BASE ? [process.env.CALORIE_API_BASE] : ["https://calorieapiadmin.com", "https://api.calorieapi.com", "https://calorieapi.com"];
 
 const num = v => (typeof v === "number" ? v : v == null || v === "" ? null : Number.isFinite(+v) ? +v : null);
 
@@ -34,16 +34,21 @@ module.exports = async (req, res) => {
   if (!key) return res.status(500).json({ error: "CALORIE_API_KEY is not set on the server." });
   const q = String(req.query.q || "").trim();
   if (q.length < 2) return res.status(400).json({ error: "Type at least two characters." });
-  const url = `${BASE}/api/v1/search/foods?q=${encodeURIComponent(q)}&limit=25`;
-  try {
-    const up = await fetch(url, { headers: { "X-API-Key": key } });
-    const text = await up.text();
-    let json; try { json = JSON.parse(text); } catch { json = null; }
-    if (req.query.raw) return res.status(200).json({ url: url.replace(key, "***"), status: up.status, body: json ?? text.slice(0, 2000) });
-    if (!up.ok) return res.status(502).json({ error: `Calorie API returned ${up.status}`, detail: (json && (json.detail || json.error)) || text.slice(0, 300) });
-    const list = Array.isArray(json) ? json : json.data || json.results || json.foods || [];
-    return res.status(200).json({ items: list.map(normalize), source: "Calorie API" });
-  } catch (e) {
-    return res.status(502).json({ error: "Could not reach Calorie API", detail: String(e).slice(0, 200) });
+  const errs = [];
+  for (const base of BASES) {
+    const url = `${base}/api/v1/search/foods?q=${encodeURIComponent(q)}&limit=25`;
+    try {
+      const up = await fetch(url, { headers: { "X-API-Key": key } });
+      const text = await up.text();
+      let json; try { json = JSON.parse(text); } catch { json = null; }
+      if (req.query.raw) return res.status(200).json({ url, status: up.status, body: json ?? text.slice(0, 2000) });
+      if (json === null) { errs.push(`${base}: not JSON (${up.status})`); continue; }
+      if (!up.ok) return res.status(502).json({ error: `Calorie API returned ${up.status}`, detail: (json.detail || json.error || "").toString().slice(0, 300) });
+      const list = Array.isArray(json) ? json : json.data || json.results || json.foods || [];
+      return res.status(200).json({ items: list.map(normalize), source: "Calorie API" });
+    } catch (e) {
+      errs.push(`${base}: ${String(e.cause && e.cause.code || e.message || e).slice(0, 80)}`);
+    }
   }
+  return res.status(502).json({ error: "Could not reach Calorie API", detail: errs.join(" | ") });
 };

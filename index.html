@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eat Out – High-Protein Finder</title>
+<style>
+:root{--bg:#f6f5f1;--card:#fff;--ink:#1d1d1b;--mute:#6b6a64;--line:#e4e2da;--accent:#1f6f4a;--accent2:#e8f3ec}
+@media(prefers-color-scheme:dark){:root{--bg:#161614;--card:#222220;--ink:#f1efe8;--mute:#a09e95;--line:#37362f;--accent:#5fc58e;--accent2:#1e3328}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%}
+body{background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,system-ui,sans-serif}
+#app{max-width:640px;margin:0 auto;min-height:100%;padding:calc(14px + env(safe-area-inset-top)) 14px calc(84px + env(safe-area-inset-bottom))}
+h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-bottom:16px}
+.back{background:none;border:0;color:var(--accent);font-size:16px;padding:6px 0;margin-bottom:4px}
+.search{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:17px}
+.big{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;color:var(--ink)}
+.big b{display:block;font-size:18px;margin-bottom:2px}.big span{color:var(--mute);font-size:14px}
+.row{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-top:10px;color:var(--ink)}
+.row .t{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+.nm{font-weight:600}.mu{color:var(--mute);font-size:13px}
+.pp{color:var(--accent);font-weight:700;white-space:nowrap}
+.det{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:13.5px;color:var(--mute)}
+.det b{color:var(--ink)}.open .det{display:block}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
+.tabs button{flex:1;background:none;border:0;padding:10px 0 9px;color:var(--mute);font-size:12px}
+.tabs button.on{color:var(--accent);font-weight:600}.tabs svg{display:block;margin:0 auto 2px;width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.bar{display:flex;gap:8px;margin-top:10px}
+.bar button,.bar select{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px}
+.seg{display:flex;gap:6px;margin-bottom:14px}.seg button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px}.seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.empty{text-align:center;color:var(--mute);padding:34px 10px}
+.foot{font-size:12px;color:var(--mute);margin-top:20px}
+</style></head><body><div id="app"></div>
+<nav class="tabs" id="tabs">
+<button data-t="picks"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg>Picks</button>
+<button data-t="rest"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Restaurants</button>
+<button data-t="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search</button>
+</nav>
+<script>
+const RAW=`F|Breakfast Burrito|Breakfast|50|729|63|30
+F|Steak & Egg Burrito|Breakfast|71|765|45|31
+F|Breakfast Hash|Breakfast|43|404|36|8
+F|Breakfast Sandwich (bacon)|Breakfast|37|392|35|11
+F|Breakfast Sandwich (sausage)|Breakfast|30|362|33|12
+F|Draper Omelet|Breakfast|37|311|8|12
+F|Veggie Omelet|Breakfast|25|226|16|7
+F|Protein Omelet|Breakfast|34|268|6|9
+F|Greek Yogurt|Breakfast|29|360|49|7
+F|Oatmeal|Breakfast|11|303|42|12
+F|Protein Pancakes: Blueberry Lemon|Pancakes|38|628|94|11
+F|Protein Pancakes: Froyo Lovers|Pancakes|46|725|113|11
+F|Protein Pancakes: Gluten-Free|Pancakes|43|392|42|6
+F|Protein Pancakes: Chocolate Dipped|Pancakes|38|623|92|11
+F|Protein Pancakes: PB & J Stack|Pancakes|31|846|126|26
+F|Protein Pancakes: Fueled Stack|Pancakes|22|549|95|10
+F|Shake: Freak|Shakes|70|646|37|26
+F|Shake: Cookie Butter|Shakes|33|449|40|19
+F|Shake: PB & J|Shakes|47|478|63|6
+F|Shake: Strawberry Cheesecake|Shakes|34|413|60|6
+F|Shake: Sweet Greens|Shakes|6|209|46|2
+F|Shake: Jojo|Shakes|27|429|38|21
+F|Shake: Apple Pie|Shakes|33|459|64|11
+F|Shake: Yoda|Shakes|30|328|26|15
+F|Shake: PB Vacation|Shakes|46|409|41|9
+F|Shake: Chocolate PB Love|Shakes|46|419|44|9
+F|Shake: Island Breeze|Shakes|32|400|47|12
+F|Shake: Fueled Beast|Shakes|30|312|19|16
+F|Acai & Toast: PB & Honey|Acai|16|457|60|18
+F|Acai & Toast: Plain Jane|Acai|11|298|38|14
+F|Acai & Toast: Summers|Acai|34|478|47|19
+F|Acai & Toast: 801|Acai|23|438|40|24
+F|Very Berry Protein Acai Smoothie|Acai|28|309|30|9
+F|Nuts N' Berries Protein Acai Smoothie|Acai|45|436|32|15
+F|Very Berry Protein Acai Bowl|Acai|40|576|59|20
+F|Nuts N' Berries Protein Acai Bowl|Acai|50|787|66|37
+F|Teriyaki Bowl|Bowls|43|312|22|5
+F|Goddess Salmon Bowl|Bowls|46|608|40|29
+F|Goddess Chicken Bowl|Bowls|50|490|40|15
+F|Buddha Bowl|Bowls|30|480|46|24
+F|Skinny Salmon Bowl|Bowls|39|386|17|19
+F|Fueled Monster Bowl|Bowls|79|522|14|16
+F|Santa Fe Bowl|Bowls|45|461|21|22
+F|Mediterranean Bowl|Bowls|45|428|20|22
+F|Chicken Curry Bowl|Bowls|44|325|17|9
+F|Babe Bowl|Bowls|40|471|16|29
+F|Blackened BBQ Chicken Bowl|Bowls|43|321|29|4
+F|Naked Salmon Salad|Salads|35|639|20|43
+F|Kale Chicken Caesar Salad|Salads|61|604|13|36
+F|Grilled Veggie Salad|Salads|36|725|75|36
+F|Fueled Cobb Salad|Salads|58|687|26|38
+F|FK Chicken Salad|Salads|45|585|49|25
+F|Buffalo Chicken Salad|Salads|40|492|20|27
+F|BBQ Chicken Salad|Salads|48|546|35|2
+F|Berry Blast Salad|Salads|39|516|24|30
+F|Chicken Quesadilla|Wraps|82|830|57|30
+F|Salmon Wrap|Wraps|45|720|55|35
+F|Blackened Chicken Caesar Wrap|Wraps|56|665|45|29
+F|Black Bean Veggie Wrap|Wraps|21|470|77|9
+F|Fueled Cheesesteak|Wraps|44|768|67|35
+F|Chicken Gyro|Wraps|54|550|52|13
+F|Thai Chicken Wrap|Wraps|44|583|58|16
+F|Buffalo Chicken Wrap|Wraps|51|650|49|27
+F|Turkey Burger|Burgers|54|637|51|29
+F|Skinny Chicken Burger|Burgers|40|257|13|5
+F|Salmon Burger|Burgers|46|633|49|29
+F|FK Burger|Burgers|54|621|42|26
+F|Black Bean Veggie Burger|Burgers|30|471|78|6
+F|Muscle Burger|Burgers|54|693|46|28
+F|Beast Burger|Burgers|75|914|45|48
+F|BBQ Turkey Burger|Burgers|46|558|57|21
+F|Hawaiian Burger|Burgers|59|582|46|18
+F|Buffalo Chicken Tacos|Tacos|51|746|65|28
+F|Fueled Chicken Tacos|Tacos|46|680|64|22
+F|Fueled Steak Tacos|Tacos|34|663|64|27
+F|Fueled Fish Tacos|Tacos|34|605|64|21
+F|PB Protein Bites (per cookie)|Dessert|9|130|4|9
+F|Chocolate PB Protein Bites (per cookie)|Dessert|9|143|5|10
+F|Protein Froyo 8oz|Dessert|16|285|65|0
+J|Slim 1 (Unwich)|Sandwich|20|190|4|11
+J|Slim 2 (Unwich)|Sandwich|17|90||3
+J|Slim 3 (Unwich)|Sandwich|11|250|5|20
+J|Slim 4 (Unwich)|Sandwich|14|70|2|0.5
+J|Slim 5 (Unwich)|Sandwich|22|280|3|20
+J|Slim 6 (Unwich)|Sandwich|17|240|2|19
+J|#1 The Pepe (Unwich)|Sandwich|21|370|7|27
+J|#2 Big John (Unwich)|Sandwich|17|270|4|20
+J|#3 Totally Tuna (Unwich)|Sandwich|12|280|9|20
+J|#4 Turkey Tom (Unwich)|Sandwich|15|250|5|17
+J|#5 Vito (Unwich)|Sandwich|24|350|9|25
+J|#6 The Veggie (Unwich)|Sandwich|19|440|8|36
+J|J.J.B.L.T. (Unwich)|Sandwich|15|360|4|31
+J|#7 Spicy East Coast Italian (Unwich)|Sandwich|37|620|11|48
+J|#8 Billy Club (Unwich)|Sandwich|37|460|7|30
+J|#9 Italian Night Club (Unwich)|Sandwich|35|580|11|44
+J|#10 Hunter's Club (Unwich)|Sandwich|42|480|5|32
+J|#11 Country Club (Unwich)|Sandwich|35|430|8|28
+J|#12 Beach Club (Unwich)|Sandwich|32|500|9|37
+J|#13 Jimmy Cubano (Unwich)|Sandwich|30|480|5|36
+J|#14 Bootlegger Club (Unwich)|Sandwich|31|330|5|20
+J|#15 Club Tuna (Unwich)|Sandwich|29|510|10|38
+J|#16 Club Lulu (Unwich)|Sandwich|22|340|5|24
+J|#17 Ultimate Porker (Unwich)|Sandwich|20|340|6|25
+J|The J.J. Gargantuan (Unwich)|Sandwich|65|730|12|47
+J|Chicken Caesar (Unwich)|Sandwich|28|620|24|47
+J|Jalapeño Ranch Chicken (Unwich)|Sandwich|30|580|17|42
+J|Tuscan Italian (Unwich)|Sandwich|35|570|11|43
+J|#7 Spicy East Coast Italian (8in French)|Sandwich|46|850|53|49
+J|#8 Billy Club (8in French)|Sandwich|50|810|73|32
+J|#9 Italian Night Club (8in French)|Sandwich|48|930|77|46
+J|#10 Hunter's Club (8in French)|Sandwich|55|830|70|34
+J|#11 Country Club (8in French)|Sandwich|48|780|74|30
+J|#12 Beach Club (8in French)|Sandwich|45|850|75|39
+J|#13 Jimmy Cubano (8in French)|Sandwich|38|710|48|38
+J|#14 Bootlegger Club (8in French)|Sandwich|44|680|71|23
+J|#15 Club Tuna (8in French)|Sandwich|42|860|76|40
+J|#16 Club Lulu (8in French)|Sandwich|35|690|71|26
+J|The J.J. Gargantuan (8in French)|Sandwich|78|1080|78|49
+R|Fire Grilled Chicken (full protein portion, add rice)|Protein portion|27|110|1|0
+R|Steak (full protein portion, add rice)|Protein portion|26|350|4|25
+R|Shrimp (full protein portion, add rice)|Protein portion|29|170|15|3.5
+R|Salmon (protein add-on)|Protein portion|30|330|0|21
+R|Mahi (protein add-on)|Protein portion|32|160|0|2.5
+R|Tofu (full protein portion, add rice)|Protein portion|16|250|12|16
+L|Flo's Filet 6 oz|Steak|37|330|2|15
+L|Flo's Filet 9 oz|Steak|56|450|3|19
+L|Renegade Sirloin 6 oz|Steak|36|320|2|15
+L|Renegade Sirloin 8 oz|Steak|51|390|2|16
+L|Ribeye 12 oz|Steak|66|810|4|54
+L|NY Strip 12 oz|Steak|72|630|1|33
+L|LongHorn Salmon 7 oz|Seafood|33|300|2|16
+L|Redrock Shrimp (8 ct)|Seafood|30|160|2|3
+L|Seasoned Steakhouse Wings|Appetizer|53|460|0|28
+L|Chop Steak|Steak|44|640|13|46`;
+const R={F:{n:"Fueled Kitchen",a:"12259 S 450 E B, Draper",la:40.5277,lo:-111.8776,note:"Some diners report its carb and calorie counts look off."},
+J:{n:"Jimmy John's",a:"8989 S Redwood Rd, West Jordan",la:40.588,lo:-111.9383,note:"Unwich = lettuce wrap, no bread."},
+R:{n:"Rumbi Island Grill",a:"7251 S Plz Ctr Dr, West Jordan",la:40.6195,lo:-111.9788,note:"Official PDF is from 2020. Protein portions only; add rice or salad separately."},
+L:{n:"LongHorn Steakhouse",a:"11346 S River Heights Dr, South Jordan",la:40.5454,lo:-111.9823,note:"Steaks only. Sides are not included."}};
+const ITEMS=RAW.split("\n").map(l=>{const a=l.split("|"),p=+a[3],c=+a[4];return{k:a[0],r:R[a[0]].n,n:a[1],c:a[2],p,cal:c,cb:a[5]===""?"–":a[5],f:a[6],ra:+(p/c*100).toFixed(1)}});
+let HOME={la:40.60,lo:-112.00,label:"from 84084"};
+const st={tab:"picks",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
+const $=s=>document.querySelector(s),app=$("#app");
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}
+function itemRow(i,showR){return `<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.n)}</span><span class="pp">${i.p} g</span></div>
+<div class="mu">${showR?esc(i.r)+" · ":""}${i.cal} cal · ${i.ra} g protein/100 cal</div>
+<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal</div></button>`}
+const PICKS={
+ lean:{t:"Best protein per calorie",s:"Most protein for the fewest calories",f:i=>i.p>=20,o:(a,b)=>b.ra-a.ra},
+ meal:{t:"Big protein meals",s:"40 g+ protein, under 700 calories",f:i=>i.p>=40&&i.cal<700,o:(a,b)=>b.p-a.p},
+ light:{t:"Light bites",s:"Under 400 calories, 25 g+ protein",f:i=>i.cal<400&&i.p>=25,o:(a,b)=>b.ra-a.ra}};
+function render(){
+ document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===st.tab));
+ let h="";
+ if(st.tab==="picks"){
+  if(st.pick){const P=PICKS[st.pick],L=ITEMS.filter(P.f).sort(P.o).slice(0,15);
+   h=`<button class="back" onclick="st.pick=null;render()">‹ Picks</button><h1>${P.t}</h1><div class="sub">${P.s}</div>`+L.map(i=>itemRow(i,true)).join("");}
+  else h=`<h1>Eat out, hit your protein</h1><div class="sub">Goal: 180 g protein a day</div>`+Object.keys(PICKS).map(k=>`<button class="big" onclick="st.pick='${k}';render()"><b>${PICKS[k].t}</b><span>${PICKS[k].s}</span></button>`).join("")+`<div class="foot">Numbers come from each restaurant's own published nutrition. Menus change, so double-check if it matters.</div>`;
+ }
+ if(st.tab==="rest"){
+  if(st.view){const r=R[st.view],cats=["All",...new Set(ITEMS.filter(i=>i.k===st.view).map(i=>i.c))];
+   let L=ITEMS.filter(i=>i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
+   h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button><h1>${esc(r.n)}</h1><div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
+   <input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div id="items"></div>`;
+  }else{
+   h=`<h1>Restaurants</h1><div class="sub">Sorted by distance ${HOME.label}</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">Use my location</button></div><div id="rl"></div>`;
+  }
+ }
+ if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Find a food across every restaurant</div><input class="search" id="fq" placeholder="Try chicken, burrito, shake" value="${esc(st.iq)}"><div id="fr"></div>`}
+ app.innerHTML=h;wire();window.scrollTo(0,0);
+}
+function wire(){
+ if(st.tab==="rest"&&!st.view){const draw=()=>{const q=st.rq.toLowerCase();const L=Object.keys(R).filter(k=>!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q)).sort((a,b)=>dist(R[a])-dist(R[b]));
+   $("#rl").innerHTML=L.length?L.map(k=>`<button class="row" onclick="st.view='${k}';render()"><div class="t"><span class="nm">${esc(R[k].n)}</span><span class="mu">${dist(R[k]).toFixed(1)} mi</span></div><div class="mu">${esc(R[k].a)} · ${ITEMS.filter(i=>i.k===k).length} items</div></button>`).join(""):'<div class="empty">No restaurant found. Send me its name and I\'ll add it.</div>'};
+   draw();$("#rq").oninput=e=>{st.rq=e.target.value;draw()};
+   $("#loc").onclick=()=>{const b=$("#loc");try{navigator.geolocation.getCurrentPosition(p=>{HOME={la:p.coords.latitude,lo:p.coords.longitude,label:"from you"};render()},()=>{b.textContent="Location blocked here; using 84084"},{timeout:6000})}catch(e){b.textContent="Location blocked here; using 84084"}}}
+ if(st.tab==="rest"&&st.view){let sort="ra";const draw=()=>{let L=ITEMS.filter(i=>i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
+   L.sort((a,b)=>sort==="cal"?a.cal-b.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
+   draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()};$("#srt").onchange=e=>{sort=e.target.value;draw()}}
+ if(st.tab==="find"){const draw=()=>{const q=st.iq;if(q.length<2){$("#fr").innerHTML='<div class="empty">Type at least two letters.</div>';return}
+   const L=ITEMS.filter(i=>(i.n+" "+i.r+" "+i.c).toLowerCase().includes(q)).sort((a,b)=>b.ra-a.ra).slice(0,40);$("#fr").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty">No match.</div>'};
+   draw();$("#fq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()}}
+}
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.view=null;st.pick=null;st.iq="";st.rq="";st.cat="All";render()});
+render();
+</script></body></html>

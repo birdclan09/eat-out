@@ -319,7 +319,6 @@ async function nearbyOSM(la,lo,rad){const dl=rad/111320,dn=rad/(111320*Math.cos(
  return{items:[...seen.values()].sort((a,b)=>a.mi-b.mi)}}
 let ME={la:HOME.la,lo:HOME.lo};
 const st={pnv:false,pcat:"lean",pc:null,poff:new Set(),cmp:[],cv:false,cpick:"lean",run:0,rad:1609,web:null,near:null,tab:"rest",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
-st.favOnly=(()=>{try{return localStorage.getItem("eo_fo")==="1"}catch(e){return false}})();
 st.menuOnly=(()=>{try{return localStorage.getItem("eo_mo")==="1"}catch(e){return false}})();
 const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -420,7 +419,7 @@ function render(){
  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===st.tab));
  let h="";
  if(st.tab==="picks"){
-  {h=`<h1>Nearby</h1><div class="sub" id="psub">Finding restaurants within 2 miles…</div><button class="frow" id="pfilt"><span>Restaurants</span><span style="color:var(--accent)">Choose ›</span></button><div class="seg" id="pseg" style="margin-bottom:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 0;padding:9px 2px;font-size:13px">${PICKS[k].sh}</button>`).join("")}</div><div class="mrow"><div class="sub" id="pcs" style="margin:0"></div><button class="mo" id="pfo">Favorites Only</button></div><div id="pitems"></div><div class="foot">Online items come from FatSecret and are not hand-checked. Only the 30 nearest places are checked, so a few may be missing.</div>`}
+  {h=`<h1>Nearby</h1><div class="sub" id="psub">Finding restaurants within 2 miles…</div><button class="frow" id="pfilt"><span>Restaurants</span><span style="color:var(--accent)">Choose ›</span></button><div class="seg" id="pseg" style="margin-bottom:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 0;padding:9px 2px;font-size:13px">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="pcs"></div><div id="pitems"></div><div class="foot">Online items come from FatSecret and are not hand-checked. Only the 30 nearest places are checked, so a few may be missing.</div>`}
  }
  if(st.tab==="rest"){
   if(st.cv){h=`<button class="back" onclick="st.cv=false;render()">‹ Restaurants</button><h1>Compare</h1><div class="sub">Best foods across the places you picked</div><div id="chips"></div><div class="seg" id="cseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="csub"></div><div id="citems"></div><div class="foot">Hand-checked items come from the restaurant's own nutrition. Online items come from FatSecret and are not hand-checked.</div>`}
@@ -463,10 +462,9 @@ function wire(){
    const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
     E=Object.keys(R).filter(k=>dist(R[k])*1609.34<=st.rad&&(!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q))).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,has:Math.max(1,ITEMS.filter(i=>i.k===k).length),sub:R[k].a,ok:1}));
     if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?"":c===0?"no menu found":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
-    E.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||a.mi-b.mi);EA=E.slice();if(st.menuOnly)E=E.filter(x=>x.has>0);if(st.favOnly)E=E.filter(x=>isFavR(x.name));
+    E.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||a.mi-b.mi);EA=E.slice();if(st.menuOnly)E=E.filter(x=>x.has>0);
     const status=!st.near?'<div class="empty" style="padding:8px 0">Finding restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
-    $("#rl").innerHTML=status+'<div class="mrow"><div class="mu">'+(st.menuOnly?E.length+" with menus"+(EA.some(x=>x.has==null)?" · checking more…":""):E.length+" restaurants · green number = menu items")+'</div><div style="display:flex;gap:6px;flex:none"><button class="mo'+(st.favOnly?" on":"")+'" id="fo">Favorites Only</button><button class="mo'+(st.menuOnly?" on":"")+'" id="mo">Menus Only</button></div></div>'+(st.menuOnly&&!E.length&&st.near&&!st.near.err?'<div class="empty" style="padding:14px 0">No menus found nearby yet.</div>':'')+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${x.has>0?'<span class="bd">'+x.has+'</span>':""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
-    $("#fo").onclick=()=>{st.favOnly=!st.favOnly;try{localStorage.setItem("eo_fo",st.favOnly?"1":"")}catch(e){}draw()};
+    $("#rl").innerHTML=status+'<div class="mrow"><div class="mu">'+(st.menuOnly?E.length+" with menus"+(EA.some(x=>x.has==null)?" · checking more…":""):E.length+" restaurants · green number = menu items")+'</div><button class="mo'+(st.menuOnly?" on":"")+'" id="mo">Menus Only</button></div>'+(st.menuOnly&&!E.length&&st.near&&!st.near.err?'<div class="empty" style="padding:14px 0">No menus found nearby yet.</div>':'')+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${x.has>0?'<span class="bd">'+x.has+'</span>':""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
     $("#mo").onclick=()=>{st.menuOnly=!st.menuOnly;try{localStorage.setItem("eo_mo",st.menuOnly?"1":"")}catch(e){}draw()};
     $("#rl").querySelectorAll("[data-e]").forEach(r=>r.onclick=e=>{if(e.target.closest("[data-s]"))return;open(E[+r.dataset.e])});
     $("#rl").querySelectorAll("[data-s]").forEach(b=>b.onclick=e=>{e.stopPropagation();cmpToggle(E[+b.dataset.s]);draw()});
@@ -505,10 +503,9 @@ function wire(){
     {const n=ok.filter(c=>!st.poff.has(c.id)).length;$("#pfilt").innerHTML=`<span>${n===ok.length?"All "+ok.length:n+" of "+ok.length} restaurants</span><span style="color:var(--accent)">Choose ›</span>`;$("#pfilt").onclick=()=>pkSheet(ok)}
     $("#pseg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===st.pcat));
     const P=PICKS[st.pcat];let all=[];ok.filter(c=>!st.poff.has(c.id)).forEach(c=>{all=all.concat(itemsOf(c))});
-    const L=all.filter(P.f).filter(i=>!st.favOnly||isFavF(fkey(i))).sort(byFav(P.o)).slice(0,P.n||20);$("#pcs").textContent=P.s;$("#pfo").classList.toggle("on",!!st.favOnly);
-    $("#pitems").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):`<div class="empty">${pend?"Checking menus…":st.favOnly?"No favorites here yet.":"Nothing fits this category."}</div>`};
+    const L=all.filter(P.f).sort(byFav(P.o)).slice(0,P.n||20);$("#pcs").textContent=P.s;
+    $("#pitems").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):`<div class="empty">${pend?"Checking menus…":"Nothing fits this category."}</div>`};
    $("#pseg").querySelectorAll("button").forEach(b=>b.onclick=()=>{st.pcat=b.dataset.k;draw()});
-   $("#pfo").onclick=()=>{st.favOnly=!st.favOnly;try{localStorage.setItem("eo_fo",st.favOnly?"1":"")}catch(e){}draw()};
    (async()=>{try{if(!C){const j=await nearby(ME.la,ME.lo,RADM);if(my!==st.run)return;const have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
       const A=Object.keys(R).map(k=>({id:norm(R[k].n),name:R[k].n,k,mi:dmi(R[k].la,R[k].lo)})).filter(c=>c.mi*1609.34<=RADM);
       const B=j.items.filter(x=>!have.has(norm(x.name))&&x.mi*1609.34<=RADM).slice(0,30).map(x=>({id:norm(x.name),name:x.name,k:null,mi:x.mi}));

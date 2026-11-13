@@ -535,19 +535,23 @@ function wire(){
  if(st.tab==="fav"){const draw=()=>{const foods=st.fseg!=="rest",el=$("#fl");
    document.querySelectorAll("#fseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===(foods?"foods":"rest")));const SC=foods?[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein",[["r","Best Ratio"],["h","High Protein"]]]]:[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["a","Name",[["a","A–Z"],["z","Z–A"]]]];
    const FS=st.fs=st.fs||{d:"n",c:"",p:"",a:""};
+   {const ks=SC.map(z=>z[0]),o=(st.fso||[]).filter(k=>ks.includes(k));ks.forEach(k=>{if(!o.includes(k))o.push(k)});SC.sort((x,y)=>o.indexOf(x[0])-o.indexOf(y[0]))}
    const sum=()=>{const t=SC.map(z=>{const o=z[2].find(o=>o[0]===FS[z[0]]);return o?o[1]:""}).filter(Boolean);return t.length?t.join(" · "):"None"};
    $("#fsort").innerHTML=`<span>Sort By <span style="color:var(--mute)">· ${sum()}</span></span><span style="color:var(--accent)">Choose ›</span>`;
    $("#fsort").onclick=()=>{shClose();const sh=document.createElement("div");sh.id="sheet";document.body.appendChild(sh);document.body.style.overflow="hidden";
-    const paint=()=>{sh.innerHTML=`<div class="sh"><div class="shh"><b>Sort By</b><span class="mu">Applied Top To Bottom</span><button id="sh-x" aria-label="Close">✕</button></div>`+SC.map(z=>`<div class="sub" style="margin:14px 0 6px">${z[1]}</div><div class="seg" style="margin:0">${[["","Off"]].concat(z[2]).map(o=>`<button data-g="${z[0]}" data-v="${o[0]}" class="${(FS[z[0]]||"")===o[0]?"on":""}">${o[1]}</button>`).join("")}</div>`).join("")+`<button class="pri" id="so-done">Done</button></div>`;
+    const paint=()=>{sh.innerHTML=`<div class="sh" style="display:flex;flex-direction:column;min-height:100dvh;box-sizing:border-box"><div class="shh"><b>Sort By</b><span class="mu">Drag ☰ To Set Priority</span><button id="sh-x" aria-label="Close">✕</button></div><div id="so-l">`+SC.map(z=>`<div class="sg" data-k="${z[0]}" style="margin-top:14px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card)"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span class="mu">${z[1]}</span><span class="dh" style="touch-action:none;padding:6px 10px;font-size:20px;color:var(--mute);cursor:grab">☰</span></div><div class="seg" style="margin:0">${[["","Off"]].concat(z[2]).map(o=>`<button data-g="${z[0]}" data-v="${o[0]}" class="${(FS[z[0]]||"")===o[0]?"on":""}">${o[1]}</button>`).join("")}</div></div>`).join("")+`</div><button class="pri" id="so-done" style="margin-top:auto">Done</button></div>`;
      sh.querySelector("#sh-x").onclick=sh.querySelector("#so-done").onclick=()=>{shClose();draw()};
-     sh.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{FS[b.dataset.g]=b.dataset.v;paint()})};paint()};
+     sh.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{FS[b.dataset.g]=b.dataset.v;paint()});
+     const L=sh.querySelector("#so-l");sh.querySelectorAll(".dh").forEach(h=>h.onpointerdown=e=>{e.preventDefault();const g=h.closest(".sg");L.setPointerCapture(e.pointerId);g.style.opacity=".7";g.style.borderColor="var(--accent)";
+      L.onpointermove=m=>{const sib=[...L.children].filter(x=>x!==g);if(m.clientY<sib[0].getBoundingClientRect().top){L.insertBefore(g,sib[0]);return}if(m.clientY>sib[sib.length-1].getBoundingClientRect().bottom){L.appendChild(g);return}for(const x of sib){const r=x.getBoundingClientRect();if(m.clientY>r.top&&m.clientY<r.bottom){const before=m.clientY<r.top+r.height/2;L.insertBefore(g,before?x:x.nextSibling);break}}};
+      L.onpointerup=L.onpointercancel=()=>{L.onpointermove=L.onpointerup=L.onpointercancel=null;st.fso=[...L.children].map(x=>x.dataset.k);const o=st.fso;SC.sort((x,y)=>o.indexOf(x[0])-o.indexOf(y[0]));paint()}})};paint()};
    const dk=k=>k&&R[k]?dist(R[k]):null;
-   const cmp=(a,b)=>{let r=0;
-    if(FS.d)r=FS.d==="o"?a.t-b.t:b.t-a.t;
-    if(!r&&FS.c){const x=dk(a.k),y=dk(b.k);r=x==null&&y==null?0:x==null?1:y==null?-1:FS.c==="f"?y-x:x-y}
-    if(!r&&foods&&FS.p)r=FS.p==="r"?b.ra-a.ra:b.p-a.p;
-    if(!r&&!foods&&FS.a)r=FS.a==="z"?b.name.localeCompare(a.name):a.name.localeCompare(b.name);
-    return r};
+   const cmp=(a,b)=>{let r=0;for(const z of SC){const v=FS[z[0]];if(!v)continue;
+     if(z[0]==="d")r=v==="o"?a.t-b.t:b.t-a.t;
+     else if(z[0]==="c"){const x=dk(a.k),y=dk(b.k);r=x==null&&y==null?0:x==null?1:y==null?-1:v==="f"?y-x:x-y}
+     else if(z[0]==="p")r=v==="r"?b.ra-a.ra:b.p-a.p;
+     else r=v==="z"?b.name.localeCompare(a.name):a.name.localeCompare(b.name);
+     if(r)return r}return 0};
    if(foods){const L=Object.values(FAV.f);L.sort(cmp);
     el.innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty">No favorite foods yet.<br>Open any food and tap “♡ Save to favorites”.</div>'}
    else{const RL=Object.values(FAV.r).sort(cmp);

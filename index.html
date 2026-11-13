@@ -28,7 +28,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .seg{display:flex;gap:6px;margin-bottom:14px}.seg button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px}.seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .empty{text-align:center;color:var(--mute);padding:34px 10px}
 .foot{font-size:12px;color:var(--mute);margin-top:20px}
-.pin{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;border:2px solid #f59e0b;background:#fff;box-shadow:0 1px 4px #0006}.pin.off{width:20px;height:20px;border:2px solid #fff;background:#9ca3af;box-shadow:0 1px 3px #0005}.pin.off svg{width:11px;height:11px}.pin.ok{width:26px;height:26px;background:#16a34a;border:2px solid #fff;box-shadow:0 1px 4px #0006;position:relative}.pin.ok svg{width:14px;height:14px}.pin.ok.sel{box-shadow:0 0 0 3px #f59e0b}.pin .cnt{position:absolute;top:-9px;right:-10px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#fff;color:#14532d;font:700 10px/17px -apple-system,system-ui,sans-serif;text-align:center;box-shadow:0 1px 3px #0006}.ck{color:var(--accent);font-weight:800}.bd{display:inline-block;min-width:24px;height:24px;padding:0 7px;margin-right:8px;border-radius:12px;background:#16a34a;color:#fff;font:700 13px/24px -apple-system,system-ui,sans-serif;text-align:center;vertical-align:1px}
+.pin{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;border:2px solid #f59e0b;background:#fff;box-shadow:0 1px 4px #0006}.pin.off{width:20px;height:20px;border:2px solid #fff;background:#9ca3af;box-shadow:0 1px 3px #0005}.pin.off svg{width:11px;height:11px}.pin.ok{width:26px;height:26px;background:#16a34a;border:2px solid #fff;box-shadow:0 1px 4px #0006;position:relative}.pin.ok svg{width:14px;height:14px}.pin.ok.sel{box-shadow:0 0 0 3px #f59e0b}.pin .cnt{position:absolute;top:-9px;right:-10px;min-width:17px;height:17px;padding:0 4px;border-radius:9px;background:#fff;color:#14532d;font:700 10px/17px -apple-system,system-ui,sans-serif;text-align:center;box-shadow:0 1px 3px #0006}.ck{color:var(--accent);font-weight:800}.mrow{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:6px 0}.mo{flex:none;padding:6px 14px;border-radius:16px;border:1px solid var(--line);background:var(--card);color:var(--mute);font-size:13px}.mo.on{background:var(--accent);border-color:var(--accent);color:var(--bg);font-weight:600}.bd{display:inline-block;min-width:24px;height:24px;padding:0 7px;margin-right:8px;border-radius:12px;background:#16a34a;color:#fff;font:700 13px/24px -apple-system,system-ui,sans-serif;text-align:center;vertical-align:1px}
 .pin.sel{border-color:#16a34a;box-shadow:0 0 0 3px #22c55e99}.pin.me{width:16px;height:16px;background:#3b82f6;border:3px solid #fff}#sa{position:absolute;z-index:1000;top:10px;left:50%;transform:translateX(-50%);padding:9px 16px;border-radius:20px;border:0;background:#22c55e;color:#000;font-size:14px;font-weight:600;box-shadow:0 2px 8px #0008;display:none}
 .rw{display:flex;align-items:center;gap:10px}.rw>div:first-child{flex:1;min-width:0}div.row{cursor:pointer}
 .selb{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--accent);background:none;color:var(--accent);font-size:22px;line-height:1;flex:none}.selb.on{background:var(--accent);color:#fff}
@@ -319,6 +319,7 @@ async function nearbyOSM(la,lo,rad){const dl=rad/111320,dn=rad/(111320*Math.cos(
  return{items:[...seen.values()].sort((a,b)=>a.mi-b.mi)}}
 let ME={la:HOME.la,lo:HOME.lo};
 const st={pnv:false,pcat:"lean",pc:null,poff:new Set(),cmp:[],cv:false,cpick:"lean",run:0,rad:1609,web:null,near:null,tab:"rest",view:null,rq:"",iq:"",cat:"All",pick:null,sort:"dist"};
+st.menuOnly=(()=>{try{return localStorage.getItem("eo_mo")==="1"}catch(e){return false}})();
 const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}
@@ -437,7 +438,7 @@ function render(){
 }
 function wire(){
  if(st.tab==="rest"&&!st.view&&!st.web&&!st.cv){
-   const my=++st.run;let E=[],map=null,layer=null,prog=false,lg=null,pts=[],pt=null,lq=0;
+   const my=++st.run;let E=[],EA=[],map=null,layer=null,prog=false,lg=null,pts=[],pt=null,lq=0;
    const zoomFor=()=>st.rad<=1609?15:st.rad<=4828?13:12;
    const FORK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8M4 3v5a3 3 0 006 0V3M7 11v10M17 3c-2 2-3 5-3 8h3v10"/></svg>';
    const CHK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
@@ -461,9 +462,10 @@ function wire(){
    const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
     E=Object.keys(R).filter(k=>dist(R[k])*1609.34<=st.rad&&(!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q))).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,has:Math.max(1,ITEMS.filter(i=>i.k===k).length),sub:R[k].a,ok:1}));
     if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?"":c===0?"no menu found":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
-    E.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||a.mi-b.mi);
+    E.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||a.mi-b.mi);EA=E.slice();if(st.menuOnly)E=E.filter(x=>x.has>0);
     const status=!st.near?'<div class="empty" style="padding:8px 0">Finding restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
-    $("#rl").innerHTML=status+'<div class="mu" style="margin:6px 0">'+E.length+' restaurants · green number = menu items</div>'+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${x.has>0?'<span class="bd">'+x.has+'</span>':""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
+    $("#rl").innerHTML=status+'<div class="mrow"><div class="mu">'+(st.menuOnly?E.length+" with menus"+(EA.some(x=>x.has==null)?" · checking more…":""):E.length+" restaurants · green number = menu items")+'</div><button class="mo'+(st.menuOnly?" on":"")+'" id="mo">Menus only</button></div>'+(st.menuOnly&&!E.length&&st.near&&!st.near.err?'<div class="empty" style="padding:14px 0">No menus found nearby yet.</div>':'')+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${x.has>0?'<span class="bd">'+x.has+'</span>':""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
+    $("#mo").onclick=()=>{st.menuOnly=!st.menuOnly;try{localStorage.setItem("eo_mo",st.menuOnly?"1":"")}catch(e){}draw()};
     $("#rl").querySelectorAll("[data-e]").forEach(r=>r.onclick=e=>{if(e.target.closest("[data-s]"))return;open(E[+r.dataset.e])});
     $("#rl").querySelectorAll("[data-s]").forEach(b=>b.onclick=e=>{e.stopPropagation();cmpToggle(E[+b.dataset.s]);draw()});
     if(layer){layer.clearLayers();L.marker([ME.la,ME.lo],{icon:icon(1,1),interactive:false}).addTo(layer);
@@ -474,7 +476,7 @@ function wire(){
       m.bindPopup(d)})}
     pts=E;placeLabels();
     const cb=$("#cbar");cb.innerHTML=st.cmp.length?`<button id="cgo">Compare ${st.cmp.length} restaurant${st.cmp.length>1?"s":""} ›</button>`:"";if(st.cmp.length)$("#cgo").onclick=()=>{st.cv=true;render()}};
-   const scan=async()=>{const T=E.filter(x=>!x.ok&&x.has==null).slice(0,30);let k=0;for(const x of T){if(my!==st.run)return;try{await hasMenu(x.name)}catch(e){return}if(++k%5===0&&my===st.run)draw()}if(my===st.run&&k)draw()};
+   const scan=async()=>{const T=EA.filter(x=>!x.ok&&x.has==null).slice(0,30);let k=0;for(const x of T){if(my!==st.run)return;try{await hasMenu(x.name)}catch(e){return}if(++k%5===0&&my===st.run)draw()}if(my===st.run&&k)draw()};
    const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Not in the list? Pull its menu from the nutrition database</span></button>`:""};
    const load=(recenter=true,keep=false)=>{const q=++lq;if(!keep)st.near=null;if(recenter)center(HOME.la,HOME.lo);draw();nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(my!==st.run||q!==lq)return;st.near=j;draw();scan()}).catch(e=>{if(my!==st.run||q!==lq)return;st.near={err:"Couldn't reach the map service ("+String(e&&e.message||e).slice(0,160)+"). Tap Refresh to try again."};draw()})};
    const locate=()=>{draw();const ok=p=>{ME={la:p.coords.latitude,lo:p.coords.longitude};HOME={la:ME.la,lo:ME.lo,label:"from you"};if(my===st.run)load()};

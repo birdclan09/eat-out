@@ -37,7 +37,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .chip button{border:0;background:none;color:var(--mute);font-size:15px;padding:2px 6px}.chip.add{padding:6px 12px;color:var(--accent);border-color:var(--accent);background:none}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:130px;background:#000d;color:#fff;padding:10px 16px;border-radius:20px;z-index:2000;font-size:14px}
 .chip.offc{opacity:.4;text-decoration:line-through}.chip[data-c]{padding:7px 12px;cursor:pointer}
-.pl{background:#fffe;border:0;box-shadow:0 1px 3px #0004;font-size:11px;font-weight:600;color:#1d1d1b;padding:1px 6px;border-radius:6px;white-space:nowrap}.pl:before{display:none}.pl.off{font-weight:500;color:#555;background:#fffc}.nolbl .pl{display:none}
+.lbl{font-size:12px;font-weight:600;line-height:13px;color:#1d1d1b;white-space:nowrap;pointer-events:none;text-shadow:1px 0 #fffc,-1px 0 #fffc,0 1px #fffc,0 -1px #fffc}.lbl.off{font-weight:500;color:#555}.lbl.l{text-align:right}
 .supbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:10px 0}.supbox summary{font-weight:600;cursor:pointer}
 .bar input{flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px}
 .rv{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.rv button{border:0;background:none;color:var(--mute);font-size:16px;padding:6px 10px}
@@ -405,12 +405,23 @@ function render(){
 }
 function wire(){
  if(st.tab==="rest"&&!st.view&&!st.web&&!st.cv){
-   const my=++st.run;let E=[],map=null,layer=null,prog=false;
+   const my=++st.run;let E=[],map=null,layer=null,prog=false,lg=null,pts=[];
    const zoomFor=()=>st.rad<=1609?15:st.rad<=4828?13:12;
    const FORK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8M4 3v5a3 3 0 006 0V3M7 11v10M17 3c-2 2-3 5-3 8h3v10"/></svg>';
    const icon=(on,me,sel)=>{const z=me?16:on?30:20;return L.divIcon({className:"",html:`<div class="pin ${me?"me":on?"":"off"}${sel?" sel":""}">${me?"":on?"<span>🍴</span>":FORK}</div>`,iconSize:[z,z],iconAnchor:[z/2,z/2]})};
+   const cx=document.createElement("canvas").getContext("2d");
+   // Plain-text map labels with collision avoidance: pins are reserved first, then labels for restaurants with menus, then the rest. A label that would overlap anything is skipped.
+   const placeLabels=()=>{if(!map||!lg)return;lg.clearLayers();const sz=map.getSize(),rc=[],hh=14;
+    const hit=r=>rc.some(o=>r.l<o.r&&r.r>o.l&&r.t<o.b&&r.b>o.t);
+    const mp=map.latLngToContainerPoint([ME.la,ME.lo]);rc.push({l:mp.x-9,r:mp.x+9,t:mp.y-9,b:mp.y+9});
+    const P=pts.filter(x=>x.la!=null).map(x=>{const q=map.latLngToContainerPoint([x.la,x.lo]),on=x.has>0,z=on?30:20;rc.push({l:q.x-z/2-1,r:q.x+z/2+1,t:q.y-z/2-1,b:q.y+z/2+1});return{x,q,on,z}});
+    cx.font="600 12px -apple-system,system-ui,sans-serif";
+    [P.filter(o=>o.on),P.filter(o=>!o.on)].forEach(g=>g.forEach(o=>{const w=Math.ceil(cx.measureText(o.x.name).width)+2,t=o.q.y-hh/2;
+     for(const side of ["r","l"]){const l=side==="r"?o.q.x+o.z/2+3:o.q.x-o.z/2-3-w,r={l,r:l+w,t,b:t+hh};
+      if(r.l<2||r.r>sz.x-2||r.t<2||r.b>sz.y-2||hit(r))continue;rc.push(r);
+      L.marker([o.x.la,o.x.lo],{interactive:false,keyboard:false,icon:L.divIcon({className:"",html:`<div class="lbl ${o.on?"":"off "}${side}" style="width:${w}px">${esc(o.x.name)}</div>`,iconSize:[w,hh],iconAnchor:side==="r"?[-(o.z/2+3),hh/2]:[w+o.z/2+3,hh/2]})}).addTo(lg);break}}))};
    const center=(la,lo)=>{if(!map)return;prog=true;map.setView([la,lo],zoomFor());setTimeout(()=>{prog=false},600);$("#sa").style.display="none"};
-   if(window.L){map=L.map("map",{zoomControl:false}).setView([HOME.la,HOME.lo],zoomFor());L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);layer=L.layerGroup().addTo(map);const lb=()=>$("#map").classList.toggle("nolbl",map.getZoom()<14);map.on("zoomend",lb);lb();
+   if(window.L){map=L.map("map",{zoomControl:false}).setView([HOME.la,HOME.lo],zoomFor());L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);layer=L.layerGroup().addTo(map);lg=L.layerGroup().addTo(map);map.on("zoomend",()=>placeLabels());
     map.on("moveend",()=>{if(!prog)$("#sa").style.display="block"})}else $("#map").style.display="none";
    const open=x=>{if(x.ok)st.view=x.k;else st.web={name:x.name};render()};
    const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
@@ -422,11 +433,12 @@ function wire(){
     $("#rl").querySelectorAll("[data-e]").forEach(r=>r.onclick=e=>{if(e.target.closest("[data-s]"))return;open(E[+r.dataset.e])});
     $("#rl").querySelectorAll("[data-s]").forEach(b=>b.onclick=e=>{e.stopPropagation();cmpToggle(E[+b.dataset.s]);draw()});
     if(layer){layer.clearLayers();L.marker([ME.la,ME.lo],{icon:icon(1,1),interactive:false}).addTo(layer);
-     E.forEach(x=>{if(x.la==null)return;const on=x.has>0,m=L.marker([x.la,x.lo],{icon:icon(on,0,cmpHas(x))}).addTo(layer);m.bindTooltip(esc(x.name.length>24?x.name.slice(0,23)+"…":x.name),{permanent:true,direction:"right",offset:[on?14:9,0],className:"pl"+(on?"":" off")});
+     E.forEach(x=>{if(x.la==null)return;const on=x.has>0,m=L.marker([x.la,x.lo],{icon:icon(on,0,cmpHas(x))}).addTo(layer);
       const d=document.createElement("div");d.innerHTML=`<b>${esc(x.name)}</b><br>${Math.round(x.mi*10)/10} mi · ${on?"menu available":x.has===0?"no menu found":"not looked up yet"}<br>`;
       const b=document.createElement("button");b.textContent=on?"Open menu":"Try menu lookup";b.style.cssText="margin-top:6px;padding:6px 12px;border-radius:8px;border:0;background:#22c55e;color:#000;font-size:14px";b.onclick=()=>open(x);d.appendChild(b);
       if(x.has!==0){const s=document.createElement("button");s.textContent=cmpHas(x)?"Remove from compare":"Add to compare";s.style.cssText=b.style.cssText+";margin-left:6px;background:#e5e7eb";s.onclick=()=>{cmpToggle(x);m.closePopup();draw()};d.appendChild(s)}
       m.bindPopup(d)})}
+    pts=E;placeLabels();
     const cb=$("#cbar");cb.innerHTML=st.cmp.length?`<button id="cgo">Compare ${st.cmp.length} restaurant${st.cmp.length>1?"s":""} ›</button>`:"";if(st.cmp.length)$("#cgo").onclick=()=>{st.cv=true;render()}};
    const scan=async()=>{const T=E.filter(x=>!x.ok&&x.has==null).slice(0,30);let k=0;for(const x of T){if(my!==st.run)return;try{await hasMenu(x.name)}catch(e){return}if(++k%5===0&&my===st.run)draw()}if(my===st.run&&k)draw()};
    const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Not in the list? Pull its menu from the nutrition database</span></button>`:""};

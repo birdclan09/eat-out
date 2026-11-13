@@ -415,7 +415,7 @@ function render(){
    h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, nearest first</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="ol"></div><div id="rl"></div><div id="cbar"></div>`;
   }
  }
- if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Find a food across every restaurant</div><input class="search" id="fq" placeholder="Try chicken, burrito, shake" value="${esc(st.iq)}"><div id="fr"></div><div id="wr"></div>`}
+ if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off"><div id="rr"></div><div id="fr"></div><div id="wr"></div>`}
  app.innerHTML=h;wire();supWire();window.scrollTo(0,0);
 }
 function wire(){
@@ -509,8 +509,21 @@ function wire(){
  if(st.tab==="rest"&&st.view){let sort="ra",mode="all";const draw=()=>{let L=ITEMS.filter(i=>MODES[mode][1](i)&&i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    L.sort((a,b)=>sort==="cal"?a.cal-b.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
    draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()};$("#srt").onchange=e=>{sort=e.target.value;draw()};$("#mode").onchange=e=>{mode=e.target.value;draw()}}
- if(st.tab==="find"){const draw=()=>{const q=st.iq;if(q.length<2){$("#fr").innerHTML='<div class="empty">Type at least two letters.</div>';return}
-   const L=ITEMS.filter(i=>(i.n+" "+i.r+" "+i.c).toLowerCase().includes(q)).sort((a,b)=>b.ra-a.ra).slice(0,40);$("#fr").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty" style="padding:8px 0">No hand-checked match.</div>'};
+ if(st.tab==="find"){const hit=(s,q)=>q.split(/\s+/).every(w=>s.includes(w)),hd=t=>`<div class="sub" style="margin:16px 0 4px">${t}</div>`;
+   const rests=q=>{const seen=new Set(),out=[],add=o=>{const id=norm(o.name);if(seen.has(id))return;seen.add(id);out.push(o)};
+    Object.keys(R).forEach(k=>{if(hit((R[k].n+" "+R[k].a).toLowerCase(),q))add({name:R[k].n,k,mi:dist(R[k]),sub:ITEMS.filter(i=>i.k===k).length+" items · hand-checked"})});
+    if(st.near&&st.near.items)st.near.items.forEach(x=>{if(hit(x.name.toLowerCase(),q)){const c=hasGet(x.name);add({name:x.name,mi:x.mi,sub:c>0?c+" items":c===0?"no menu found":"tap to look up the menu"})}});
+    Object.keys(SUP).forEach(id=>{const m=SUP[id];if(hit(m.name.toLowerCase(),q))add({name:m.name,sub:m.items.length+" items added by you"})});
+    return out.sort((a,b)=>(a.mi==null?99:a.mi)-(b.mi==null?99:b.mi)).slice(0,6)};
+   const draw=()=>{const q=st.iq;
+    if(q.length<2){$("#rr").innerHTML="";$("#fr").innerHTML='<div class="empty">Type a food or a restaurant name.</div>';return}
+    const RL=rests(q);
+    $("#rr").innerHTML=hd("Restaurants")+RL.map((x,n)=>`<div class="row" data-r="${n}"><div class="t"><span class="nm">${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
+     `<button class="big" id="rlook" style="margin-top:10px"><b>Look up “${esc(st.iqRaw||q)}” online</b><span>Find it as a restaurant in the nutrition database</span></button>`;
+    $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=()=>{const x=RL[+r.dataset.r];st.tab="rest";st.cv=false;if(x.k){st.view=x.k;st.web=null}else{st.view=null;st.web={name:x.name}}st.cat="All";st.iq="";render()});
+    $("#rlook").onclick=()=>{st.tab="rest";st.cv=false;st.view=null;st.web={name:(st.iqRaw||q).trim()};st.iq="";render()};
+    const all=ITEMS.concat(...MENU.values()),seenI=new Set(),L=all.filter(i=>{const k=norm(i.r+i.n+i.p+i.cal);if(seenI.has(k))return false;seenI.add(k);return hit((i.n+" "+i.r+" "+i.c).toLowerCase(),q)}).sort((a,b)=>b.ra-a.ra).slice(0,40);
+    $("#fr").innerHTML=hd("Foods"+(L.length?" · best protein per calorie first":""))+(L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty" style="padding:8px 0">No food matched in the menus loaded so far.</div>')};
    let tm=null,seq=0;
    const n=v=>v==null?"–":Math.round(v*10)/10;
    const online=async(q)=>{const box=$("#wr"),my=++seq;
@@ -518,10 +531,11 @@ function wire(){
     box.innerHTML='<div class="sub" style="margin-top:14px">Online database</div><div class="empty">Searching…</div>';
     try{const r=await fetch("/api/search?q="+encodeURIComponent(q));const j=await r.json();if(my!==seq)return;
      if(!r.ok){box.innerHTML='<div class="sub" style="margin-top:14px">Online database</div><div class="empty">'+esc(j.error||"Lookup failed")+(j.detail?" ("+esc(j.detail)+")":"")+'</div>';return}
-     box.innerHTML='<div class="sub" style="margin-top:14px">Online database (not hand-checked)</div>'+(j.items.length?j.items.map(i=>`<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.name)}</span><span class="pp">${n(i.n.p)} g</span></div><div class="mu">${esc(i.brand)}${i.brand?" · ":""}${n(i.n.cal)} cal · per ${esc(i.basis)}${i.verified?"":" · unverified"}</div><div class="det"><b>${n(i.n.p)} g</b> protein · <b>${n(i.n.c)}</b> g carbs · <b>${n(i.n.f)}</b> g fat · <b>${n(i.n.cal)}</b> cal<br>Per ${esc(i.basis)}. Source: ${esc(j.source)} database, not the restaurant itself${i.verified?"":" (unverified entry)"}.</div></button>`).join(""):'<div class="empty">Nothing found online.</div>')+'<div class="foot">'+(j.source==='fatsecret'?'Powered by <a href="https://www.fatsecret.com" style="color:inherit">fatsecret</a>. ':'Source: '+esc(j.source)+'. ')+'Not hand-checked against the restaurant; check for oddities.</div>'
+     const have=new Set(ITEMS.concat(...MENU.values()).map(i=>norm(i.n)+Math.round(i.cal)+Math.round(i.p))),fresh=j.items.filter(i=>!have.has(norm(i.name)+Math.round(i.n.cal||0)+Math.round(i.n.p||0)));
+     box.innerHTML='<div class="sub" style="margin:16px 0 4px">More from the online database (not hand-checked)</div>'+(fresh.length?fresh.map(i=>`<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.name)}</span><span class="pp">${n(i.n.p)} g</span></div><div class="mu">${esc(i.brand)}${i.brand?" · ":""}${n(i.n.cal)} cal · per ${esc(i.basis)}${i.verified?"":" · unverified"}</div><div class="det"><b>${n(i.n.p)} g</b> protein · <b>${n(i.n.c)}</b> g carbs · <b>${n(i.n.f)}</b> g fat · <b>${n(i.n.cal)}</b> cal<br>Per ${esc(i.basis)}. Source: ${esc(j.source)} database, not the restaurant itself${i.verified?"":" (unverified entry)"}.</div></button>`).join(""):'<div class="empty">Nothing found online.</div>')+'<div class="foot">'+(j.source==='fatsecret'?'Powered by <a href="https://www.fatsecret.com" style="color:inherit">fatsecret</a>. ':'Source: '+esc(j.source)+'. ')+'Not hand-checked against the restaurant; check for oddities.</div>'
     }catch(e){if(my===seq)box.innerHTML=""}};
-   draw();online(st.iq);
-   $("#fq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw();clearTimeout(tm);tm=setTimeout(()=>online(st.iq),500)}}
+   draw();online(st.iq);if(!st.near){nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(!st.near)st.near=j;if(st.tab==="find")draw()}).catch(()=>{})}
+   $("#fq").oninput=e=>{st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();clearTimeout(tm);tm=setTimeout(()=>online(st.iq),500)}}
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.view=null;st.pick=null;st.iq="";st.rq="";st.cat="All";render()});
 render();

@@ -28,7 +28,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .seg{display:flex;gap:6px;margin-bottom:14px}.seg button{flex:1;padding:9px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:14px}.seg button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
 .empty{text-align:center;color:var(--mute);padding:34px 10px}
 .foot{font-size:12px;color:var(--mute);margin-top:20px}
-.pin{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;border:2px solid #f59e0b;background:#fff;box-shadow:0 1px 4px #0006}.pin.off{border:2px dashed #9ca3af;background:#e5e7eb}.pin.off span{opacity:.5;filter:grayscale(1)}.pin.sel{border-color:#16a34a;box-shadow:0 0 0 3px #22c55e99}.pin.me{width:16px;height:16px;background:#3b82f6;border:3px solid #fff}#sa{position:absolute;z-index:1000;top:10px;left:50%;transform:translateX(-50%);padding:9px 16px;border-radius:20px;border:0;background:#22c55e;color:#000;font-size:14px;font-weight:600;box-shadow:0 2px 8px #0008;display:none}
+.pin{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;border:2px solid #f59e0b;background:#fff;box-shadow:0 1px 4px #0006}.pin.off{width:20px;height:20px;border:2px solid #fff;background:#9ca3af;box-shadow:0 1px 3px #0005}.pin.off svg{width:11px;height:11px}.pin.sel{border-color:#16a34a;box-shadow:0 0 0 3px #22c55e99}.pin.me{width:16px;height:16px;background:#3b82f6;border:3px solid #fff}#sa{position:absolute;z-index:1000;top:10px;left:50%;transform:translateX(-50%);padding:9px 16px;border-radius:20px;border:0;background:#22c55e;color:#000;font-size:14px;font-weight:600;box-shadow:0 2px 8px #0008;display:none}
 .rw{display:flex;align-items:center;gap:10px}.rw>div:first-child{flex:1;min-width:0}div.row{cursor:pointer}
 .selb{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--accent);background:none;color:var(--accent);font-size:22px;line-height:1;flex:none}.selb.on{background:var(--accent);color:#fff}
 #cbar{position:fixed;left:12px;right:12px;bottom:calc(62px + env(safe-area-inset-bottom));z-index:900;max-width:616px;margin:0 auto}
@@ -37,6 +37,11 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .chip button{border:0;background:none;color:var(--mute);font-size:15px;padding:2px 6px}.chip.add{padding:6px 12px;color:var(--accent);border-color:var(--accent);background:none}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:130px;background:#000d;color:#fff;padding:10px 16px;border-radius:20px;z-index:2000;font-size:14px}
 .chip.offc{opacity:.4;text-decoration:line-through}.chip[data-c]{padding:7px 12px;cursor:pointer}
+.pl{background:#fffe;border:0;box-shadow:0 1px 3px #0004;font-size:11px;font-weight:600;color:#1d1d1b;padding:1px 6px;border-radius:6px;white-space:nowrap}.pl:before{display:none}.pl.off{font-weight:500;color:#555;background:#fffc}.nolbl .pl{display:none}
+.supbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:10px 0}.supbox summary{font-weight:600;cursor:pointer}
+.bar input{flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px}
+.rv{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.rv button{border:0;background:none;color:var(--mute);font-size:16px;padding:6px 10px}
+.del{display:inline-block;margin-top:6px;padding:5px 12px;border:1px solid var(--line);border-radius:14px;color:var(--accent);cursor:pointer}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head><body><div id="app"></div>
 <nav class="tabs" id="tabs">
@@ -273,20 +278,20 @@ let HOME={la:40.60,lo:-112.00,label:"from 84084"};
 const MODES={all:["Everything",()=>true],hp:["High protein (30 g+)",i=>i.p>=30],lt:["Light (under 400 cal)",i=>i.cal<400],hc:["High calorie (700+)",i=>i.cal>=700]};
 const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,"");
 const HAS=(()=>{try{return JSON.parse(localStorage.getItem("eo_has")||"{}")}catch(e){return{}}})();
-const hasGet=n=>{const v=HAS[norm(n)];return v&&Date.now()-v.t<864e5?v.n:null};
+const hasGet=n=>{const v=HAS[norm(n)],o=v&&Date.now()-v.t<864e5?v.n:null,m=SUP[norm(n)],s=m?m.items.length:0;return s?(o||0)+s:o};
 const hasSet=(n,c)=>{HAS[norm(n)]={t:Date.now(),n:c};try{localStorage.setItem("eo_has",JSON.stringify(HAS))}catch(e){}};
-const MENU=new Map();
+const MENU=new Map(),ONL=new Map();
 async function fetchMenu(nm){const id=norm(nm);if(MENU.has(id))return MENU.get(id);
  const r=await fetch("/api/search?q="+encodeURIComponent(nm));const j=await r.json();if(!r.ok)throw new Error(j.error||r.status);
  const q=v=>v==null?0:Math.round(v*10)/10;
  const L=j.items.filter(i=>i.brand&&(norm(i.brand).includes(id)||id.includes(norm(i.brand)))&&i.n.cal>0).map(i=>({n:i.name,r:nm,c:"",p:q(i.n.p),cal:q(i.n.cal),cb:q(i.n.c),f:q(i.n.f),ra:+(q(i.n.p)/q(i.n.cal)*100).toFixed(1),b:i.basis,u:!i.verified}));
- MENU.set(id,L);hasSet(nm,L.length);return L}
+ ONL.set(id,{nm,L});const A=L.concat(supItems(nm));MENU.set(id,A);hasSet(nm,L.length);return A}
 const hasMenu=async nm=>(await fetchMenu(nm)).length;
 function toast(m){const t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2200)}
 function cmpToggle(x){const id=norm(x.name),i=st.cmp.findIndex(c=>c.id===id);
  if(i>=0){st.cmp.splice(i,1);return}
  if(st.cmp.length>=10){toast("You can compare up to 10");return}
- st.cmp.push({id,name:x.name,k:x.ok?x.k:null});if(!x.ok)fetchMenu(x.name).catch(()=>MENU.set(id,[]))}
+ st.cmp.push({id,name:x.name,k:x.ok?x.k:null});if(!x.ok)fetchMenu(x.name).catch(()=>MENU.set(id,supItems(x.name)))}
 const cmpHas=x=>st.cmp.some(c=>c.id===norm(x.name));
 const OV=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://overpass.private.coffee/api/interpreter"];
 async function nearby(la,lo,rad){
@@ -308,12 +313,75 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",
 function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}
 function itemRow(i,showR){return `<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.n)}</span><span class="pp">${i.p} g</span></div>
 <div class="mu">${showR?esc(i.r)+" · ":""}${i.cal} cal · ${i.ra} g protein/100 cal</div>
-<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></button>`}
+<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></button>`}
 const PICKS={
  lean:{sh:"Best ratio",t:"Best protein per calorie",s:"Most protein for the fewest calories",f:i=>i.p>=20,o:(a,b)=>b.ra-a.ra},
  meal:{sh:"Big protein",t:"Big protein meals",s:"40 g+ protein, under 700 calories",f:i=>i.p>=40&&i.cal<700,o:(a,b)=>b.p-a.p},
  cal:{sh:"High cal",t:"High calorie",s:"700+ calories, most protein first",f:i=>i.cal>=700,o:(a,b)=>b.p-a.p},
  light:{sh:"Light",t:"Light bites",s:"Under 400 calories, 25 g+ protein",f:i=>i.cal<400&&i.p>=25,o:(a,b)=>b.ra-a.ra}};
+
+/* ---- Supplemental menus: added by hand, imported from a link/PDF/photo, or found by online search. Saved to data/menus.json in the repo via /api/menus. ---- */
+let SUP=(()=>{try{return JSON.parse(localStorage.getItem("eo_sup")||"{}")}catch(e){return{}}})();
+const EK={get:()=>{try{return localStorage.getItem("eo_ek")||""}catch(e){return""}},set:v=>{try{localStorage.setItem("eo_ek",v)}catch(e){}}};
+const supCache=()=>{try{localStorage.setItem("eo_sup",JSON.stringify(SUP))}catch(e){}};
+const supOf=n=>SUP[norm(n)]||null;
+const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return String(u)}};
+const fmtD=t=>{try{return new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}catch(e){return""}};
+const supItems=n=>{const m=supOf(n);return m?m.items.map((i,x)=>({n:i.n,r:m.name||n,c:i.c||"Added",p:i.p,cal:i.cal,cb:i.cb==null?"–":i.cb,f:i.f==null?"–":i.f,ra:+(i.p/i.cal*100).toFixed(1),b:i.b||"",s:1,sx:x,srcu:m.source&&m.source.url})):[]};
+function applySup(){for(let x=ITEMS.length-1;x>=0;x--)if(ITEMS[x].s)ITEMS.splice(x,1);
+ Object.keys(R).forEach(k=>supItems(R[k].n).forEach(i=>{i.k=k;ITEMS.push(i)}));
+ for(const [id,o] of ONL)MENU.set(id,o.L.concat(supItems(o.nm)));
+ for(const id of Object.keys(SUP))if(!ONL.has(id)&&MENU.has(id))MENU.set(id,supItems(SUP[id].name))}
+async function api(path,body,retry){const r=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json","x-edit-key":EK.get()},body:JSON.stringify(body)});
+ const j=await r.json().catch(()=>({}));
+ if(r.status===401&&!retry){const k=prompt("Enter your edit key (the EDIT_KEY you set in Vercel):");if(k){EK.set(k.trim());return api(path,body,1)}}
+ if(!r.ok)throw new Error(j.error||("Request failed ("+r.status+")"));return j}
+async function supSave(name,items,source,replace){const j=await api("/api/menus",{action:"save",name,items,source,replace:!!replace});SUP[norm(name)]=j.menu;supCache();applySup();return j}
+async function supDel(name,x){const m=supOf(name);if(!m)return;const rest=m.items.filter((_,i)=>i!==x),y=window.scrollY;
+ try{if(rest.length){const j=await api("/api/menus",{action:"save",name,items:rest,replace:true});SUP[norm(name)]=j.menu}else{await api("/api/menus",{action:"delete",name});delete SUP[norm(name)]}
+  supCache();applySup();render();window.scrollTo(0,y);toast("Removed")}catch(e){toast(e.message.slice(0,80))}}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(b){e.stopPropagation();e.preventDefault();supDel(b.dataset.rn,+b.dataset.del)}},true);
+const curName=()=>st.web?st.web.name:st.view?R[st.view].n:"";
+function supPanel(){const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
+ const src=m&&m.source&&m.source.url?`Source: <a href="${esc(m.source.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(host(m.source.url))}</a> · updated ${fmtD(m.source.t)} · <a href="#" id="s-ref" style="color:var(--accent)">Refresh from source</a>`:"";
+ return `<details id="sup" class="supbox"${st.supOpen?" open":""}><summary>Add or update menu items${cnt?" · "+cnt+" added":""}</summary>
+ <div class="mu" style="margin:8px 0">${src||"Items you add are saved to your repo and show up in every list."}</div>
+ <button class="big s-search" style="margin-bottom:10px"><b>Search online for nutrition info</b><span>Finds the restaurant's own numbers; you review before saving</span></button>
+ <input class="search" id="s-url" placeholder="Paste a menu or nutrition link (page or PDF)" inputmode="url">
+ <div class="bar"><button id="s-imp">Import link</button><button id="s-file">Upload PDF or photo</button></div><input type="file" id="s-f" accept="application/pdf,image/*" hidden>
+ <div class="mu" style="margin:12px 0 6px">Or add one item by hand</div>
+ <input class="search" id="m-n" placeholder="Item name">
+ <div class="bar"><input id="m-c" inputmode="decimal" placeholder="Cal"><input id="m-p" inputmode="decimal" placeholder="Protein g"><input id="m-cb" inputmode="decimal" placeholder="Carbs g"><input id="m-f" inputmode="decimal" placeholder="Fat g"></div>
+ <div class="bar"><button id="m-add">Add item</button></div>
+ <div class="mu" id="s-msg" style="margin-top:8px"></div><div id="s-rev"></div></details>`}
+const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Search online for nutrition info</b><span>Looks for official numbers and adds them after you review</span></button>`;
+function readFile(f){return new Promise((ok,no)=>{const fr=new FileReader();fr.onerror=()=>no(new Error("Couldn't read that file."));
+ if(f.type==="application/pdf"){if(f.size>3e6)return no(new Error("That PDF is over 3 MB. Paste its link instead."));fr.onload=()=>ok({mime:f.type,data:String(fr.result).split(",")[1]});fr.readAsDataURL(f)}
+ else if(/^image\//.test(f.type)){fr.onload=()=>{const im=new Image();im.onerror=()=>no(new Error("Couldn't open that image."));im.onload=()=>{const s=Math.min(1,1800/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);ok({mime:"image/jpeg",data:c.toDataURL("image/jpeg",.85).split(",")[1]})};im.src=fr.result};fr.readAsDataURL(f)}
+ else no(new Error("Upload a PDF or a photo."))})}
+function drawRev(){const r=st.rev,el=$("#s-rev");if(!r||!el)return;
+ if(!r.items.length){el.innerHTML=`<div class="mu" style="margin-top:8px">${esc(r.notes||"No items with calories and protein were found.")}</div>`;return}
+ const have=(supOf(r.name)||{items:[]}).items.length,two=have&&!r.replace;
+ el.innerHTML=`<div class="mu" style="margin:10px 0 6px"><b>${r.items.length} items found</b>${r.source&&r.source.url?" at "+esc(host(r.source.url)):""}. Remove any that look wrong, then save.${r.notes?"<br>"+esc(r.notes):""}</div>`+
+  r.items.map((i,x)=>`<div class="rv"><span>${esc(i.n)}<br><span class="mu">${i.cal} cal · ${i.p} g protein${i.cb!=null?" · "+i.cb+" g carbs":""}${i.f!=null?" · "+i.f+" g fat":""}</span></span><button data-rx="${x}" aria-label="Remove">✕</button></div>`).join("")+
+  `<div class="bar"><button id="rv-save">${two?"Add to menu":"Save to menu"}</button>${two?'<button id="rv-rep">Replace menu</button>':""}<button id="rv-no">Discard</button></div>`;
+ el.querySelectorAll("[data-rx]").forEach(b=>b.onclick=()=>{r.items.splice(+b.dataset.rx,1);drawRev()});
+ const go=async rp=>{$("#s-msg").textContent="Saving…";try{await supSave(r.name,r.items,r.source,rp);st.rev=null;const y=window.scrollY;st.supOpen=true;render();window.scrollTo(0,y);toast("Saved to your menu")}catch(e){$("#s-msg").textContent=e.message}};
+ $("#rv-save").onclick=()=>go(r.replace);if(two)$("#rv-rep").onclick=()=>go(true);$("#rv-no").onclick=()=>{st.rev=null;drawRev()}}
+function supWire(){const box=$("#sup");document.querySelectorAll(".s-search").forEach(b=>b.onclick=()=>{const d=$("#sup");if(d){d.open=true;st.supOpen=true}run({mode:"search",near:ME.la.toFixed(3)+", "+ME.lo.toFixed(3)+" (latitude, longitude)"},"Searching the web… this can take up to a minute.")});
+ if(!box)return;const name=curName(),msg=t=>{$("#s-msg").textContent=t||""};
+ window.run=run;function run(body,label){msg(label);return api("/api/import",{name,...body}).then(j=>{st.rev={name,items:j.items||[],notes:j.notes,source:j.source,replace:!!body.replace};msg("");drawRev()}).catch(e=>msg(e.message))}
+ box.ontoggle=()=>{st.supOpen=box.open};
+ $("#s-imp").onclick=()=>{const u=$("#s-url").value.trim();if(!u)return msg("Paste a link first.");run({mode:"url",url:u},"Reading the page… this can take up to a minute.")};
+ $("#s-file").onclick=()=>$("#s-f").click();
+ $("#s-f").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{msg("Preparing the file…");const d=await readFile(f);run({mode:"file",...d},"Reading the file… this can take up to a minute.")}catch(x){msg(x.message)}};
+ const ref=$("#s-ref");if(ref)ref.onclick=e=>{e.preventDefault();run({mode:"url",url:supOf(name).source.url,replace:1},"Re-reading the source…")};
+ $("#m-add").onclick=async()=>{const n=$("#m-n").value.trim(),v=id=>{const x=parseFloat($(id).value);return Number.isFinite(x)&&x>=0?x:null};
+  const it={n,cal:v("#m-c"),p:v("#m-p"),cb:v("#m-cb"),f:v("#m-f")};if(!n||!(it.cal>0)||it.p==null)return msg("Needs a name, calories and protein.");
+  msg("Saving…");try{await supSave(name,[it],null,false);const y=window.scrollY;st.supOpen=true;render();window.scrollTo(0,y);toast("Added")}catch(e){msg(e.message)}};
+ if(st.rev&&st.rev.name===name)drawRev()}
+applySup();
+(async()=>{try{const r=await fetch("/api/menus"),j=await r.json();if(r.ok&&j.configured){SUP=j.menus||{};supCache();applySup();const a=document.activeElement;if(st.tab==="rest"&&(st.view||st.web)&&!(a&&a.closest&&a.closest("#sup")))render()}}catch(e){}})();
 function render(){
  if(st.tab==="picks"){st.pnv=true;const k=ME.la.toFixed(3)+","+ME.lo.toFixed(3);if(st.pcKey!==k){st.pcKey=k;st.pc=null}}
  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===st.tab));
@@ -323,25 +391,26 @@ function render(){
  }
  if(st.tab==="rest"){
   if(st.cv){h=`<button class="back" onclick="st.cv=false;render()">‹ Restaurants</button><h1>Compare</h1><div class="sub">Best foods across the places you picked</div><div id="chips"></div><div class="seg" id="cseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="csub"></div><div id="citems"></div><div class="foot">Hand-checked items come from the restaurant's own nutrition. Online items come from FatSecret and are not hand-checked.</div>`}
-  else if(st.web){h=`<button class="back" onclick="st.web=null;render()">‹ Restaurants</button><h1>${esc(st.web.name)}</h1><div class="sub">Online menu data, not hand-checked</div><div class="bar"><select id="wmode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select><select id="wsrt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option><option value="hcal">Most cal</option></select></div><div id="items"><div class="empty">Loading menu…</div></div><div class="foot" id="wf"></div>`}
+  else if(st.web){h=`<button class="back" onclick="st.web=null;render()">‹ Restaurants</button><h1>${esc(st.web.name)}</h1><div class="sub">Online menu data, not hand-checked</div>${supPanel()}<div class="bar"><select id="wmode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select><select id="wsrt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option><option value="hcal">Most cal</option></select></div><div id="items"><div class="empty">Loading menu…</div></div><div class="foot" id="wf"></div>`}
   else if(st.view){const r=R[st.view],cats=["All",...new Set(ITEMS.filter(i=>i.k===st.view).map(i=>i.c))];
    let L=ITEMS.filter(i=>i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button><h1>${esc(r.n)}</h1><div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
-   <input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div class="bar"><select id="mode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select></div><div id="items"></div>`;
+   ${supPanel()}<input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div class="bar"><select id="mode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select></div><div id="items"></div>`;
   }else{
    h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, nearest first</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="ol"></div><div id="rl"></div><div id="cbar"></div>`;
   }
  }
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Find a food across every restaurant</div><input class="search" id="fq" placeholder="Try chicken, burrito, shake" value="${esc(st.iq)}"><div id="fr"></div><div id="wr"></div>`}
- app.innerHTML=h;wire();window.scrollTo(0,0);
+ app.innerHTML=h;wire();supWire();window.scrollTo(0,0);
 }
 function wire(){
  if(st.tab==="rest"&&!st.view&&!st.web&&!st.cv){
    const my=++st.run;let E=[],map=null,layer=null,prog=false;
    const zoomFor=()=>st.rad<=1609?15:st.rad<=4828?13:12;
-   const icon=(on,me,sel)=>L.divIcon({className:"",html:`<div class="pin ${me?"me":on?"":"off"}${sel?" sel":""}">${me?"":"<span>🍴</span>"}</div>`,iconSize:me?[16,16]:[30,30],iconAnchor:me?[8,8]:[15,15]});
+   const FORK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8M4 3v5a3 3 0 006 0V3M7 11v10M17 3c-2 2-3 5-3 8h3v10"/></svg>';
+   const icon=(on,me,sel)=>{const z=me?16:on?30:20;return L.divIcon({className:"",html:`<div class="pin ${me?"me":on?"":"off"}${sel?" sel":""}">${me?"":on?"<span>🍴</span>":FORK}</div>`,iconSize:[z,z],iconAnchor:[z/2,z/2]})};
    const center=(la,lo)=>{if(!map)return;prog=true;map.setView([la,lo],zoomFor());setTimeout(()=>{prog=false},600);$("#sa").style.display="none"};
-   if(window.L){map=L.map("map",{zoomControl:false}).setView([HOME.la,HOME.lo],zoomFor());L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);layer=L.layerGroup().addTo(map);
+   if(window.L){map=L.map("map",{zoomControl:false}).setView([HOME.la,HOME.lo],zoomFor());L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);layer=L.layerGroup().addTo(map);const lb=()=>$("#map").classList.toggle("nolbl",map.getZoom()<14);map.on("zoomend",lb);lb();
     map.on("moveend",()=>{if(!prog)$("#sa").style.display="block"})}else $("#map").style.display="none";
    const open=x=>{if(x.ok)st.view=x.k;else st.web={name:x.name};render()};
    const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
@@ -353,7 +422,7 @@ function wire(){
     $("#rl").querySelectorAll("[data-e]").forEach(r=>r.onclick=e=>{if(e.target.closest("[data-s]"))return;open(E[+r.dataset.e])});
     $("#rl").querySelectorAll("[data-s]").forEach(b=>b.onclick=e=>{e.stopPropagation();cmpToggle(E[+b.dataset.s]);draw()});
     if(layer){layer.clearLayers();L.marker([ME.la,ME.lo],{icon:icon(1,1),interactive:false}).addTo(layer);
-     E.forEach(x=>{if(x.la==null)return;const on=x.has>0,m=L.marker([x.la,x.lo],{icon:icon(on,0,cmpHas(x))}).addTo(layer);
+     E.forEach(x=>{if(x.la==null)return;const on=x.has>0,m=L.marker([x.la,x.lo],{icon:icon(on,0,cmpHas(x))}).addTo(layer);m.bindTooltip(esc(x.name.length>24?x.name.slice(0,23)+"…":x.name),{permanent:true,direction:"right",offset:[on?14:9,0],className:"pl"+(on?"":" off")});
       const d=document.createElement("div");d.innerHTML=`<b>${esc(x.name)}</b><br>${Math.round(x.mi*10)/10} mi · ${on?"menu available":x.has===0?"no menu found":"not looked up yet"}<br>`;
       const b=document.createElement("button");b.textContent=on?"Open menu":"Try menu lookup";b.style.cssText="margin-top:6px;padding:6px 12px;border-radius:8px;border:0;background:#22c55e;color:#000;font-size:14px";b.onclick=()=>open(x);d.appendChild(b);
       if(x.has!==0){const s=document.createElement("button");s.textContent=cmpHas(x)?"Remove from compare":"Add to compare";s.style.cssText=b.style.cssText+";margin-left:6px;background:#e5e7eb";s.onclick=()=>{cmpToggle(x);m.closePopup();draw()};d.appendChild(s)}
@@ -386,7 +455,7 @@ function wire(){
       const A=Object.keys(R).map(k=>({id:norm(R[k].n),name:R[k].n,k,mi:dmi(R[k].la,R[k].lo)})).filter(c=>c.mi*1609.34<=RADM);
       const B=j.items.filter(x=>!have.has(norm(x.name))&&x.mi*1609.34<=RADM).slice(0,30).map(x=>({id:norm(x.name),name:x.name,k:null,mi:x.mi}));
       C=st.pc=A.concat(B).sort((a,b)=>a.mi-b.mi)}
-     draw();let n=0;for(const c of C.filter(c=>!c.k&&!MENU.has(c.id))){if(my!==st.run)return;try{await fetchMenu(c.name)}catch(e){MENU.set(c.id,[])}if(++n%3===0&&my===st.run)draw()}
+     draw();let n=0;for(const c of C.filter(c=>!c.k&&!MENU.has(c.id))){if(my!==st.run)return;try{await fetchMenu(c.name)}catch(e){MENU.set(c.id,supItems(c.name))}if(++n%3===0&&my===st.run)draw()}
      if(my===st.run)draw()}catch(e){if(my===st.run)$("#psub").textContent="Couldn't find nearby restaurants ("+String(e&&e.message||e).slice(0,120)+"). Go back and try again."}})()}
  if(st.tab==="rest"&&st.cv){const itemsOf=c=>c.k?ITEMS.filter(i=>i.k===c.k):(MENU.get(c.id)||null);
    const draw=()=>{if(!st.cmp.length){st.cv=false;render();return}
@@ -397,11 +466,11 @@ function wire(){
     const L=all.filter(P.f).sort(P.o).slice(0,20);$("#csub").textContent=P.s+" · top "+L.length;
     $("#citems").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty">Nothing fits this category yet.</div>'};
    $("#cseg").querySelectorAll("button").forEach(b=>b.onclick=()=>{st.cpick=b.dataset.k;draw()});
-   draw();st.cmp.filter(c=>!c.k&&!MENU.has(c.id)).forEach(c=>fetchMenu(c.name).then(draw).catch(()=>{MENU.set(c.id,[]);draw()}))}
+   draw();st.cmp.filter(c=>!c.k&&!MENU.has(c.id)).forEach(c=>fetchMenu(c.name).then(draw).catch(()=>{MENU.set(c.id,supItems(c.name));draw()}))}
  if(st.tab==="rest"&&st.web){let all=[],mode="all",sort="ra";const draw=()=>{let L=all.filter(i=>MODES[mode][1](i));L.sort((a,b)=>sort==="cal"?a.cal-b.cal:sort==="hcal"?b.cal-a.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
    $("#wmode").onchange=e=>{mode=e.target.value;draw()};$("#wsrt").onchange=e=>{sort=e.target.value;draw()};
-   const nm=st.web.name;fetchMenu(nm).then(L=>{all=L;if(!all.length){$("#items").innerHTML='<div class="empty">No menu items found under that restaurant name.</div>';return}
-    draw();$("#wf").innerHTML='Powered by <a href="https://www.fatsecret.com" style="color:inherit">fatsecret</a>. Up to 50 matches per lookup, so the menu may be incomplete. Check for oddities.'}).catch(()=>{$("#items").innerHTML='<div class="empty">Online lookup only works on the Vercel version.</div>'})}
+   const nm=st.web.name;fetchMenu(nm).then(L=>{all=L;if(!all.length){$("#items").innerHTML=emptyHtml("No menu found for this restaurant.");st.supOpen=true;const d=$("#sup");if(d)d.open=true;supWire();return}
+    draw();$("#wf").innerHTML='Powered by <a href="https://www.fatsecret.com" style="color:inherit">fatsecret</a>. Up to 50 matches per lookup, so the menu may be incomplete. Check for oddities.'}).catch(()=>{all=supItems(nm);if(all.length)draw();else{$("#items").innerHTML=emptyHtml("Online menu lookup isn't available right now.");supWire()}})}
  if(st.tab==="rest"&&st.view){let sort="ra",mode="all";const draw=()=>{let L=ITEMS.filter(i=>MODES[mode][1](i)&&i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    L.sort((a,b)=>sort==="cal"?a.cal-b.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
    draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()};$("#srt").onchange=e=>{sort=e.target.value;draw()};$("#mode").onchange=e=>{mode=e.target.value;draw()}}

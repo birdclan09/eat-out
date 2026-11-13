@@ -337,10 +337,10 @@ function itemRow(i,showR){const fk=fkey(i);FREG[fk]=i;return `<button class="row
 <div class="mu">${showR?esc(i.r)+" · ":""}${i.cal} cal · ${i.ra} g protein/100 cal</div>
 <div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div></div></button>`}
 const PICKS={
- lean:{sh:"Best ratio",t:"Best protein per calorie",s:"Most protein for the fewest calories",f:i=>i.p>=20,o:(a,b)=>b.ra-a.ra},
- meal:{sh:"Big protein",t:"Big protein meals",s:"40 g+ protein, under 700 calories",f:i=>i.p>=40&&i.cal<700,o:(a,b)=>b.p-a.p},
- cal:{sh:"High cal",t:"High calorie",s:"700+ calories, most protein first",f:i=>i.cal>=700,o:(a,b)=>b.p-a.p},
- light:{sh:"Light",t:"Light bites",s:"Under 400 calories, 25 g+ protein",f:i=>i.cal<400&&i.p>=25,o:(a,b)=>b.ra-a.ra}};
+ lean:{sh:"Best Ratio",t:"Best protein per calorie",s:"Most protein for the fewest calories",f:i=>i.p>=20,o:(a,b)=>b.ra-a.ra},
+ meal:{sh:"High Protein",t:"High protein meals",s:"40 g+ protein, under 700 calories",f:i=>i.p>=40&&i.cal<700,o:(a,b)=>b.p-a.p},
+ light:{sh:"Light",t:"Light bites",s:"Under 400 calories, 25 g+ protein",f:i=>i.cal<400&&i.p>=25,o:(a,b)=>b.ra-a.ra},
+ all:{sh:"All",t:"All foods",s:"Everything, best protein per calorie first",f:()=>true,o:(a,b)=>b.ra-a.ra,n:60}};
 
 /* ---- Supplemental menus: added by hand, imported from a link/PDF/photo, or found by online search. Saved to data/menus.json in the repo via /api/menus. ---- */
 let SUP=(()=>{try{return JSON.parse(localStorage.getItem("eo_sup")||"{}")}catch(e){return{}}})();
@@ -503,7 +503,7 @@ function wire(){
     {const n=ok.filter(c=>!st.poff.has(c.id)).length;$("#pfilt").innerHTML=`<span>${n===ok.length?"All "+ok.length:n+" of "+ok.length} restaurants</span><span style="color:var(--accent)">Choose ›</span>`;$("#pfilt").onclick=()=>pkSheet(ok)}
     $("#pseg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===st.pcat));
     const P=PICKS[st.pcat];let all=[];ok.filter(c=>!st.poff.has(c.id)).forEach(c=>{all=all.concat(itemsOf(c))});
-    const L=all.filter(P.f).sort(byFav(P.o)).slice(0,20);$("#pcs").textContent=P.s;
+    const L=all.filter(P.f).sort(byFav(P.o)).slice(0,P.n||20);$("#pcs").textContent=P.s;
     $("#pitems").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):`<div class="empty">${pend?"Checking menus…":"Nothing fits this category."}</div>`};
    $("#pseg").querySelectorAll("button").forEach(b=>b.onclick=()=>{st.pcat=b.dataset.k;draw()});
    (async()=>{try{if(!C){const j=await nearby(ME.la,ME.lo,RADM);if(my!==st.run)return;const have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
@@ -518,7 +518,7 @@ function wire(){
     $("#chips").querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{st.cmp=st.cmp.filter(c=>c.id!==b.dataset.x);draw()});$("#more").onclick=()=>{st.cv=false;render()};
     $("#cseg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===st.cpick));
     const P=PICKS[st.cpick];let all=[];st.cmp.forEach(c=>{const L=itemsOf(c);if(L)all=all.concat(L)});
-    const L=all.filter(P.f).sort(byFav(P.o)).slice(0,20);$("#csub").textContent=P.s+" · top "+L.length;
+    const L=all.filter(P.f).sort(byFav(P.o)).slice(0,P.n||20);$("#csub").textContent=P.s+" · top "+L.length;
     $("#citems").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty">Nothing fits this category yet.</div>'};
    $("#cseg").querySelectorAll("button").forEach(b=>b.onclick=()=>{st.cpick=b.dataset.k;draw()});
    draw();st.cmp.filter(c=>!c.k&&!MENU.has(c.id)).forEach(c=>fetchMenu(c.name).then(draw).catch(()=>{MENU.set(c.id,supItems(c.name));draw()}))}

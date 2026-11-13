@@ -47,12 +47,15 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .shh{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}.shh b{font-size:22px}.shh .mu{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.shh button{margin-left:auto;border:0;background:none;color:var(--mute);font-size:24px;padding:2px 8px}
 .frow{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:14px;margin:6px 0 10px}
 .pk{display:flex;align-items:center;gap:10px;padding:12px 2px;border-top:1px solid var(--line)}.pk input{width:20px;height:20px;accent-color:var(--accent);flex:none}.pk .nm{flex:1;min-width:0}.pk .mu{flex:none}
+.hrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.hrow h1{min-width:0}.heart{flex:none;border:0;background:none;font-size:30px;line-height:1;color:var(--mute);padding:4px 6px}.heart.on{color:var(--accent)}
+.hb{flex:none;border:0;background:none;color:var(--accent);font-size:24px;padding:6px 8px}
 .del{display:inline-block;margin-top:6px;padding:5px 12px;border:1px solid var(--line);border-radius:14px;color:var(--accent);cursor:pointer}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head><body><div id="app"></div>
 <nav class="tabs" id="tabs">
 <button data-t="rest"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Restaurants</button>
 <button data-t="picks"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg>Nearby</button>
+<button data-t="fav"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg>Favorites</button>
 <button data-t="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search</button>
 </nav>
 <script>
@@ -317,9 +320,18 @@ const st={pnv:false,pcat:"lean",pc:null,poff:new Set(),cmp:[],cv:false,cpick:"le
 const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}
-function itemRow(i,showR){return `<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.n)}</span><span class="pp">${i.p} g</span></div>
+/* ---- Favorites (kept on this device in localStorage) ---- */
+let FAV=(()=>{try{const j=JSON.parse(localStorage.getItem("eo_fav")||"{}");return{f:j.f||{},r:j.r||{}}}catch(e){return{f:{},r:{}}}})();
+const FREG={},favSave=()=>{try{localStorage.setItem("eo_fav",JSON.stringify(FAV))}catch(e){}};
+const fkey=i=>norm(i.r+"|"+i.n)+"|"+Math.round(i.cal)+"|"+Math.round(i.p),isFavF=k=>!!FAV.f[k],isFavR=n=>!!FAV.r[norm(n)];
+function toggleFavF(k){if(FAV.f[k])delete FAV.f[k];else{const i=FREG[k];if(!i)return false;FAV.f[k]={n:i.n,r:i.r,c:i.c||"",p:i.p,cal:i.cal,cb:i.cb,f:i.f,ra:i.ra,b:i.b||"",u:!!i.u,t:Date.now()}}favSave();return isFavF(k)}
+function toggleFavR(name,k){const id=norm(name);if(FAV.r[id])delete FAV.r[id];else FAV.r[id]={name,k:k||null,t:Date.now()};favSave();return !!FAV.r[id]}
+const heartH=(name,k)=>`<div class="hrow"><h1>${esc(name)}</h1><button class="heart${isFavR(name)?" on":""}" data-fr="${esc(name)}" data-k="${k||""}" aria-label="Favorite restaurant">${isFavR(name)?"♥":"♡"}</button></div>`;
+function favWire(){document.querySelectorAll(".heart").forEach(b=>b.onclick=()=>{const on=toggleFavR(b.dataset.fr,b.dataset.k);b.classList.toggle("on",on);b.textContent=on?"♥":"♡"})}
+function openRest(x){st.tab="rest";st.cv=false;st.iq="";st.cat="All";if(x.k&&R[x.k]){st.view=x.k;st.web=null}else{st.view=null;st.web={name:x.name}}render()}
+function itemRow(i,showR){const fk=fkey(i);FREG[fk]=i;return `<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.n)}</span><span class="pp">${i.p} g</span></div>
 <div class="mu">${showR?esc(i.r)+" · ":""}${i.cal} cal · ${i.ra} g protein/100 cal</div>
-<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></button>`}
+<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}<br><span class="del" data-fav="${fk}">${isFavF(fk)?"♥ Saved · tap to remove":"♡ Save to favorites"}</span></div></button>`}
 const PICKS={
  lean:{sh:"Best ratio",t:"Best protein per calorie",s:"Most protein for the fewest calories",f:i=>i.p>=20,o:(a,b)=>b.ra-a.ra},
  meal:{sh:"Big protein",t:"Big protein meals",s:"40 g+ protein, under 700 calories",f:i=>i.p>=40&&i.cal<700,o:(a,b)=>b.p-a.p},
@@ -346,7 +358,8 @@ async function supSave(name,items,source,replace){const j=await api("/api/menus"
 async function supDel(name,x){const m=supOf(name);if(!m)return;const rest=m.items.filter((_,i)=>i!==x),y=window.scrollY;
  try{if(rest.length){const j=await api("/api/menus",{action:"save",name,items:rest,replace:true});SUP[norm(name)]=j.menu}else{await api("/api/menus",{action:"delete",name});delete SUP[norm(name)]}
   supCache();applySup();render();window.scrollTo(0,y);toast("Removed")}catch(e){toast(e.message.slice(0,80))}}
-document.addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(b){e.stopPropagation();e.preventDefault();supDel(b.dataset.rn,+b.dataset.del)}},true);
+document.addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(b){e.stopPropagation();e.preventDefault();supDel(b.dataset.rn,+b.dataset.del);return}
+ const f=e.target.closest("[data-fav]");if(f){e.stopPropagation();e.preventDefault();const on=toggleFavF(f.dataset.fav);f.textContent=on?"♥ Saved · tap to remove":"♡ Save to favorites";if(st.tab==="fav"&&!on){const y=window.scrollY;render();window.scrollTo(0,y)}}},true);
 const curName=()=>st.web?st.web.name:st.view?R[st.view].n:"";
 function readFile(f){return new Promise((ok,no)=>{const fr=new FileReader();fr.onerror=()=>no(new Error("Couldn't read that file."));
  if(f.type==="application/pdf"){if(f.size>3e6)return no(new Error("That PDF is over 3 MB. Paste its link instead."));fr.onload=()=>ok({mime:f.type,data:String(fr.result).split(",")[1]});fr.readAsDataURL(f)}
@@ -406,17 +419,18 @@ function render(){
  }
  if(st.tab==="rest"){
   if(st.cv){h=`<button class="back" onclick="st.cv=false;render()">‹ Restaurants</button><h1>Compare</h1><div class="sub">Best foods across the places you picked</div><div id="chips"></div><div class="seg" id="cseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="csub"></div><div id="citems"></div><div class="foot">Hand-checked items come from the restaurant's own nutrition. Online items come from FatSecret and are not hand-checked.</div>`}
-  else if(st.web){h=`<button class="back" onclick="st.web=null;render()">‹ Restaurants</button><h1>${esc(st.web.name)}</h1><div class="sub">Online menu data, not hand-checked</div>${supBar()}<div class="bar"><select id="wmode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select><select id="wsrt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option><option value="hcal">Most cal</option></select></div><div id="items"><div class="empty">Loading menu…</div></div><div class="foot" id="wf"></div>`}
+  else if(st.web){h=`<button class="back" onclick="st.web=null;render()">‹ Restaurants</button>${heartH(st.web.name,null)}<div class="sub">Online menu data, not hand-checked</div>${supBar()}<div class="bar"><select id="wmode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select><select id="wsrt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option><option value="hcal">Most cal</option></select></div><div id="items"><div class="empty">Loading menu…</div></div><div class="foot" id="wf"></div>`}
   else if(st.view){const r=R[st.view],cats=["All",...new Set(ITEMS.filter(i=>i.k===st.view).map(i=>i.c))];
    let L=ITEMS.filter(i=>i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
-   h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button><h1>${esc(r.n)}</h1><div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
+   h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button>${heartH(r.n,st.view)}<div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
    ${supBar()}<input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div class="bar"><select id="mode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select></div><div id="items"></div>`;
   }else{
    h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, nearest first</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="ol"></div><div id="rl"></div><div id="cbar"></div>`;
   }
  }
+ if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods and restaurants you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button></div><div class="bar" id="fsb" style="margin:0 0 4px"><select id="fsort"><option value="t">Newest first</option><option value="ra">Best protein per cal</option><option value="p">Most protein</option></select></div><div id="fl"></div>`}
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off"><div id="rr"></div><div id="fr"></div><div id="wr"></div>`}
- app.innerHTML=h;wire();supWire();window.scrollTo(0,0);
+ app.innerHTML=h;wire();supWire();favWire();window.scrollTo(0,0);
 }
 function wire(){
  if(st.tab==="rest"&&!st.view&&!st.web&&!st.cv){
@@ -509,6 +523,14 @@ function wire(){
  if(st.tab==="rest"&&st.view){let sort="ra",mode="all";const draw=()=>{let L=ITEMS.filter(i=>MODES[mode][1](i)&&i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    L.sort((a,b)=>sort==="cal"?a.cal-b.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
    draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()};$("#srt").onchange=e=>{sort=e.target.value;draw()};$("#mode").onchange=e=>{mode=e.target.value;draw()}}
+ if(st.tab==="fav"){const draw=()=>{const foods=st.fseg!=="rest",el=$("#fl");
+   document.querySelectorAll("#fseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===(foods?"foods":"rest")));$("#fsb").style.display=foods?"":"none";$("#fsort").value=st.fsort||"t";
+   if(foods){const L=Object.values(FAV.f),so=st.fsort||"t";L.sort((a,b)=>so==="ra"?b.ra-a.ra:so==="p"?b.p-a.p:b.t-a.t);
+    el.innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty">No favorite foods yet.<br>Open any food and tap “♡ Save to favorites”.</div>'}
+   else{const RL=Object.values(FAV.r).sort((a,b)=>b.t-a.t);
+    el.innerHTML=RL.length?RL.map((x,n)=>{const hc=x.k&&R[x.k],c=hc?0:hasGet(x.name);return `<div class="row" data-r="${n}"><div class="rw"><div><div class="t"><span class="nm">${esc(x.name)}</span><span class="mu">${hc?(Math.round(dist(R[x.k])*10)/10)+" mi":""}</span></div><div class="mu">${hc?ITEMS.filter(i=>i.k===x.k).length+" items · hand-checked":c>0?c+" items":"Tap to open the menu"}</div></div><button class="hb" data-u="${n}" aria-label="Remove from favorites">♥</button></div></div>`}).join(""):'<div class="empty">No favorite restaurants yet.<br>Tap the ♡ next to a restaurant’s name to save it.</div>';
+    el.querySelectorAll("[data-r]").forEach(r=>r.onclick=e=>{const x=RL[+r.dataset.r];if(e.target.closest("[data-u]")){toggleFavR(x.name);draw();return}openRest(x)})}};
+   document.querySelectorAll("#fseg button").forEach(b=>b.onclick=()=>{st.fseg=b.dataset.k;draw()});$("#fsort").onchange=e=>{st.fsort=e.target.value;draw()};draw()}
  if(st.tab==="find"){const hit=(s,q)=>q.split(/\s+/).every(w=>s.includes(w)),hd=t=>`<div class="sub" style="margin:16px 0 4px">${t}</div>`;
    const rests=q=>{const seen=new Set(),out=[],add=o=>{const id=norm(o.name);if(seen.has(id))return;seen.add(id);out.push(o)};
     Object.keys(R).forEach(k=>{if(hit((R[k].n+" "+R[k].a).toLowerCase(),q))add({name:R[k].n,k,mi:dist(R[k]),sub:ITEMS.filter(i=>i.k===k).length+" items · hand-checked"})});
@@ -520,7 +542,7 @@ function wire(){
     const RL=rests(q);
     $("#rr").innerHTML=hd("Restaurants")+RL.map((x,n)=>`<div class="row" data-r="${n}"><div class="t"><span class="nm">${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
      `<button class="big" id="rlook" style="margin-top:10px"><b>Look up “${esc(st.iqRaw||q)}” online</b><span>Find it as a restaurant in the nutrition database</span></button>`;
-    $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=()=>{const x=RL[+r.dataset.r];st.tab="rest";st.cv=false;if(x.k){st.view=x.k;st.web=null}else{st.view=null;st.web={name:x.name}}st.cat="All";st.iq="";render()});
+    $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=()=>openRest(RL[+r.dataset.r]));
     $("#rlook").onclick=()=>{st.tab="rest";st.cv=false;st.view=null;st.web={name:(st.iqRaw||q).trim()};st.iq="";render()};
     const all=ITEMS.concat(...MENU.values()),seenI=new Set(),L=all.filter(i=>{const k=norm(i.r+i.n+i.p+i.cal);if(seenI.has(k))return false;seenI.add(k);return hit((i.n+" "+i.r+" "+i.c).toLowerCase(),q)}).sort((a,b)=>b.ra-a.ra).slice(0,40);
     $("#fr").innerHTML=hd("Foods"+(L.length?" · best protein per calorie first":""))+(L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty" style="padding:8px 0">No food matched in the menus loaded so far.</div>')};
@@ -537,6 +559,6 @@ function wire(){
    draw();online(st.iq);if(!st.near){nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(!st.near)st.near=j;if(st.tab==="find")draw()}).catch(()=>{})}
    $("#fq").oninput=e=>{st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();clearTimeout(tm);tm=setTimeout(()=>online(st.iq),500)}}
 }
-document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.view=null;st.pick=null;st.iq="";st.rq="";st.cat="All";render()});
+document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.view=null;st.web=null;st.cv=false;st.pick=null;st.iq="";st.rq="";st.cat="All";render()});
 render();
 </script></body></html>

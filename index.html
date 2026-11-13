@@ -362,8 +362,8 @@ function itemRow(i,showR){const fk=fkey(i);FREG[fk]=i;return `<button class="row
 <div class="mu">${showR?esc(i.r)+" · ":""}${i.cal} cal · ${i.ra} g protein per 100 cal</div>
 <div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div></div></button>`}
 const PICKS={
- meal:{sh:"High Protein",t:"High protein meals",s:"40 g+ protein, under 700 calories",f:i=>i.p>=40&&i.cal<700,o:(a,b)=>b.p-a.p},
- lean:{sh:"High Protein Low Calorie",t:"High protein, low calorie",s:"Most protein for the fewest calories",f:i=>i.p>=20,o:(a,b)=>b.ra-a.ra},
+ meal:{sh:"High Protein",t:"High protein meals",s:"40 g or more protein",f:i=>i.p>=40,o:(a,b)=>b.p-a.p},
+ lean:{sh:"High Protein Low Calorie",t:"High protein, low calorie",s:"10 g+ protein per 100 calories",f:i=>i.ra>=10,o:(a,b)=>b.ra-a.ra},
  light:{sh:"Light",t:"Light bites",s:"Under 400 calories, 25 g+ protein",f:i=>i.cal<400&&i.p>=25,o:(a,b)=>b.ra-a.ra},
  all:{sh:"All",t:"All foods",s:"Everything",f:()=>true,o:(a,b)=>b.ra-a.ra,n:60}};
 

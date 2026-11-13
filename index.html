@@ -329,6 +329,27 @@ let FAV=(()=>{try{const j=JSON.parse(localStorage.getItem("eo_fav")||"{}");retur
 const FREG={},favSave=()=>{try{localStorage.setItem("eo_fav",JSON.stringify(FAV))}catch(e){}};
 const fkey=i=>norm(i.r+"|"+i.n)+"|"+Math.round(i.cal)+"|"+Math.round(i.p),isFavF=k=>!!FAV.f[k],isFavR=n=>!!FAV.r[norm(n)];
 function toggleFavF(k){if(FAV.f[k])delete FAV.f[k];else{const i=FREG[k];if(!i)return false;FAV.f[k]={n:i.n,r:i.r,c:i.c||"",p:i.p,cal:i.cal,cb:i.cb,f:i.f,ra:i.ra,b:i.b||"",u:!!i.u,t:Date.now()}}favSave();return isFavF(k)}
+function sortBar(el,SC,FS,ok,draw){
+   {const ks=SC.map(z=>z[0]),o=(st[ok]||[]).filter(k=>ks.includes(k));ks.forEach(k=>{if(!o.includes(k))o.push(k)});SC.sort((x,y)=>o.indexOf(x[0])-o.indexOf(y[0]))}
+   const sum=()=>{const t=SC.map(z=>{const o=z[2].find(o=>o[0]===FS[z[0]]);return o?o[1]:""}).filter(Boolean);return t.length?t.join(" · "):"None"};
+   el.innerHTML=`<span>Sort By <span style="color:var(--mute)">· ${sum()}</span></span><span style="color:var(--accent)">Choose ›</span>`;
+   el.onclick=()=>{shClose();const sh=document.createElement("div");sh.id="sheet";document.body.appendChild(sh);document.body.style.overflow="hidden";
+    const paint=()=>{sh.innerHTML=`<div class="sh" style="display:flex;flex-direction:column;min-height:100dvh;box-sizing:border-box"><div class="shh"><b>Sort By</b><span class="mu">Drag ☰ To Set Priority</span><button id="sh-x" aria-label="Close">✕</button></div><div id="so-l">`+SC.map(z=>`<div class="sg" data-k="${z[0]}" style="margin-top:14px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card)"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span class="mu">${z[1]}</span><span class="dh" style="touch-action:none;padding:6px 10px;font-size:20px;color:var(--mute);cursor:grab">☰</span></div><div class="seg" style="margin:0">${[["","Off"]].concat(z[2]).map(o=>`<button data-g="${z[0]}" data-v="${o[0]}" class="${(FS[z[0]]||"")===o[0]?"on":""}">${o[1]}</button>`).join("")}</div></div>`).join("")+`</div><div class="bar" style="margin-top:auto;padding-top:16px"><button id="so-clr" style="flex:1">Clear All</button><button class="pri" id="so-done" style="flex:2;margin:0;background:var(--accent);color:var(--bg);border:0;padding:14px;font-size:16px;font-weight:600">Done</button></div></div>`;
+     sh.querySelector("#so-clr").onclick=()=>{Object.keys(FS).forEach(k=>FS[k]="");paint()};
+     sh.querySelector("#sh-x").onclick=sh.querySelector("#so-done").onclick=()=>{shClose();draw()};
+     sh.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{FS[b.dataset.g]=b.dataset.v;paint()});
+     const L=sh.querySelector("#so-l");sh.querySelectorAll(".dh").forEach(h=>h.onpointerdown=e=>{e.preventDefault();const g=h.closest(".sg");L.setPointerCapture(e.pointerId);g.style.opacity=".7";g.style.borderColor="var(--accent)";
+      L.onpointermove=m=>{const sib=[...L.children].filter(x=>x!==g);if(m.clientY<sib[0].getBoundingClientRect().top){L.insertBefore(g,sib[0]);return}if(m.clientY>sib[sib.length-1].getBoundingClientRect().bottom){L.appendChild(g);return}for(const x of sib){const r=x.getBoundingClientRect();if(m.clientY>r.top&&m.clientY<r.bottom){const before=m.clientY<r.top+r.height/2;L.insertBefore(g,before?x:x.nextSibling);break}}};
+      L.onpointerup=L.onpointercancel=()=>{L.onpointermove=L.onpointerup=L.onpointercancel=null;st[ok]=[...L.children].map(x=>x.dataset.k);const o=st[ok];SC.sort((x,y)=>o.indexOf(x[0])-o.indexOf(y[0]));paint()}})};paint()};
+}
+function sortCmp(SC,FS,dk){return (a,b)=>{let r=0;for(const z of SC){const v=FS[z[0]];if(!v)continue;
+     if(z[0]==="d")r=v==="o"?a.t-b.t:b.t-a.t;
+     else if(z[0]==="c"){const x=dk(a),y=dk(b);r=x==null&&y==null?0:x==null?1:y==null?-1:v==="f"?y-x:x-y}
+     else if(z[0]==="p")r=v==="r"?b.ra-a.ra:b.p-a.p;
+     else if(z[0]==="l")r=v==="w"?a.cal-b.cal:b.cal-a.cal;
+     else if(z[0]==="g")r=v==="z"?String(b.r).localeCompare(String(a.r)):String(a.r).localeCompare(String(b.r));
+     else r=v==="z"?b.name.localeCompare(a.name):a.name.localeCompare(b.name);
+     if(r)return r}return 0}}
 const favRank=i=>isFavF(fkey(i))?2:isFavR(i.r)?1:0,byFav=(o)=>(a,b)=>favRank(b)-favRank(a)||o(a,b);
 function toggleFavR(name,k){const id=norm(name);if(FAV.r[id])delete FAV.r[id];else FAV.r[id]={name,k:k||null,t:Date.now()};favSave();return !!FAV.r[id]}
 const heartH=(name,k)=>`<div class="hrow"><h1>${esc(name)}</h1><button class="heart${isFavR(name)?" on":""}" data-fr="${esc(name)}" data-k="${k||""}" aria-label="Favorite restaurant">${isFavR(name)?"♥":"♡"}</button></div>`;
@@ -420,7 +441,7 @@ function render(){
  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===st.tab));
  let h="";
  if(st.tab==="picks"){
-  {h=`<h1>Nearby</h1><div class="sub" id="psub">Finding restaurants within 2 miles…</div><button class="frow" id="pfilt"><span>Restaurants</span><span style="color:var(--accent)">Choose ›</span></button><div class="seg" id="pseg" style="margin-bottom:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 0;padding:9px 2px;font-size:13px">${PICKS[k].sh}</button>`).join("")}</div><div class="mrow"><div class="sub" id="pcs" style="margin:0"></div><button class="mo" id="pfo">Favorites Only</button></div><div id="pitems"></div><div class="foot">Online items come from FatSecret and are not hand-checked. Only the 30 nearest places are checked, so a few may be missing.</div>`}
+  {h=`<h1>Nearby</h1><div class="sub" id="psub">Finding restaurants within 2 miles…</div><button class="frow" id="pfilt"><span>Restaurants</span><span style="color:var(--accent)">Choose ›</span></button><div class="seg" id="pseg" style="margin-bottom:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 0;padding:9px 2px;font-size:13px">${PICKS[k].sh}</button>`).join("")}</div><div class="mrow"><div class="sub" id="pcs" style="margin:0"></div><button class="mo" id="pfo">Favorites Only</button></div><button class="frow" id="psort" style="margin:0 0 10px"></button><div id="pitems"></div><div class="foot">Online items come from FatSecret and are not hand-checked. Only the 30 nearest places are checked, so a few may be missing.</div>`}
  }
  if(st.tab==="rest"){
   if(st.cv){h=`<button class="back" onclick="st.cv=false;render()">‹ Restaurants</button><h1>Compare</h1><div class="sub">Best foods across the places you picked</div><div id="chips"></div><div class="seg" id="cseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="csub"></div><div id="citems"></div><div class="foot">Hand-checked items come from the restaurant's own nutrition. Online items come from FatSecret and are not hand-checked.</div>`}
@@ -505,7 +526,10 @@ function wire(){
     {const n=ok.filter(c=>!st.poff.has(c.id)).length;$("#pfilt").innerHTML=`<span>${n===ok.length?"All "+ok.length:n+" of "+ok.length} restaurants</span><span style="color:var(--accent)">Choose ›</span>`;$("#pfilt").onclick=()=>pkSheet(ok)}
     $("#pseg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===st.pcat));
     const P=PICKS[st.pcat];let all=[];ok.filter(c=>!st.poff.has(c.id)).forEach(c=>{all=all.concat(itemsOf(c))});
-    const L=all.filter(P.f).filter(i=>!st.favOnly||isFavF(fkey(i))).sort(byFav(P.o)).slice(0,P.n||20);$("#pcs").textContent=P.s;$("#pfo").classList.toggle("on",!!st.favOnly);
+    const SCn=[["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein",[["r","Best Ratio"],["h","High Protein"]]],["l","Calories",[["w","Fewest"],["m","Most"]]],["g","Group By Restaurant",[["a","A–Z"],["z","Z–A"]]]];
+    const FSn=st.fsn=st.fsn||{c:"",p:"",l:"",g:""};sortBar($("#psort"),SCn,FSn,"fson",draw);
+    const dmap={};C.forEach(c=>{dmap[norm(c.name)]=c.mi});const sc=sortCmp(SCn,FSn,i=>dmap[norm(i.r)]);
+    const L=all.filter(P.f).filter(i=>!st.favOnly||isFavF(fkey(i))).sort(byFav((a,b)=>sc(a,b)||P.o(a,b))).slice(0,P.n||20);$("#pcs").textContent=P.s;$("#pfo").classList.toggle("on",!!st.favOnly);
     $("#pitems").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):`<div class="empty">${pend?"Checking menus…":st.favOnly?"No favorites here yet.":"Nothing fits this category."}</div>`};
    $("#pseg").querySelectorAll("button").forEach(b=>b.onclick=()=>{st.pcat=b.dataset.k;draw()});
    $("#pfo").onclick=()=>{st.favOnly=!st.favOnly;try{localStorage.setItem("eo_fo",st.favOnly?"1":"")}catch(e){}draw()};
@@ -535,26 +559,9 @@ function wire(){
  if(st.tab==="fav"){const draw=()=>{const foods=st.fseg!=="rest",el=$("#fl");
    document.querySelectorAll("#fseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===(foods?"foods":"rest")));const SC=foods?[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein",[["r","Best Ratio"],["h","High Protein"]]],["l","Calories",[["w","Fewest"],["m","Most"]]],["g","Group By Restaurant",[["a","A–Z"],["z","Z–A"]]]]:[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["a","Name",[["a","A–Z"],["z","Z–A"]]]];
    const FS=st.fs=st.fs||{d:"n",c:"",p:"",a:"",l:"",g:""};
-   {const ks=SC.map(z=>z[0]),o=(st.fso||[]).filter(k=>ks.includes(k));ks.forEach(k=>{if(!o.includes(k))o.push(k)});SC.sort((x,y)=>o.indexOf(x[0])-o.indexOf(y[0]))}
-   const sum=()=>{const t=SC.map(z=>{const o=z[2].find(o=>o[0]===FS[z[0]]);return o?o[1]:""}).filter(Boolean);return t.length?t.join(" · "):"None"};
-   $("#fsort").innerHTML=`<span>Sort By <span style="color:var(--mute)">· ${sum()}</span></span><span style="color:var(--accent)">Choose ›</span>`;
-   $("#fsort").onclick=()=>{shClose();const sh=document.createElement("div");sh.id="sheet";document.body.appendChild(sh);document.body.style.overflow="hidden";
-    const paint=()=>{sh.innerHTML=`<div class="sh" style="display:flex;flex-direction:column;min-height:100dvh;box-sizing:border-box"><div class="shh"><b>Sort By</b><span class="mu">Drag ☰ To Set Priority</span><button id="sh-x" aria-label="Close">✕</button></div><div id="so-l">`+SC.map(z=>`<div class="sg" data-k="${z[0]}" style="margin-top:14px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--card)"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><span class="mu">${z[1]}</span><span class="dh" style="touch-action:none;padding:6px 10px;font-size:20px;color:var(--mute);cursor:grab">☰</span></div><div class="seg" style="margin:0">${[["","Off"]].concat(z[2]).map(o=>`<button data-g="${z[0]}" data-v="${o[0]}" class="${(FS[z[0]]||"")===o[0]?"on":""}">${o[1]}</button>`).join("")}</div></div>`).join("")+`</div><div class="bar" style="margin-top:auto;padding-top:16px"><button id="so-clr" style="flex:1">Clear All</button><button class="pri" id="so-done" style="flex:2;margin:0;background:var(--accent);color:var(--bg);border:0;padding:14px;font-size:16px;font-weight:600">Done</button></div></div>`;
-     sh.querySelector("#so-clr").onclick=()=>{Object.keys(FS).forEach(k=>FS[k]="");paint()};
-     sh.querySelector("#sh-x").onclick=sh.querySelector("#so-done").onclick=()=>{shClose();draw()};
-     sh.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{FS[b.dataset.g]=b.dataset.v;paint()});
-     const L=sh.querySelector("#so-l");sh.querySelectorAll(".dh").forEach(h=>h.onpointerdown=e=>{e.preventDefault();const g=h.closest(".sg");L.setPointerCapture(e.pointerId);g.style.opacity=".7";g.style.borderColor="var(--accent)";
-      L.onpointermove=m=>{const sib=[...L.children].filter(x=>x!==g);if(m.clientY<sib[0].getBoundingClientRect().top){L.insertBefore(g,sib[0]);return}if(m.clientY>sib[sib.length-1].getBoundingClientRect().bottom){L.appendChild(g);return}for(const x of sib){const r=x.getBoundingClientRect();if(m.clientY>r.top&&m.clientY<r.bottom){const before=m.clientY<r.top+r.height/2;L.insertBefore(g,before?x:x.nextSibling);break}}};
-      L.onpointerup=L.onpointercancel=()=>{L.onpointermove=L.onpointerup=L.onpointercancel=null;st.fso=[...L.children].map(x=>x.dataset.k);const o=st.fso;SC.sort((x,y)=>o.indexOf(x[0])-o.indexOf(y[0]));paint()}})};paint()};
+   sortBar($("#fsort"),SC,FS,"fso",draw);
    const dk=k=>k&&R[k]?dist(R[k]):null;
-   const cmp=(a,b)=>{let r=0;for(const z of SC){const v=FS[z[0]];if(!v)continue;
-     if(z[0]==="d")r=v==="o"?a.t-b.t:b.t-a.t;
-     else if(z[0]==="c"){const x=dk(a.k),y=dk(b.k);r=x==null&&y==null?0:x==null?1:y==null?-1:v==="f"?y-x:x-y}
-     else if(z[0]==="p")r=v==="r"?b.ra-a.ra:b.p-a.p;
-     else if(z[0]==="l")r=v==="w"?a.cal-b.cal:b.cal-a.cal;
-     else if(z[0]==="g")r=v==="z"?String(b.r).localeCompare(String(a.r)):String(a.r).localeCompare(String(b.r));
-     else r=v==="z"?b.name.localeCompare(a.name):a.name.localeCompare(b.name);
-     if(r)return r}return 0};
+   const cmp=sortCmp(SC,FS,x=>dk(x.k));
    if(foods){const L=Object.values(FAV.f);L.sort(cmp);
     el.innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty">No favorite foods yet.<br>Open any food and tap “♡ Save to favorites”.</div>'}
    else{const RL=Object.values(FAV.r).sort(cmp);

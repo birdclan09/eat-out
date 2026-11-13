@@ -48,6 +48,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .frow{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:14px;margin:6px 0 10px}
 .pk{display:flex;align-items:center;gap:10px;padding:12px 2px;border-top:1px solid var(--line)}.pk input{width:20px;height:20px;accent-color:var(--accent);flex:none}.pk .nm{flex:1;min-width:0}.pk .mu{flex:none}
 .hrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.hrow h1{min-width:0}.heart{flex:none;border:0;background:none;font-size:30px;line-height:1;color:var(--mute);padding:4px 6px}.heart.on{color:var(--accent)}
+.fh{flex:none;width:30px;text-align:center;font-size:23px;line-height:1;color:var(--mute);padding:8px 0;margin:-8px 0 -8px -4px}.fh.on{color:var(--accent)}
 .hb{flex:none;border:0;background:none;color:var(--accent);font-size:24px;padding:6px 8px}
 .del{display:inline-block;margin-top:6px;padding:5px 12px;border:1px solid var(--line);border-radius:14px;color:var(--accent);cursor:pointer}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -325,13 +326,14 @@ let FAV=(()=>{try{const j=JSON.parse(localStorage.getItem("eo_fav")||"{}");retur
 const FREG={},favSave=()=>{try{localStorage.setItem("eo_fav",JSON.stringify(FAV))}catch(e){}};
 const fkey=i=>norm(i.r+"|"+i.n)+"|"+Math.round(i.cal)+"|"+Math.round(i.p),isFavF=k=>!!FAV.f[k],isFavR=n=>!!FAV.r[norm(n)];
 function toggleFavF(k){if(FAV.f[k])delete FAV.f[k];else{const i=FREG[k];if(!i)return false;FAV.f[k]={n:i.n,r:i.r,c:i.c||"",p:i.p,cal:i.cal,cb:i.cb,f:i.f,ra:i.ra,b:i.b||"",u:!!i.u,t:Date.now()}}favSave();return isFavF(k)}
+const favRank=i=>isFavF(fkey(i))?2:isFavR(i.r)?1:0,byFav=(o)=>(a,b)=>favRank(b)-favRank(a)||o(a,b);
 function toggleFavR(name,k){const id=norm(name);if(FAV.r[id])delete FAV.r[id];else FAV.r[id]={name,k:k||null,t:Date.now()};favSave();return !!FAV.r[id]}
 const heartH=(name,k)=>`<div class="hrow"><h1>${esc(name)}</h1><button class="heart${isFavR(name)?" on":""}" data-fr="${esc(name)}" data-k="${k||""}" aria-label="Favorite restaurant">${isFavR(name)?"♥":"♡"}</button></div>`;
 function favWire(){document.querySelectorAll(".heart").forEach(b=>b.onclick=()=>{const on=toggleFavR(b.dataset.fr,b.dataset.k);b.classList.toggle("on",on);b.textContent=on?"♥":"♡"})}
 function openRest(x){st.tab="rest";st.cv=false;st.iq="";st.cat="All";if(x.k&&R[x.k]){st.view=x.k;st.web=null}else{st.view=null;st.web={name:x.name}}render()}
-function itemRow(i,showR){const fk=fkey(i);FREG[fk]=i;return `<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.n)}</span><span class="pp">${i.p} g</span></div>
+function itemRow(i,showR){const fk=fkey(i);FREG[fk]=i;return `<button class="row" onclick="this.classList.toggle('open')"><div class="rw"><span class="fh${isFavF(fk)?" on":""}" data-fav="${fk}" role="button" aria-label="Save to favorites">${isFavF(fk)?"♥":"♡"}</span><div style="flex:1;min-width:0"><div class="t"><span class="nm">${esc(i.n)}</span><span class="pp">${i.p} g</span></div>
 <div class="mu">${showR?esc(i.r)+" · ":""}${i.cal} cal · ${i.ra} g protein/100 cal</div>
-<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}<br><span class="del" data-fav="${fk}">${isFavF(fk)?"♥ Saved · tap to remove":"♡ Save to favorites"}</span></div></button>`}
+<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div></div></button>`}
 const PICKS={
  lean:{sh:"Best ratio",t:"Best protein per calorie",s:"Most protein for the fewest calories",f:i=>i.p>=20,o:(a,b)=>b.ra-a.ra},
  meal:{sh:"Big protein",t:"Big protein meals",s:"40 g+ protein, under 700 calories",f:i=>i.p>=40&&i.cal<700,o:(a,b)=>b.p-a.p},
@@ -359,7 +361,7 @@ async function supDel(name,x){const m=supOf(name);if(!m)return;const rest=m.item
  try{if(rest.length){const j=await api("/api/menus",{action:"save",name,items:rest,replace:true});SUP[norm(name)]=j.menu}else{await api("/api/menus",{action:"delete",name});delete SUP[norm(name)]}
   supCache();applySup();render();window.scrollTo(0,y);toast("Removed")}catch(e){toast(e.message.slice(0,80))}}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(b){e.stopPropagation();e.preventDefault();supDel(b.dataset.rn,+b.dataset.del);return}
- const f=e.target.closest("[data-fav]");if(f){e.stopPropagation();e.preventDefault();const on=toggleFavF(f.dataset.fav);f.textContent=on?"♥ Saved · tap to remove":"♡ Save to favorites";if(st.tab==="fav"&&!on){const y=window.scrollY;render();window.scrollTo(0,y)}}},true);
+ const f=e.target.closest("[data-fav]");if(f){e.stopPropagation();e.preventDefault();const on=toggleFavF(f.dataset.fav);f.textContent=on?"♥":"♡";f.classList.toggle("on",on);if(st.tab==="fav"&&!on){const y=window.scrollY;render();window.scrollTo(0,y)}}},true);
 const curName=()=>st.web?st.web.name:st.view?R[st.view].n:"";
 function readFile(f){return new Promise((ok,no)=>{const fr=new FileReader();fr.onerror=()=>no(new Error("Couldn't read that file."));
  if(f.type==="application/pdf"){if(f.size>3e6)return no(new Error("That PDF is over 3 MB. Paste its link instead."));fr.onload=()=>ok({mime:f.type,data:String(fr.result).split(",")[1]});fr.readAsDataURL(f)}
@@ -425,7 +427,7 @@ function render(){
    h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button>${heartH(r.n,st.view)}<div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
    ${supBar()}<input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div class="bar"><select id="mode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select></div><div id="items"></div>`;
   }else{
-   h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, nearest first</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="ol"></div><div id="rl"></div><div id="cbar"></div>`;
+   h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, favorites first, then nearest</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="ol"></div><div id="rl"></div><div id="cbar"></div>`;
   }
  }
  if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods and restaurants you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button></div><div class="bar" id="fsb" style="margin:0 0 4px"><select id="fsort"><option value="t">Newest first</option><option value="ra">Best protein per cal</option><option value="p">Most protein</option></select></div><div id="fl"></div>`}
@@ -457,9 +459,9 @@ function wire(){
    const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
     E=Object.keys(R).filter(k=>dist(R[k])*1609.34<=st.rad&&(!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q))).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,has:1,sub:R[k].a+" · "+ITEMS.filter(i=>i.k===k).length+" items",ok:1}));
     if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?c+" items online":c===0?"no menu found":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
-    E.sort((a,b)=>a.mi-b.mi);
+    E.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||a.mi-b.mi);
     const status=!st.near?'<div class="empty" style="padding:8px 0">Finding restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
-    $("#rl").innerHTML=status+'<div class="mu" style="margin:6px 0">'+E.length+' restaurants · 🍴 menu available · gray = no menu found</div>'+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${x.has>0?"🍴 ":""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
+    $("#rl").innerHTML=status+'<div class="mu" style="margin:6px 0">'+E.length+' restaurants · 🍴 menu available · gray = no menu found</div>'+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${x.has>0?"🍴 ":""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
     $("#rl").querySelectorAll("[data-e]").forEach(r=>r.onclick=e=>{if(e.target.closest("[data-s]"))return;open(E[+r.dataset.e])});
     $("#rl").querySelectorAll("[data-s]").forEach(b=>b.onclick=e=>{e.stopPropagation();cmpToggle(E[+b.dataset.s]);draw()});
     if(layer){layer.clearLayers();L.marker([ME.la,ME.lo],{icon:icon(1,1),interactive:false}).addTo(layer);
@@ -487,7 +489,7 @@ function wire(){
    const pkSheet=ok=>{shClose();const s=document.createElement("div");s.id="sheet";document.body.appendChild(s);document.body.style.overflow="hidden";
     const cnt=()=>ok.filter(c=>!st.poff.has(c.id)).length+" of "+ok.length+" included";
     const paint=()=>{s.innerHTML=`<div class="sh"><div class="shh"><b>Restaurants</b><span class="mu" id="pk-n">${cnt()}</span><button id="sh-x" aria-label="Close">✕</button></div><div class="bar" style="margin:0 0 4px"><button id="pk-all">Select all</button><button id="pk-none">Clear all</button></div>`+
-      ok.map(c=>{const L=itemsOf(c);return `<label class="pk"><input type="checkbox" data-c="${c.id}"${st.poff.has(c.id)?"":" checked"}><span class="nm">${esc(c.name)}</span><span class="mu">${Math.round(c.mi*10)/10} mi · ${L.length} items</span></label>`}).join("")+`<button class="pri" id="pk-done">Done</button></div>`;
+      ok.slice().sort((a,b)=>isFavR(b.name)-isFavR(a.name)||a.mi-b.mi).map(c=>{const L=itemsOf(c);return `<label class="pk"><input type="checkbox" data-c="${c.id}"${st.poff.has(c.id)?"":" checked"}><span class="nm">${isFavR(c.name)?"♥ ":""}${esc(c.name)}</span><span class="mu">${Math.round(c.mi*10)/10} mi · ${L.length} items</span></label>`}).join("")+`<button class="pri" id="pk-done">Done</button></div>`;
      s.querySelector("#sh-x").onclick=s.querySelector("#pk-done").onclick=shClose;
      s.querySelector("#pk-all").onclick=()=>{st.poff.clear();paint();draw()};s.querySelector("#pk-none").onclick=()=>{ok.forEach(c=>st.poff.add(c.id));paint();draw()};
      s.querySelectorAll("[data-c]").forEach(i=>i.onchange=()=>{i.checked?st.poff.delete(i.dataset.c):st.poff.add(i.dataset.c);s.querySelector("#pk-n").textContent=cnt();draw()})};
@@ -497,7 +499,7 @@ function wire(){
     {const n=ok.filter(c=>!st.poff.has(c.id)).length;$("#pfilt").innerHTML=`<span>${n===ok.length?"All "+ok.length:n+" of "+ok.length} restaurants</span><span style="color:var(--accent)">Choose ›</span>`;$("#pfilt").onclick=()=>pkSheet(ok)}
     $("#pseg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===st.pcat));
     const P=PICKS[st.pcat];let all=[];ok.filter(c=>!st.poff.has(c.id)).forEach(c=>{all=all.concat(itemsOf(c))});
-    const L=all.filter(P.f).sort(P.o).slice(0,20);$("#pcs").textContent=P.s;
+    const L=all.filter(P.f).sort(byFav(P.o)).slice(0,20);$("#pcs").textContent=P.s;
     $("#pitems").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):`<div class="empty">${pend?"Checking menus…":"Nothing fits this category."}</div>`};
    $("#pseg").querySelectorAll("button").forEach(b=>b.onclick=()=>{st.pcat=b.dataset.k;draw()});
    (async()=>{try{if(!C){const j=await nearby(ME.la,ME.lo,RADM);if(my!==st.run)return;const have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
@@ -512,7 +514,7 @@ function wire(){
     $("#chips").querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{st.cmp=st.cmp.filter(c=>c.id!==b.dataset.x);draw()});$("#more").onclick=()=>{st.cv=false;render()};
     $("#cseg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===st.cpick));
     const P=PICKS[st.cpick];let all=[];st.cmp.forEach(c=>{const L=itemsOf(c);if(L)all=all.concat(L)});
-    const L=all.filter(P.f).sort(P.o).slice(0,20);$("#csub").textContent=P.s+" · top "+L.length;
+    const L=all.filter(P.f).sort(byFav(P.o)).slice(0,20);$("#csub").textContent=P.s+" · top "+L.length;
     $("#citems").innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty">Nothing fits this category yet.</div>'};
    $("#cseg").querySelectorAll("button").forEach(b=>b.onclick=()=>{st.cpick=b.dataset.k;draw()});
    draw();st.cmp.filter(c=>!c.k&&!MENU.has(c.id)).forEach(c=>fetchMenu(c.name).then(draw).catch(()=>{MENU.set(c.id,supItems(c.name));draw()}))}
@@ -536,16 +538,16 @@ function wire(){
     Object.keys(R).forEach(k=>{if(hit((R[k].n+" "+R[k].a).toLowerCase(),q))add({name:R[k].n,k,mi:dist(R[k]),sub:ITEMS.filter(i=>i.k===k).length+" items · hand-checked"})});
     if(st.near&&st.near.items)st.near.items.forEach(x=>{if(hit(x.name.toLowerCase(),q)){const c=hasGet(x.name);add({name:x.name,mi:x.mi,sub:c>0?c+" items":c===0?"no menu found":"tap to look up the menu"})}});
     Object.keys(SUP).forEach(id=>{const m=SUP[id];if(hit(m.name.toLowerCase(),q))add({name:m.name,sub:m.items.length+" items added by you"})});
-    return out.sort((a,b)=>(a.mi==null?99:a.mi)-(b.mi==null?99:b.mi)).slice(0,6)};
+    return out.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||(a.mi==null?99:a.mi)-(b.mi==null?99:b.mi)).slice(0,6)};
    const draw=()=>{const q=st.iq;
     if(q.length<2){$("#rr").innerHTML="";$("#fr").innerHTML='<div class="empty">Type a food or a restaurant name.</div>';return}
     const RL=rests(q);
-    $("#rr").innerHTML=hd("Restaurants")+RL.map((x,n)=>`<div class="row" data-r="${n}"><div class="t"><span class="nm">${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
+    $("#rr").innerHTML=hd("Restaurants")+RL.map((x,n)=>`<div class="row" data-r="${n}"><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
      `<button class="big" id="rlook" style="margin-top:10px"><b>Look up “${esc(st.iqRaw||q)}” online</b><span>Find it as a restaurant in the nutrition database</span></button>`;
     $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=()=>openRest(RL[+r.dataset.r]));
     $("#rlook").onclick=()=>{st.tab="rest";st.cv=false;st.view=null;st.web={name:(st.iqRaw||q).trim()};st.iq="";render()};
-    const all=ITEMS.concat(...MENU.values()),seenI=new Set(),L=all.filter(i=>{const k=norm(i.r+i.n+i.p+i.cal);if(seenI.has(k))return false;seenI.add(k);return hit((i.n+" "+i.r+" "+i.c).toLowerCase(),q)}).sort((a,b)=>b.ra-a.ra).slice(0,40);
-    $("#fr").innerHTML=hd("Foods"+(L.length?" · best protein per calorie first":""))+(L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty" style="padding:8px 0">No food matched in the menus loaded so far.</div>')};
+    const all=ITEMS.concat(...MENU.values()),seenI=new Set(),L=all.filter(i=>{const k=norm(i.r+i.n+i.p+i.cal);if(seenI.has(k))return false;seenI.add(k);return hit((i.n+" "+i.r+" "+i.c).toLowerCase(),q)}).sort(byFav((a,b)=>b.ra-a.ra)).slice(0,40);
+    $("#fr").innerHTML=hd("Foods"+(L.length?" · favorites first, then best protein per calorie":""))+(L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty" style="padding:8px 0">No food matched in the menus loaded so far.</div>')};
    let tm=null,seq=0;
    const n=v=>v==null?"–":Math.round(v*10)/10;
    const online=async(q)=>{const box=$("#wr"),my=++seq;

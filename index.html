@@ -542,7 +542,7 @@ function wire(){
    const open=x=>{if(x.ok)st.view=x.k;else st.web={name:x.name};render()};
    const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
     E=Object.keys(R).filter(k=>dist(R[k])*1609.34<=st.rad&&(!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q))).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,has:Math.max(1,ITEMS.filter(i=>i.k===k).length),sub:R[k].a,ok:1}));
-    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?"":c===0?"no menu found":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
+    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||(x.name+" "+(x.addr||"")).toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?"":c===0?"no menu found":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
     E.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||a.mi-b.mi);EA=E.slice();if(st.menuOnly)E=E.filter(x=>x.has>0);if(st.favOnly)E=E.filter(x=>isFavR(x.name));
     const status=!st.near?'<div class="empty" style="padding:8px 0">Finding restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
     $("#rl").innerHTML=status+'<div class="mrow"><div class="mu">'+(st.menuOnly?E.length+" With Menus"+(EA.some(x=>x.has==null)?" · checking more…":""):E.length+" Restaurants · Number = Menu Items")+'</div><div style="display:flex;gap:6px;flex:none"><button class="mo'+(st.favOnly?" on":"")+'" id="fo">Favorites Only</button><button class="mo'+(st.menuOnly?" on":"")+'" id="mo">Menus Only</button></div></div>'+(st.menuOnly&&!E.length&&st.near&&!st.near.err?'<div class="empty" style="padding:14px 0">No menus found nearby yet.</div>':'')+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${x.has>0?'<span class="bd">'+x.has+'</span>':""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
@@ -557,15 +557,19 @@ function wire(){
       if(x.has!==0){const s=document.createElement("button");s.textContent=cmpHas(x)?"Remove from compare":"Add to compare";s.style.cssText=b.style.cssText+";margin-left:6px;background:#e5e7eb";s.onclick=()=>{cmpToggle(x);m.closePopup();draw()};d.appendChild(s)}
       m.bindPopup(d)})}
     pts=E;placeLabels();
-    const cb=$("#cbar");cb.innerHTML=st.cmp.length?`<button id="cgo">Compare ${st.cmp.length} restaurant${st.cmp.length>1?"s":""} ›</button><button id="cclr">Deselect all</button>`:"";if(st.cmp.length){$("#cgo").onclick=()=>{st.cv=true;render()};$("#cclr").onclick=()=>{st.cmp=[];draw()}}};
+    const cb=$("#cbar");cb.innerHTML=st.cmp.length?`<button id="cgo">Compare ${st.cmp.length} restaurant${st.cmp.length>1?"s":""} ›</button><button id="cclr">Deselect all</button>`:"";if(st.cmp.length){$("#cgo").onclick=()=>{st.cv=true;render()};$("#cclr").onclick=()=>{st.cmp=[];draw()}}ol()};
    const scan=async()=>{const T=EA.filter(x=>!x.ok&&x.has==null).slice(0,30);let k=0;for(const x of T){if(my!==st.run)return;try{await hasMenu(x.name)}catch(e){return}if(++k%5===0&&my===st.run)draw()}if(my===st.run&&k)draw()};
-   const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Not in the list? Pull its menu from the nutrition database</span></button>`:""};
+   const goTown=async()=>{const q=st.rq.trim();if(q.length<2)return;const t=$("#town");if(t)t.querySelector("b").textContent="Finding “"+q+"”…";
+     try{const r=await fetch(`/api/geocode?q=${encodeURIComponent(q)}&lat=${HOME.la}&lon=${HOME.lo}`),j=await r.json().catch(()=>({}));if(my!==st.run)return;if(!r.ok||j.la==null)throw new Error(j.error||"Not found");
+      HOME={la:j.la,lo:j.lo,label:j.name||q};st.rq="";$("#rq").value="";load();toast("Showing restaurants near "+(j.name||q))}
+     catch(e){if(my===st.run){toast("Couldn't find “"+q+"”");ol()}}};
+    const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?(EA.length?"":`<button class="big" id="town"><b>Show restaurants in “${esc(q)}”</b><span>Move the map to that town or address</span></button>`)+`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Not in the list? Pull its menu from the nutrition database</span></button>`:"";const t=$("#town");if(t)t.onclick=goTown};
    const load=(recenter=true,keep=false)=>{const q=++lq;if(!keep)st.near=null;if(recenter)center(HOME.la,HOME.lo);draw();nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(my!==st.run||q!==lq)return;st.near=j;draw();scan()}).catch(e=>{if(my!==st.run||q!==lq)return;st.near={err:"Couldn't reach the map service ("+String(e&&e.message||e).slice(0,160)+"). Tap Refresh to try again."};draw()})};
    const locate=()=>{draw();const ok=p=>{ME={la:p.coords.latitude,lo:p.coords.longitude};HOME={la:ME.la,lo:ME.lo,label:"from you"};if(my===st.run)load()};
     try{navigator.geolocation.getCurrentPosition(ok,()=>{if(my===st.run)load()},{timeout:7000,maximumAge:60000})}catch(e){load()}};
    ol();
    if(!st.geoTried){st.geoTried=1;locate()}else if(!st.near||st.near.err)load();else{draw();scan()}
-   $("#rq").oninput=e=>{st.rq=e.target.value;draw();ol()};
+   $("#rq").oninput=e=>{st.rq=e.target.value;draw()};$("#rq").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();e.target.blur();if(st.rq.trim().length>=2&&!EA.length)goTown()}};
    $("#rad").onchange=e=>{st.rad=+e.target.value;load()};$("#nb").onclick=()=>load();
    $("#sa").onclick=()=>{if(!map)return;const c=map.getCenter();HOME={la:c.lat,lo:c.lng,label:"map area"};$("#sa").style.display="none";load(false)};
    $("#loc").onclick=locate}

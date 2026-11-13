@@ -52,6 +52,13 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .fh{flex:none;width:30px;text-align:center;font-size:23px;line-height:1;color:var(--mute);padding:8px 0;margin:-8px 0 -8px -4px}.fh.on{color:var(--accent)}
 .hb{flex:none;border:0;background:none;color:var(--accent);font-size:24px;padding:6px 8px}
 .del{display:inline-block;margin-top:6px;padding:5px 12px;border:1px solid var(--line);border-radius:14px;color:var(--accent);cursor:pointer}
+.addm{flex:none;width:34px;height:34px;border-radius:50%;border:1.5px solid var(--accent);background:none;color:var(--accent);font-size:22px;line-height:30px;text-align:center;font-weight:500;cursor:pointer}.addm.on{background:var(--accent);color:#fff;font-size:15px;font-weight:700}
+#mbar{position:fixed;left:12px;right:12px;bottom:calc(62px + env(safe-area-inset-bottom));z-index:950;max-width:616px;margin:0 auto;display:none}
+#mbar button{width:100%;display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;border:1.5px solid var(--accent);background:var(--card);color:var(--ink);font-size:14.5px;box-shadow:0 4px 14px #0004}#mbar button span:last-child{color:var(--accent);font-weight:600;white-space:nowrap}
+body.hasmeal #mbar{display:block}body.hasmeal #cbar{bottom:calc(122px + env(safe-area-inset-bottom))}body.hasmeal #app{padding-bottom:calc(150px + env(safe-area-inset-bottom))}body.hasmeal .toast{bottom:190px}
+.mtot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 6px;margin:14px 0 10px}.mtot b{display:block;font-size:20px}.mtot span{font-size:12px;color:var(--mute)}
+.mq{display:flex;align-items:center;gap:2px;flex:none}.mq button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:18px;line-height:1}.mq span{min-width:22px;text-align:center;font-weight:600}
+.mbarw{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:6px 0}.mbarw i{display:block;height:100%;background:var(--accent)}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head><body><div id="app"></div>
 <nav class="tabs" id="tabs">
@@ -59,7 +66,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 <button data-t="picks"><svg viewBox="0 0 24 24"><path d="M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2L12 17.2 6.4 20.2l1.1-6.2L3 9.6l6.2-.9z"/></svg>Nearby</button>
 <button data-t="fav"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg>Favorites</button>
 <button data-t="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search</button>
-</nav>
+</nav><div id="mbar"></div>
 <script>
 const RAW=`F|Breakfast Burrito|Breakfast|50|729|63|30
 F|Steak & Egg Burrito|Breakfast|71|765|45|31
@@ -325,7 +332,7 @@ const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}
 /* ---- Favorites (kept on this device in localStorage) ---- */
-let FAV=(()=>{try{const j=JSON.parse(localStorage.getItem("eo_fav")||"{}");return{f:j.f||{},r:j.r||{}}}catch(e){return{f:{},r:{}}}})();
+let FAV=(()=>{try{const j=JSON.parse(localStorage.getItem("eo_fav")||"{}");return{f:j.f||{},r:j.r||{},m:j.m||{}}}catch(e){return{f:{},r:{}}}})();
 const FREG={},favSave=()=>{try{localStorage.setItem("eo_fav",JSON.stringify(FAV))}catch(e){}};
 const fkey=i=>norm(i.r+"|"+i.n)+"|"+Math.round(i.cal)+"|"+Math.round(i.p),isFavF=k=>!!FAV.f[k],isFavR=n=>!!FAV.r[norm(n)];
 function toggleFavF(k){if(FAV.f[k])delete FAV.f[k];else{const i=FREG[k];if(!i)return false;FAV.f[k]={n:i.n,r:i.r,c:i.c||"",p:i.p,cal:i.cal,cb:i.cb,f:i.f,ra:i.ra,b:i.b||"",u:!!i.u,t:Date.now()}}favSave();return isFavF(k)}
@@ -363,9 +370,52 @@ function metricFn(SC,FS,P,dfn){let key=null;for(const z of SC){const v=FS[z[0]];
  return i=>{if(key==="grams")return[i.p+" g","protein"];if(key==="ratio")return[i.ra+" g","per 100 cal"];if(key==="cal")return[i.cal,"calories"];
   if(key==="dist"){const d=dfn?dfn(i):null;return d==null?["—","distance"]:[(Math.round(d*10)/10)+" mi","away"]}
   if(key==="date")return[i.t?new Date(i.t).toLocaleDateString(undefined,{month:"short",day:"numeric"}):"—","saved"];return[i.p+" g","protein"]}}
+/* ---- Meal builder (kept on this device in localStorage) ---- */
+const GOAL={p:(()=>{try{const v=+localStorage.getItem("eo_gp");return v>0?v:180}catch(e){return 180}})()};
+let MEAL=(()=>{try{const j=JSON.parse(localStorage.getItem("eo_meal")||"null");return j&&Array.isArray(j.items)?j:{r:"",items:[]}}catch(e){return{r:"",items:[]}}})();
+const mealSave=()=>{try{localStorage.setItem("eo_meal",JSON.stringify(MEAL))}catch(e){}};
+const HCK=new Set(ITEMS.map(fkey)),isHC=i=>HCK.has(fkey(i));
+const fmt=n=>Math.round(n).toLocaleString("en-US"),num=v=>{const x=parseFloat(v);return isNaN(x)?null:x};
+const mSnap=i=>({k:fkey(i),n:i.n,r:i.r,c:i.c||"",p:i.p,cal:i.cal,cb:i.cb,f:i.f,b:i.b||"",u:i.u,s:i.s?1:0});
+const mQty=k=>{const x=MEAL.items.find(y=>y.k===k);return x?x.q:0},mCount=()=>MEAL.items.reduce((a,x)=>a+x.q,0);
+function mTotOf(L){const t={cal:0,p:0,cb:0,f:0,cbU:0,fU:0};for(const x of L){t.cal+=x.cal*x.q;t.p+=x.p*x.q;const c=num(x.cb),f=num(x.f);if(c==null)t.cbU++;else t.cb+=c*x.q;if(f==null)t.fU++;else t.f+=f*x.q}return t}
+function mDlg(title,msg,okLabel,onOk){const d=document.createElement("div");d.style.cssText="position:fixed;inset:0;z-index:4000;background:#0008;display:flex;align-items:center;justify-content:center;padding:20px";
+ d.innerHTML=`<div style="background:var(--card);color:var(--ink);border-radius:16px;padding:18px;max-width:360px;width:100%"><b style="font-size:17px">${esc(title)}</b><div class="mu" style="margin:8px 0 14px;font-size:14px">${esc(msg)}</div><button class="pri" style="margin:0 0 8px" data-o>${esc(okLabel)}</button><button class="pri" style="margin:0;background:none;color:var(--accent);border:1px solid var(--line)" data-c>Keep current meal</button></div>`;
+ document.body.appendChild(d);d.querySelector("[data-c]").onclick=()=>d.remove();d.querySelector("[data-o]").onclick=()=>{d.remove();onOk()}}
+function mealAdd(i,force){const k=fkey(i);
+ if(MEAL.items.length&&norm(MEAL.r)!==norm(i.r)&&!force){mDlg("Start a new meal?","Your current meal is from "+MEAL.r+". Adding from "+i.r+" starts a new meal and clears it. Open the Meal bar first if you want to save it.","Start new meal at "+i.r,()=>mealAdd(i,true));return false}
+ if(force)MEAL={r:i.r,items:[]};if(!MEAL.items.length)MEAL.r=i.r;
+ const x=MEAL.items.find(y=>y.k===k);if(x)x.q=Math.min(x.q+1,20);else MEAL.items.push({...mSnap(i),q:1});
+ mealSave();mealUI();return true}
+function mealUI(){const n=mCount(),b=$("#mbar");document.body.classList.toggle("hasmeal",n>0);
+ if(n){const t=mTotOf(MEAL.items);b.innerHTML=`<button id="mgo"><span><b>Meal</b> · ${n} item${n>1?"s":""}</span><span>${fmt(t.cal)} cal · ${fmt(t.p)} g protein ›</span></button>`;$("#mgo").onclick=mealOpen}else b.innerHTML="";
+ document.querySelectorAll("[data-add]").forEach(e=>{const q=mQty(e.dataset.add);e.textContent=q||"+";e.classList.toggle("on",q>0)})}
+function mealOpen(){shClose();if(!MEAL.items.length)return;const sh=document.createElement("div");sh.id="sheet";document.body.appendChild(sh);document.body.style.overflow="hidden";
+ const paint=()=>{if(!MEAL.items.length){shClose();mealUI();return}
+  const t=mTotOf(MEAL.items),pct=Math.round(t.p/GOAL.p*100),nh=MEAL.items.filter(x=>!isHC(x)).reduce((a,x)=>a+x.q,0),miss=t.cbU||t.fU;
+  sh.innerHTML=`<div class="sh"><div class="shh"><b>Meal</b><span class="mu">${esc(MEAL.r)}</span><button id="ml-x" aria-label="Close">✕</button></div>
+  ${MEAL.items.map((x,n)=>`<div class="srow" style="align-items:center;padding:8px 8px 8px 14px"><div style="min-width:0;flex:1"><div class="nm" style="font-size:15px">${esc(x.n)}</div><div class="mu">${fmt(x.cal*x.q)} cal · ${fmt(x.p*x.q)} g protein${x.q>1?" · "+x.q+" × "+fmt(x.cal)+" cal":""}${isHC(x)?"":" · not hand-checked"}</div><span class="del" data-rm="${n}" style="margin-top:4px">Remove</span></div><div class="mq"><button data-q="-1" data-n="${n}" aria-label="Fewer">−</button><span>${x.q}</span><button data-q="1" data-n="${n}" aria-label="More">+</button></div></div>`).join("")}
+  <div class="mtot"><div><b>${fmt(t.cal)}</b><span>Calories</span></div><div><b>${fmt(t.p)} g</b><span>Protein</span></div><div><b>${fmt(t.cb)}${t.cbU?"+":""} g</b><span>Carbs</span></div><div><b>${fmt(t.f)}${t.fU?"+":""} g</b><span>Fat</span></div></div>
+  <div class="supbox" style="margin:0 0 10px"><div style="display:flex;justify-content:space-between;gap:10px"><span><b>${pct}%</b> of your protein goal</span><span class="mu">${fmt(t.p)} / ${GOAL.p} g</span></div><div class="mbarw"><i style="width:${Math.min(100,pct)}%"></i></div><div class="bar" style="margin-top:6px;align-items:center"><span class="mu" style="flex:1">Daily protein goal (g)</span><input id="ml-g" type="number" inputmode="numeric" min="1" max="500" value="${GOAL.p}" style="flex:none;width:90px"></div></div>
+  ${nh?`<div class="mu" style="margin:0 0 10px;color:#b45309">${nh} item${nh>1?"s":""} in this meal ${nh>1?"aren't":"isn't"} hand-checked (online database or added by you), so these totals may be off.</div>`:""}
+  ${miss?`<div class="mu" style="margin:0 0 10px">Carbs or fat are missing for some items, so those totals are partial (shown with +).</div>`:""}
+  <input class="search" id="ml-nm" placeholder="${esc(MEAL.r)} meal" style="font-size:16px"><button class="pri" id="ml-save">Save to Favorites</button><button class="pri" id="ml-clr" style="background:none;color:var(--accent);border:1px solid var(--line)">Clear meal</button></div>`;
+  sh.querySelector("#ml-x").onclick=()=>{shClose();mealUI()};
+  sh.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const x=MEAL.items[+b.dataset.n];x.q+=+b.dataset.q;if(x.q<1)MEAL.items.splice(+b.dataset.n,1);if(x.q>20)x.q=20;mealSave();mealUI();paint()});
+  sh.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{MEAL.items.splice(+b.dataset.rm,1);mealSave();mealUI();paint()});
+  sh.querySelector("#ml-g").onchange=e=>{const v=Math.round(+e.target.value);if(v>=1&&v<=500){GOAL.p=v;try{localStorage.setItem("eo_gp",String(v))}catch(x){}}setTimeout(()=>{if($("#sheet")===sh)paint()},0)};
+  sh.querySelector("#ml-clr").onclick=()=>{MEAL={r:"",items:[]};mealSave();mealUI();shClose()};
+  sh.querySelector("#ml-save").onclick=()=>{const id="m"+Date.now(),nm=sh.querySelector("#ml-nm").value.trim()||MEAL.r+" meal";FAV.m[id]={id,name:nm,r:MEAL.r,items:MEAL.items.map(x=>({...x})),t:Date.now()};favSave();toast("Meal saved to Favorites")}};
+ paint()}
+function favMeals(el){const L=Object.values(FAV.m).sort((a,b)=>b.t-a.t);
+ el.innerHTML=L.length?L.map(m=>{const t=mTotOf(m.items),n=m.items.reduce((a,x)=>a+x.q,0);return `<div class="row" data-mid="${m.id}" style="cursor:pointer"><div class="t"><span class="nm">${esc(m.name)}</span><span class="pp">${fmt(t.p)} g</span></div><div class="mu">${esc(m.r)} · ${n} item${n>1?"s":""} · ${fmt(t.cal)} cal · ${fmt(t.p)} g protein</div><div class="det">${m.items.map(x=>`${x.q} × ${esc(x.n)}`).join("<br>")}<div style="margin-top:8px"><span class="del" data-use>Use this meal</span> <span class="del" data-mdel>Delete</span></div></div></div>`}).join(""):'<div class="empty">No saved meals yet.<br>Add foods with the + button, open the Meal bar, and tap “Save to Favorites”.</div>';
+ el.querySelectorAll("[data-mid]").forEach(r=>r.onclick=e=>{const m=FAV.m[r.dataset.mid];if(!m)return;
+  if(e.target.closest("[data-mdel]")){delete FAV.m[m.id];favSave();favMeals(el);return}
+  if(e.target.closest("[data-use]")){const go=()=>{MEAL={r:m.r,items:m.items.map(x=>({...x}))};mealSave();mealUI();mealOpen()};if(MEAL.items.length)mDlg("Replace your current meal?","Your current meal from "+MEAL.r+" will be replaced with “"+m.name+"”.","Use saved meal",go);else go();return}
+  r.classList.toggle("open")})}
 function itemRow(i,showR,mf){const mt=mf?mf(i):[i.p+" g","protein"];const fk=fkey(i);FREG[fk]=i;return `<button class="row" onclick="this.classList.toggle('open')"><div class="rw"><span class="fh${isFavF(fk)?" on":""}" data-fav="${fk}" role="button" aria-label="Save to favorites">${isFavF(fk)?"♥":"♡"}</span><div style="flex:1;min-width:0"><div class="t"><span class="nm">${esc(i.n)}</span></div>${showR?`<div class="mu">${esc(i.r)}</div>`:""}
 <div class="mu">${i.cal} cal · ${i.ra} g protein per 100 cal</div>
-<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div><div class="ppc"><b>${mt[0]}</b><span>${mt[1]}</span></div></div></button>`}
+<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/GOAL.p*100)}% of your ${GOAL.p} g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div><span class="addm${mQty(fk)?" on":""}" data-add="${fk}" role="button" aria-label="Add to meal">${mQty(fk)||"+"}</span><div class="ppc"><b>${mt[0]}</b><span>${mt[1]}</span></div></div></button>`}
 const PICKS={
  meal:{sh:"High Protein",t:"High protein meals",s:"40 g or more protein",f:i=>i.p>=40,o:(a,b)=>b.p-a.p},
  lean:{sh:"High Protein Low Calorie",t:"High protein, low calorie",s:"10 g+ protein per 100 calories",f:i=>i.ra>=10,o:(a,b)=>b.ra-a.ra},
@@ -394,6 +444,7 @@ async function supDel(name,x){const m=supOf(name);if(!m)return;const rest=m.item
   supCache();applySup();render();window.scrollTo(0,y);toast("Removed")}catch(e){toast(e.message.slice(0,80))}}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(b){e.stopPropagation();e.preventDefault();supDel(b.dataset.rn,+b.dataset.del);return}
  const f=e.target.closest("[data-fav]");if(f){e.stopPropagation();e.preventDefault();const on=toggleFavF(f.dataset.fav);f.textContent=on?"♥":"♡";f.classList.toggle("on",on);if(st.tab==="fav"&&!on){const y=window.scrollY;render();window.scrollTo(0,y)}}},true);
+document.addEventListener("click",e=>{const a=e.target.closest("[data-add]");if(a){e.stopPropagation();e.preventDefault();const i=FREG[a.dataset.add];if(i)mealAdd(i)}},true);
 const curName=()=>st.web?st.web.name:st.view?R[st.view].n:"";
 function readFile(f){return new Promise((ok,no)=>{const fr=new FileReader();fr.onerror=()=>no(new Error("Couldn't read that file."));
  if(f.type==="application/pdf"){if(f.size>3e6)return no(new Error("That PDF is over 3 MB. Paste its link instead."));fr.onload=()=>ok({mime:f.type,data:String(fr.result).split(",")[1]});fr.readAsDataURL(f)}
@@ -462,7 +513,7 @@ function render(){
    h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, favorites first, then nearest</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="ol"></div><div id="rl"></div><div id="cbar"></div>`;
   }
  }
- if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods and restaurants you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button></div><button class="frow" id="fsort" style="margin:0 0 10px"></button><div id="fl"></div>`}
+ if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods, restaurants and meals you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button><button data-k="meals">Meals</button></div><button class="frow" id="fsort" style="margin:0 0 10px"></button><div id="fl"></div>`}
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off"><div id="rr"></div><div id="fr"></div><div id="wr"></div>`}
  app.innerHTML=h;wire();supWire();favWire();window.scrollTo(0,0);
 }
@@ -559,8 +610,8 @@ function wire(){
  if(st.tab==="rest"&&st.view){const draw=()=>{const FSm=st.fsm=st.fsm||{sh:"all",p:"r",l:""},P=PICKS[FSm.sh];sortBar($("#msort"),MSC(),FSm,"fsom",draw);let L=ITEMS.filter(i=>P.f(i)&&i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    const sc=sortCmp(MSC(),FSm,()=>null),mf=metricFn(MSC(),FSm,P,()=>null);L.sort((a,b)=>sc(a,b)||P.o(a,b));$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false,mf)).join(""):'<div class="empty">Nothing matches.</div>'};
    draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()}}
- if(st.tab==="fav"){const draw=()=>{const foods=st.fseg!=="rest",el=$("#fl");
-   document.querySelectorAll("#fseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===(foods?"foods":"rest")));const SC=foods?[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein Rank",[["r","Per 100 Cal"],["h","Total Grams"]]],["l","Calories",[["w","Fewest"],["m","Most"]]],["g","Group By Restaurant",[["a","A–Z"],["z","Z–A"]]]]:[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["a","Name",[["a","A–Z"],["z","Z–A"]]]];
+ if(st.tab==="fav"){const draw=()=>{const foods=st.fseg!=="rest"&&st.fseg!=="meals",el=$("#fl");$("#fsort").style.display=st.fseg==="meals"?"none":"";
+   document.querySelectorAll("#fseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===(st.fseg||"foods")));if(st.fseg==="meals"){favMeals(el);return}const SC=foods?[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein Rank",[["r","Per 100 Cal"],["h","Total Grams"]]],["l","Calories",[["w","Fewest"],["m","Most"]]],["g","Group By Restaurant",[["a","A–Z"],["z","Z–A"]]]]:[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["a","Name",[["a","A–Z"],["z","Z–A"]]]];
    const FS=st.fs=st.fs||{sh:"all",d:"n",c:"",p:"",a:"",l:"",g:""};if(!foods){if(FS.sh!==undefined)st._sh=FS.sh;delete FS.sh}else if(FS.sh===undefined)FS.sh=st._sh||"all";
    sortBar($("#fsort"),SC,FS,"fso",draw);
    const dk=k=>k&&R[k]?dist(R[k]):null;
@@ -600,5 +651,5 @@ function wire(){
    $("#fq").oninput=e=>{st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();clearTimeout(tm);tm=setTimeout(()=>online(st.iq),500)}}
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.view=null;st.web=null;st.cv=false;st.pick=null;st.iq="";st.rq="";st.cat="All";render()});
-render();
+mealUI();render();
 </script></body></html>

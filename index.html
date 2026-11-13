@@ -405,7 +405,7 @@ function render(){
 }
 function wire(){
  if(st.tab==="rest"&&!st.view&&!st.web&&!st.cv){
-   const my=++st.run;let E=[],map=null,layer=null,prog=false,lg=null,pts=[];
+   const my=++st.run;let E=[],map=null,layer=null,prog=false,lg=null,pts=[],pt=null,lq=0;
    const zoomFor=()=>st.rad<=1609?15:st.rad<=4828?13:12;
    const FORK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8M4 3v5a3 3 0 006 0V3M7 11v10M17 3c-2 2-3 5-3 8h3v10"/></svg>';
    const icon=(on,me,sel)=>{const z=me?16:on?30:20;return L.divIcon({className:"",html:`<div class="pin ${me?"me":on?"":"off"}${sel?" sel":""}">${me?"":on?"<span>🍴</span>":FORK}</div>`,iconSize:[z,z],iconAnchor:[z/2,z/2]})};
@@ -422,7 +422,8 @@ function wire(){
       L.marker([o.x.la,o.x.lo],{interactive:false,keyboard:false,icon:L.divIcon({className:"",html:`<div class="lbl ${o.on?"":"off "}${side}" style="width:${w}px">${esc(o.x.name)}</div>`,iconSize:[w,hh],iconAnchor:side==="r"?[-(o.z/2+3),hh/2]:[w+o.z/2+3,hh/2]})}).addTo(lg);break}}))};
    const center=(la,lo)=>{if(!map)return;prog=true;map.setView([la,lo],zoomFor());setTimeout(()=>{prog=false},600);$("#sa").style.display="none"};
    if(window.L){map=L.map("map",{zoomControl:false}).setView([HOME.la,HOME.lo],zoomFor());L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(map);layer=L.layerGroup().addTo(map);lg=L.layerGroup().addTo(map);map.on("zoomend",()=>placeLabels());
-    map.on("moveend",()=>{if(!prog)$("#sa").style.display="block"})}else $("#map").style.display="none";
+    map.on("moveend",()=>{if(prog)return;clearTimeout(pt);pt=setTimeout(()=>{if(my!==st.run)return;const c=map.getCenter(),t=Math.PI/180,dx=(c.lng-HOME.lo)*t*Math.cos(HOME.la*t),dy=(c.lat-HOME.la)*t;
+     if(Math.sqrt(dx*dx+dy*dy)*6371000>st.rad*.25){HOME={la:c.lat,lo:c.lng,label:"map area"};load(false,true)}},700)})}else $("#map").style.display="none";
    const open=x=>{if(x.ok)st.view=x.k;else st.web={name:x.name};render()};
    const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
     E=Object.keys(R).filter(k=>dist(R[k])*1609.34<=st.rad&&(!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q))).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,has:1,sub:R[k].a+" · "+ITEMS.filter(i=>i.k===k).length+" items",ok:1}));
@@ -442,7 +443,7 @@ function wire(){
     const cb=$("#cbar");cb.innerHTML=st.cmp.length?`<button id="cgo">Compare ${st.cmp.length} restaurant${st.cmp.length>1?"s":""} ›</button>`:"";if(st.cmp.length)$("#cgo").onclick=()=>{st.cv=true;render()}};
    const scan=async()=>{const T=E.filter(x=>!x.ok&&x.has==null).slice(0,30);let k=0;for(const x of T){if(my!==st.run)return;try{await hasMenu(x.name)}catch(e){return}if(++k%5===0&&my===st.run)draw()}if(my===st.run&&k)draw()};
    const ol=()=>{const q=st.rq.trim();$("#ol").innerHTML=q.length>=2?`<button class="big" onclick="st.web={name:st.rq.trim()};render()"><b>Look up “${esc(q)}” online</b><span>Not in the list? Pull its menu from the nutrition database</span></button>`:""};
-   const load=(recenter=true)=>{st.near=null;if(recenter)center(HOME.la,HOME.lo);draw();nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(my!==st.run)return;st.near=j;draw();scan()}).catch(e=>{if(my!==st.run)return;st.near={err:"Couldn't reach the map service ("+String(e&&e.message||e).slice(0,160)+"). Tap Refresh to try again."};draw()})};
+   const load=(recenter=true,keep=false)=>{const q=++lq;if(!keep)st.near=null;if(recenter)center(HOME.la,HOME.lo);draw();nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(my!==st.run||q!==lq)return;st.near=j;draw();scan()}).catch(e=>{if(my!==st.run||q!==lq)return;st.near={err:"Couldn't reach the map service ("+String(e&&e.message||e).slice(0,160)+"). Tap Refresh to try again."};draw()})};
    const locate=()=>{draw();const ok=p=>{ME={la:p.coords.latitude,lo:p.coords.longitude};HOME={la:ME.la,lo:ME.lo,label:"from you"};if(my===st.run)load()};
     try{navigator.geolocation.getCurrentPosition(ok,()=>{if(my===st.run)load()},{timeout:7000,maximumAge:60000})}catch(e){load()}};
    ol();

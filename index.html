@@ -441,16 +441,16 @@ function wire(){
    const zoomFor=()=>st.rad<=1609?15:st.rad<=4828?13:12;
    const FORK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3v8M4 3v5a3 3 0 006 0V3M7 11v10M17 3c-2 2-3 5-3 8h3v10"/></svg>';
    const CHK='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7"/></svg>';
-   const icon=(on,me,sel,n)=>{const z=me?16:on?26:20;return L.divIcon({className:"",html:`<div class="pin ${me?"me":on?"ok":"off"}${sel?" sel":""}">${me?"":on?CHK+`<b class="cnt">${n>99?"99+":n}</b>`:FORK}</div>`,iconSize:[z,z],iconAnchor:[z/2,z/2]})};
+   const icon=(on,me,sel,n)=>{const z=me?16:on?26:20;return L.divIcon({className:"",html:`<div class="pin ${me?"me":on?"ok":"off"}${sel?" sel":""}">${me?"":on?CHK:FORK}</div>`,iconSize:[z,z],iconAnchor:[z/2,z/2]})};
    const cx=document.createElement("canvas").getContext("2d");
    // Plain-text map labels with collision avoidance: pins are reserved first, then labels for restaurants with menus, then the rest. A label that would overlap anything is skipped.
    const placeLabels=()=>{if(!map||!lg)return;lg.clearLayers();const sz=map.getSize(),rc=[],hh=14;
     const hit=r=>rc.some(o=>r.l<o.r&&r.r>o.l&&r.t<o.b&&r.b>o.t);
     const mp=map.latLngToContainerPoint([ME.la,ME.lo]);rc.push({l:mp.x-9,r:mp.x+9,t:mp.y-9,b:mp.y+9});
-    const P=pts.filter(x=>x.la!=null).map(x=>{const q=map.latLngToContainerPoint([x.la,x.lo]),on=x.has>0,z=on?26:20;rc.push({l:q.x-z/2-1,r:q.x+z/2+1+(on?10:0),t:q.y-z/2-1-(on?10:0),b:q.y+z/2+1});return{x,q,on,z}});
+    const P=pts.filter(x=>x.la!=null).map(x=>{const q=map.latLngToContainerPoint([x.la,x.lo]),on=x.has>0,z=on?26:20;rc.push({l:q.x-z/2-1,r:q.x+z/2+1,t:q.y-z/2-1,b:q.y+z/2+1});return{x,q,on,z}});
     cx.font="600 12px -apple-system,system-ui,sans-serif";
     [P.filter(o=>o.on),P.filter(o=>!o.on)].forEach(g=>g.forEach(o=>{const w=Math.ceil(cx.measureText(o.x.name).width)+2,t=o.q.y-hh/2;
-     for(const side of ["r","l"]){const pd=o.on?10:0,l=side==="r"?o.q.x+o.z/2+3+pd:o.q.x-o.z/2-3-w,r={l,r:l+w,t,b:t+hh};
+     for(const side of ["r","l"]){const pd=0,l=side==="r"?o.q.x+o.z/2+3+pd:o.q.x-o.z/2-3-w,r={l,r:l+w,t,b:t+hh};
       if(r.l<2||r.r>sz.x-2||r.t<2||r.b>sz.y-2||hit(r))continue;rc.push(r);
       L.marker([o.x.la,o.x.lo],{interactive:false,keyboard:false,icon:L.divIcon({className:"",html:`<div class="lbl ${o.on?"":"off "}${side}" style="width:${w}px">${esc(o.x.name)}</div>`,iconSize:[w,hh],iconAnchor:side==="r"?[-(o.z/2+3+pd),hh/2]:[w+o.z/2+3,hh/2]})}).addTo(lg);break}}))};
    const center=(la,lo)=>{if(!map)return;prog=true;map.setView([la,lo],zoomFor());setTimeout(()=>{prog=false},600);$("#sa").style.display="none"};
@@ -459,11 +459,11 @@ function wire(){
      if(Math.sqrt(dx*dx+dy*dy)*6371000>st.rad*.25){HOME={la:c.lat,lo:c.lng,label:"map area"};load(false,true)}},700)})}else $("#map").style.display="none";
    const open=x=>{if(x.ok)st.view=x.k;else st.web={name:x.name};render()};
    const draw=()=>{const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
-    E=Object.keys(R).filter(k=>dist(R[k])*1609.34<=st.rad&&(!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q))).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,has:Math.max(1,ITEMS.filter(i=>i.k===k).length),sub:R[k].a+" · "+ITEMS.filter(i=>i.k===k).length+" items",ok:1}));
-    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?c+" items online":c===0?"no menu found":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
+    E=Object.keys(R).filter(k=>dist(R[k])*1609.34<=st.rad&&(!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q))).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,has:Math.max(1,ITEMS.filter(i=>i.k===k).length),sub:R[k].a,ok:1}));
+    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||x.name.toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?"":c===0?"no menu found":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
     E.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||a.mi-b.mi);
     const status=!st.near?'<div class="empty" style="padding:8px 0">Finding restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
-    $("#rl").innerHTML=status+'<div class="mu" style="margin:6px 0">'+E.length+' restaurants · <span class="ck">✓</span> menu available (number = items) · gray = no menu</div>'+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${x.has>0?'<span class="ck">✓</span> ':""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
+    $("#rl").innerHTML=status+'<div class="mu" style="margin:6px 0">'+E.length+' restaurants · <span class="ck">✓</span> menu available · gray = no menu</div>'+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${x.has>0?'<span class="ck">✓ '+x.has+'</span> ':""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
     $("#rl").querySelectorAll("[data-e]").forEach(r=>r.onclick=e=>{if(e.target.closest("[data-s]"))return;open(E[+r.dataset.e])});
     $("#rl").querySelectorAll("[data-s]").forEach(b=>b.onclick=e=>{e.stopPropagation();cmpToggle(E[+b.dataset.s]);draw()});
     if(layer){layer.clearLayers();L.marker([ME.la,ME.lo],{icon:icon(1,1),interactive:false}).addTo(layer);

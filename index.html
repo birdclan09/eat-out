@@ -45,6 +45,8 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .pri{display:block;width:100%;padding:14px;border-radius:14px;border:0;background:var(--accent);color:var(--bg);font-size:16px;font-weight:600;margin-top:12px}
 #sheet{position:fixed;inset:0;z-index:3000;background:var(--bg);overflow:auto}#sheet .sh{max-width:640px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 14px 40px}
 .shh{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}.shh b{font-size:22px}.shh .mu{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.shh button{margin-left:auto;border:0;background:none;color:var(--mute);font-size:24px;padding:2px 8px}
+.frow{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:14px;margin:6px 0 10px}
+.pk{display:flex;align-items:center;gap:10px;padding:12px 2px;border-top:1px solid var(--line)}.pk input{width:20px;height:20px;accent-color:var(--accent);flex:none}.pk .nm{flex:1;min-width:0}.pk .mu{flex:none}
 .del{display:inline-block;margin-top:6px;padding:5px 12px;border:1px solid var(--line);border-radius:14px;color:var(--accent);cursor:pointer}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head><body><div id="app"></div>
@@ -400,7 +402,7 @@ function render(){
  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===st.tab));
  let h="";
  if(st.tab==="picks"){
-  {h=`<h1>Nearby</h1><div class="sub" id="psub">Finding restaurants within 2 miles…</div><div id="pchips"></div><div class="seg" id="pseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="pcs"></div><div id="pitems"></div><div class="foot">Tap a restaurant above to leave it out. Online items come from FatSecret and are not hand-checked. Only the 30 nearest places are checked, so a few may be missing.</div>`}
+  {h=`<h1>Nearby</h1><div class="sub" id="psub">Finding restaurants within 2 miles…</div><button class="frow" id="pfilt"><span>Restaurants</span><span style="color:var(--accent)">Choose ›</span></button><div class="seg" id="pseg" style="margin-bottom:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 0;padding:9px 2px;font-size:13px">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="pcs"></div><div id="pitems"></div><div class="foot">Online items come from FatSecret and are not hand-checked. Only the 30 nearest places are checked, so a few may be missing.</div>`}
  }
  if(st.tab==="rest"){
   if(st.cv){h=`<button class="back" onclick="st.cv=false;render()">‹ Restaurants</button><h1>Compare</h1><div class="sub">Best foods across the places you picked</div><div id="chips"></div><div class="seg" id="cseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="csub"></div><div id="citems"></div><div class="foot">Hand-checked items come from the restaurant's own nutrition. Online items come from FatSecret and are not hand-checked.</div>`}
@@ -468,10 +470,17 @@ function wire(){
  if(st.tab==="picks"&&st.pnv){const my=++st.run,RADM=3219;let C=st.pc;
    const dmi=(la,lo)=>{const t=Math.PI/180,dx=(lo-ME.lo)*t*Math.cos(ME.la*t),dy=(la-ME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8};
    const itemsOf=c=>c.k?ITEMS.filter(i=>i.k===c.k):(MENU.get(c.id)||null);
+   const pkSheet=ok=>{shClose();const s=document.createElement("div");s.id="sheet";document.body.appendChild(s);document.body.style.overflow="hidden";
+    const cnt=()=>ok.filter(c=>!st.poff.has(c.id)).length+" of "+ok.length+" included";
+    const paint=()=>{s.innerHTML=`<div class="sh"><div class="shh"><b>Restaurants</b><span class="mu" id="pk-n">${cnt()}</span><button id="sh-x" aria-label="Close">✕</button></div><div class="bar" style="margin:0 0 4px"><button id="pk-all">Select all</button><button id="pk-none">Clear all</button></div>`+
+      ok.map(c=>{const L=itemsOf(c);return `<label class="pk"><input type="checkbox" data-c="${c.id}"${st.poff.has(c.id)?"":" checked"}><span class="nm">${esc(c.name)}</span><span class="mu">${Math.round(c.mi*10)/10} mi · ${L.length} items</span></label>`}).join("")+`<button class="pri" id="pk-done">Done</button></div>`;
+     s.querySelector("#sh-x").onclick=s.querySelector("#pk-done").onclick=shClose;
+     s.querySelector("#pk-all").onclick=()=>{st.poff.clear();paint();draw()};s.querySelector("#pk-none").onclick=()=>{ok.forEach(c=>st.poff.add(c.id));paint();draw()};
+     s.querySelectorAll("[data-c]").forEach(i=>i.onchange=()=>{i.checked?st.poff.delete(i.dataset.c):st.poff.add(i.dataset.c);s.querySelector("#pk-n").textContent=cnt();draw()})};
+    paint()};
    const draw=()=>{if(!C)return;const ok=C.filter(c=>{const L=itemsOf(c);return L&&L.length}),pend=C.filter(c=>itemsOf(c)==null).length;
-    $("#psub").textContent=`Within 2 miles of you · ${ok.length} with menus`+(pend?` · checking ${pend} more…`:"");
-    $("#pchips").innerHTML=ok.map(c=>`<span class="chip${st.poff.has(c.id)?" offc":""}" data-c="${c.id}">🍴 ${esc(c.name)}</span>`).join("");
-    $("#pchips").querySelectorAll("[data-c]").forEach(s=>s.onclick=()=>{st.poff.has(s.dataset.c)?st.poff.delete(s.dataset.c):st.poff.add(s.dataset.c);draw()});
+    $("#psub").textContent="Within 2 miles of you"+(pend?` · checking ${pend} more…`:"");
+    {const n=ok.filter(c=>!st.poff.has(c.id)).length;$("#pfilt").innerHTML=`<span>${n===ok.length?"All "+ok.length:n+" of "+ok.length} restaurants</span><span style="color:var(--accent)">Choose ›</span>`;$("#pfilt").onclick=()=>pkSheet(ok)}
     $("#pseg").querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.k===st.pcat));
     const P=PICKS[st.pcat];let all=[];ok.filter(c=>!st.poff.has(c.id)).forEach(c=>{all=all.concat(itemsOf(c))});
     const L=all.filter(P.f).sort(P.o).slice(0,20);$("#pcs").textContent=P.s;

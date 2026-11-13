@@ -41,6 +41,10 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .supbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:10px 0}.supbox summary{font-weight:600;cursor:pointer}
 .bar input{flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px}
 .rv{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.rv button{border:0;background:none;color:var(--mute);font-size:16px;padding:6px 10px}
+.supbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 10px;min-height:34px}.supbar .mu{min-width:0}.addb{flex:none;padding:8px 14px;border-radius:18px;border:1px solid var(--accent);background:none;color:var(--accent);font-size:14px;font-weight:600;margin-left:auto}
+.pri{display:block;width:100%;padding:14px;border-radius:14px;border:0;background:var(--accent);color:var(--bg);font-size:16px;font-weight:600;margin-top:12px}
+#sheet{position:fixed;inset:0;z-index:3000;background:var(--bg);overflow:auto}#sheet .sh{max-width:640px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 14px 40px}
+.shh{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}.shh b{font-size:22px}.shh .mu{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.shh button{margin-left:auto;border:0;background:none;color:var(--mute);font-size:24px;padding:2px 8px}
 .del{display:inline-block;margin-top:6px;padding:5px 12px;border:1px solid var(--line);border-radius:14px;color:var(--accent);cursor:pointer}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head><body><div id="app"></div>
@@ -342,46 +346,55 @@ async function supDel(name,x){const m=supOf(name);if(!m)return;const rest=m.item
   supCache();applySup();render();window.scrollTo(0,y);toast("Removed")}catch(e){toast(e.message.slice(0,80))}}
 document.addEventListener("click",e=>{const b=e.target.closest("[data-del]");if(b){e.stopPropagation();e.preventDefault();supDel(b.dataset.rn,+b.dataset.del)}},true);
 const curName=()=>st.web?st.web.name:st.view?R[st.view].n:"";
-function supPanel(){const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
- const src=m&&m.source&&m.source.url?`Source: <a href="${esc(m.source.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(host(m.source.url))}</a> · updated ${fmtD(m.source.t)} · <a href="#" id="s-ref" style="color:var(--accent)">Refresh from source</a>`:"";
- return `<details id="sup" class="supbox"${st.supOpen?" open":""}><summary>Add or update menu items${cnt?" · "+cnt+" added":""}</summary>
- <div class="mu" style="margin:8px 0">${src||"Items you add are saved to your repo and show up in every list."}</div>
- <button class="big s-search" style="margin-bottom:10px"><b>Search online for nutrition info</b><span>Finds the restaurant's own numbers; you review before saving</span></button>
- <input class="search" id="s-url" placeholder="Paste a menu or nutrition link (page or PDF)" inputmode="url">
- <div class="bar"><button id="s-imp">Import link</button><button id="s-file">Upload PDF or photo</button></div><input type="file" id="s-f" accept="application/pdf,image/*" hidden>
- <div class="mu" style="margin:12px 0 6px">Or add one item by hand</div>
- <input class="search" id="m-n" placeholder="Item name">
- <div class="bar"><input id="m-c" inputmode="decimal" placeholder="Cal"><input id="m-p" inputmode="decimal" placeholder="Protein g"><input id="m-cb" inputmode="decimal" placeholder="Carbs g"><input id="m-f" inputmode="decimal" placeholder="Fat g"></div>
- <div class="bar"><button id="m-add">Add item</button></div>
- <div class="mu" id="s-msg" style="margin-top:8px"></div><div id="s-rev"></div></details>`}
-const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Search online for nutrition info</b><span>Looks for official numbers and adds them after you review</span></button>`;
 function readFile(f){return new Promise((ok,no)=>{const fr=new FileReader();fr.onerror=()=>no(new Error("Couldn't read that file."));
  if(f.type==="application/pdf"){if(f.size>3e6)return no(new Error("That PDF is over 3 MB. Paste its link instead."));fr.onload=()=>ok({mime:f.type,data:String(fr.result).split(",")[1]});fr.readAsDataURL(f)}
  else if(/^image\//.test(f.type)){fr.onload=()=>{const im=new Image();im.onerror=()=>no(new Error("Couldn't open that image."));im.onload=()=>{const s=Math.min(1,1800/Math.max(im.width,im.height)),c=document.createElement("canvas");c.width=Math.round(im.width*s);c.height=Math.round(im.height*s);c.getContext("2d").drawImage(im,0,0,c.width,c.height);ok({mime:"image/jpeg",data:c.toDataURL("image/jpeg",.85).split(",")[1]})};im.src=fr.result};fr.readAsDataURL(f)}
  else no(new Error("Upload a PDF or a photo."))})}
-function drawRev(){const r=st.rev,el=$("#s-rev");if(!r||!el)return;
- if(!r.items.length){el.innerHTML=`<div class="mu" style="margin-top:8px">${esc(r.notes||"No items with calories and protein were found.")}</div>`;return}
- const have=(supOf(r.name)||{items:[]}).items.length,two=have&&!r.replace;
- el.innerHTML=`<div class="mu" style="margin:10px 0 6px"><b>${r.items.length} items found</b>${r.source&&r.source.url?" at "+esc(host(r.source.url)):""}. Remove any that look wrong, then save.${r.notes?"<br>"+esc(r.notes):""}</div>`+
-  r.items.map((i,x)=>`<div class="rv"><span>${esc(i.n)}<br><span class="mu">${i.cal} cal · ${i.p} g protein${i.cb!=null?" · "+i.cb+" g carbs":""}${i.f!=null?" · "+i.f+" g fat":""}</span></span><button data-rx="${x}" aria-label="Remove">✕</button></div>`).join("")+
-  `<div class="bar"><button id="rv-save">${two?"Add to menu":"Save to menu"}</button>${two?'<button id="rv-rep">Replace menu</button>':""}<button id="rv-no">Discard</button></div>`;
- el.querySelectorAll("[data-rx]").forEach(b=>b.onclick=()=>{r.items.splice(+b.dataset.rx,1);drawRev()});
- const go=async rp=>{$("#s-msg").textContent="Saving…";try{await supSave(r.name,r.items,r.source,rp);st.rev=null;const y=window.scrollY;st.supOpen=true;render();window.scrollTo(0,y);toast("Saved to your menu")}catch(e){$("#s-msg").textContent=e.message}};
- $("#rv-save").onclick=()=>go(r.replace);if(two)$("#rv-rep").onclick=()=>go(true);$("#rv-no").onclick=()=>{st.rev=null;drawRev()}}
-function supWire(){const box=$("#sup");document.querySelectorAll(".s-search").forEach(b=>b.onclick=()=>{const d=$("#sup");if(d){d.open=true;st.supOpen=true}run({mode:"search",near:ME.la.toFixed(3)+", "+ME.lo.toFixed(3)+" (latitude, longitude)"},"Searching the web… this can take up to a minute.")});
- if(!box)return;const name=curName(),msg=t=>{$("#s-msg").textContent=t||""};
- window.run=run;function run(body,label){msg(label);return api("/api/import",{name,...body}).then(j=>{st.rev={name,items:j.items||[],notes:j.notes,source:j.source,replace:!!body.replace};msg("");drawRev()}).catch(e=>msg(e.message))}
- box.ontoggle=()=>{st.supOpen=box.open};
- $("#s-imp").onclick=()=>{const u=$("#s-url").value.trim();if(!u)return msg("Paste a link first.");run({mode:"url",url:u},"Reading the page… this can take up to a minute.")};
- $("#s-file").onclick=()=>$("#s-f").click();
- $("#s-f").onchange=async e=>{const f=e.target.files[0];e.target.value="";if(!f)return;try{msg("Preparing the file…");const d=await readFile(f);run({mode:"file",...d},"Reading the file… this can take up to a minute.")}catch(x){msg(x.message)}};
- const ref=$("#s-ref");if(ref)ref.onclick=e=>{e.preventDefault();run({mode:"url",url:supOf(name).source.url,replace:1},"Re-reading the source…")};
- $("#m-add").onclick=async()=>{const n=$("#m-n").value.trim(),v=id=>{const x=parseFloat($(id).value);return Number.isFinite(x)&&x>=0?x:null};
-  const it={n,cal:v("#m-c"),p:v("#m-p"),cb:v("#m-cb"),f:v("#m-f")};if(!n||!(it.cal>0)||it.p==null)return msg("Needs a name, calories and protein.");
-  msg("Saving…");try{await supSave(name,[it],null,false);const y=window.scrollY;st.supOpen=true;render();window.scrollTo(0,y);toast("Added")}catch(e){msg(e.message)}};
- if(st.rev&&st.rev.name===name)drawRev()}
+const SH={name:"",tab:"search",note:"",busy:false,hand:{}};
+const near=()=>ME.la.toFixed(3)+", "+ME.lo.toFixed(3)+" (latitude, longitude)";
+const supBar=()=>{const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
+ const src=m&&m.source&&m.source.url?`<a href="${esc(m.source.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(host(m.source.url))}</a> · ${fmtD(m.source.t)} · <a href="#" id="s-ref" style="color:var(--accent)">Refresh</a>`:cnt?cnt+" added by you":"";
+ return `<div class="supbar"><div class="mu">${src}</div><button class="addb" id="s-open">+ Add items</button></div>`};
+const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Search online for nutrition info</b><span>Official numbers, reviewed by you before saving</span></button><div style="text-align:center"><a href="#" id="s-open2" style="color:var(--accent)">Add items another way</a></div>`;
+function shClose(){const s=$("#sheet");if(s)s.remove();document.body.style.overflow="";SH.busy=false}
+function shOpen(tab,auto){shClose();SH.name=curName();SH.tab=tab||"search";SH.note="";const s=document.createElement("div");s.id="sheet";document.body.appendChild(s);document.body.style.overflow="hidden";shDraw();if(auto)shRun({mode:"search",near:near()},"Searching the web.")}
+async function shRun(body,label){SH.busy=true;SH.note=label+" This can take up to a minute.";st.rev=null;shDraw();
+ try{const j=await api("/api/import",{name:SH.name,...body});st.rev={name:SH.name,items:j.items||[],notes:j.notes,source:j.source,replace:!!body.replace};SH.note=""}catch(e){SH.note=e.message}
+ SH.busy=false;shDraw()}
+function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&st.rev.name===name?st.rev:null,H=SH.hand||{};
+ const TABS=[["search","Search"],["link","Link"],["file","PDF/photo"],["hand","By hand"]],note=SH.note?`<div class="mu" style="margin-top:12px">${esc(SH.note)}</div>`:"";
+ const TB={search:`<div class="mu" style="margin:4px 0">Looks for ${esc(name)}'s own published nutrition numbers. You review them before anything is saved.</div><button class="pri" id="t-search">Search now</button>`,
+  link:`<div class="mu" style="margin:4px 0 10px">A menu or nutrition page, or a link to a PDF.</div><input class="search" id="s-url" placeholder="https://" inputmode="url" autocapitalize="off"><button class="pri" id="t-link">Import link</button>`,
+  file:`<div class="mu" style="margin:4px 0">A nutrition PDF (up to 3 MB) or a photo of the menu.</div><button class="pri" id="t-file">Choose file</button><input type="file" id="s-f" accept="application/pdf,image/*" hidden>`,
+  hand:`<input class="search" id="m-n" placeholder="Item name" value="${esc(H.n||"")}"><div class="bar"><input id="m-c" inputmode="decimal" placeholder="Cal" value="${esc(H.c||"")}"><input id="m-p" inputmode="decimal" placeholder="Protein" value="${esc(H.p||"")}"><input id="m-cb" inputmode="decimal" placeholder="Carbs" value="${esc(H.cb||"")}"><input id="m-f" inputmode="decimal" placeholder="Fat" value="${esc(H.f||"")}"></div><div class="mu" style="margin-top:6px">Grams for protein, carbs and fat.</div><button class="pri" id="t-hand">Add item</button>`};
+ let body;
+ if(SH.busy)body=`<div class="empty">${esc(SH.note)}</div>`;
+ else if(r&&r.items.length){const have=(supOf(name)||{items:[]}).items.length,two=have&&!r.replace;
+  body=`<div class="mu" style="margin-bottom:6px"><b>${r.items.length} items found</b>${r.source&&r.source.url?" at "+esc(host(r.source.url)):""}. Remove any that look wrong, then save.${r.notes?"<br>"+esc(r.notes):""}</div>`+
+   r.items.map((i,x)=>`<div class="rv"><span>${esc(i.n)}<br><span class="mu">${i.cal} cal · ${i.p} g protein${i.cb!=null?" · "+i.cb+" g carbs":""}${i.f!=null?" · "+i.f+" g fat":""}</span></span><button data-rx="${x}" aria-label="Remove">✕</button></div>`).join("")+
+   `<button class="pri" id="rv-save">${two?"Add to menu":"Save to menu"}</button>${two?'<button class="addb" style="width:100%;margin:10px 0 0;padding:12px" id="rv-rep">Replace the whole menu instead</button>':""}<div style="text-align:center;margin-top:12px"><a href="#" id="rv-no" style="color:var(--mute)">Discard</a></div>`+note}
+ else if(r)body=`<div class="empty">${esc(r.notes||"No items with calories and protein were found.")}</div><div style="text-align:center"><a href="#" id="rv-no" style="color:var(--accent)">Try another way</a></div>`+note;
+ else body=`<div class="seg" id="sh-t" style="margin-bottom:12px">${TABS.map(t=>`<button data-k="${t[0]}"${SH.tab===t[0]?' class="on"':""}>${t[1]}</button>`).join("")}</div>`+TB[SH.tab]+note;
+ s.innerHTML=`<div class="sh"><div class="shh"><b>Add items</b><span class="mu">${esc(name)}</span><button id="sh-x" aria-label="Close">✕</button></div>${body}</div>`;
+ const g=id=>s.querySelector(id);
+ g("#sh-x").onclick=shClose;
+ s.querySelectorAll("#sh-t button").forEach(b=>b.onclick=()=>{SH.tab=b.dataset.k;SH.note="";shDraw()});
+ if(g("#t-search"))g("#t-search").onclick=()=>shRun({mode:"search",near:near()},"Searching the web.");
+ if(g("#t-link"))g("#t-link").onclick=()=>{const u=g("#s-url").value.trim();if(!u){SH.note="Paste a link first.";return shDraw()}shRun({mode:"url",url:u},"Reading the page.")};
+ if(g("#t-file")){g("#t-file").onclick=()=>g("#s-f").click();g("#s-f").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=await readFile(f);shRun({mode:"file",...d},"Reading the file.")}catch(x){SH.note=x.message;shDraw()}}}
+ if(g("#t-hand"))g("#t-hand").onclick=async()=>{const v=id=>g(id).value.trim(),f=id=>{const x=parseFloat(v(id));return Number.isFinite(x)&&x>=0?x:null};
+  SH.hand={n:v("#m-n"),c:v("#m-c"),p:v("#m-p"),cb:v("#m-cb"),f:v("#m-f")};const it={n:SH.hand.n,cal:f("#m-c"),p:f("#m-p"),cb:f("#m-cb"),f:f("#m-f")};
+  if(!it.n||!(it.cal>0)||it.p==null){SH.note="Needs a name, calories and protein.";return shDraw()}
+  SH.busy=true;SH.note="Saving…";shDraw();try{await supSave(name,[it],null,false);SH.hand={};shClose();render();toast("Added")}catch(e){SH.busy=false;SH.note=e.message;shDraw()}};
+ s.querySelectorAll("[data-rx]").forEach(b=>b.onclick=()=>{r.items.splice(+b.dataset.rx,1);shDraw()});
+ const go=async rp=>{SH.busy=true;SH.note="Saving…";shDraw();try{await supSave(name,r.items,r.source,rp);st.rev=null;shClose();render();toast("Saved to your menu")}catch(e){SH.busy=false;SH.note=e.message;shDraw()}};
+ if(g("#rv-save"))g("#rv-save").onclick=()=>go(r.replace);if(g("#rv-rep"))g("#rv-rep").onclick=()=>go(true);
+ if(g("#rv-no"))g("#rv-no").onclick=e=>{e.preventDefault();st.rev=null;shDraw()}}
+function supWire(){const o=$("#s-open");if(o)o.onclick=()=>shOpen();const o2=$("#s-open2");if(o2)o2.onclick=e=>{e.preventDefault();shOpen("link")};
+ document.querySelectorAll(".s-search").forEach(b=>b.onclick=()=>shOpen("search",true));
+ const ref=$("#s-ref");if(ref)ref.onclick=e=>{e.preventDefault();shOpen("link");shRun({mode:"url",url:supOf(curName()).source.url,replace:1},"Re-reading the source.")}}
 applySup();
-(async()=>{try{const r=await fetch("/api/menus"),j=await r.json();if(r.ok&&j.configured){SUP=j.menus||{};supCache();applySup();const a=document.activeElement;if(st.tab==="rest"&&(st.view||st.web)&&!(a&&a.closest&&a.closest("#sup")))render()}}catch(e){}})();
+(async()=>{try{const r=await fetch("/api/menus"),j=await r.json();if(r.ok&&j.configured){SUP=j.menus||{};supCache();applySup();if(st.tab==="rest"&&(st.view||st.web)&&!$("#sheet"))render()}}catch(e){}})();
 function render(){
  if(st.tab==="picks"){st.pnv=true;const k=ME.la.toFixed(3)+","+ME.lo.toFixed(3);if(st.pcKey!==k){st.pcKey=k;st.pc=null}}
  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===st.tab));
@@ -391,11 +404,11 @@ function render(){
  }
  if(st.tab==="rest"){
   if(st.cv){h=`<button class="back" onclick="st.cv=false;render()">‹ Restaurants</button><h1>Compare</h1><div class="sub">Best foods across the places you picked</div><div id="chips"></div><div class="seg" id="cseg" style="flex-wrap:wrap;margin-top:6px">${Object.keys(PICKS).map(k=>`<button data-k="${k}" style="flex:1 1 40%">${PICKS[k].sh}</button>`).join("")}</div><div class="sub" id="csub"></div><div id="citems"></div><div class="foot">Hand-checked items come from the restaurant's own nutrition. Online items come from FatSecret and are not hand-checked.</div>`}
-  else if(st.web){h=`<button class="back" onclick="st.web=null;render()">‹ Restaurants</button><h1>${esc(st.web.name)}</h1><div class="sub">Online menu data, not hand-checked</div>${supPanel()}<div class="bar"><select id="wmode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select><select id="wsrt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option><option value="hcal">Most cal</option></select></div><div id="items"><div class="empty">Loading menu…</div></div><div class="foot" id="wf"></div>`}
+  else if(st.web){h=`<button class="back" onclick="st.web=null;render()">‹ Restaurants</button><h1>${esc(st.web.name)}</h1><div class="sub">Online menu data, not hand-checked</div>${supBar()}<div class="bar"><select id="wmode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select><select id="wsrt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option><option value="hcal">Most cal</option></select></div><div id="items"><div class="empty">Loading menu…</div></div><div class="foot" id="wf"></div>`}
   else if(st.view){const r=R[st.view],cats=["All",...new Set(ITEMS.filter(i=>i.k===st.view).map(i=>i.c))];
    let L=ITEMS.filter(i=>i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button><h1>${esc(r.n)}</h1><div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
-   ${supPanel()}<input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div class="bar"><select id="mode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select></div><div id="items"></div>`;
+   ${supBar()}<input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select><select id="srt"><option value="ra">Protein per cal</option><option value="p">Most protein</option><option value="cal">Fewest cal</option></select></div><div class="bar"><select id="mode">${Object.keys(MODES).map(k=>`<option value="${k}">${MODES[k][0]}</option>`).join("")}</select></div><div id="items"></div>`;
   }else{
    h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, nearest first</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="ol"></div><div id="rl"></div><div id="cbar"></div>`;
   }
@@ -482,7 +495,7 @@ function wire(){
    draw();st.cmp.filter(c=>!c.k&&!MENU.has(c.id)).forEach(c=>fetchMenu(c.name).then(draw).catch(()=>{MENU.set(c.id,supItems(c.name));draw()}))}
  if(st.tab==="rest"&&st.web){let all=[],mode="all",sort="ra";const draw=()=>{let L=all.filter(i=>MODES[mode][1](i));L.sort((a,b)=>sort==="cal"?a.cal-b.cal:sort==="hcal"?b.cal-a.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
    $("#wmode").onchange=e=>{mode=e.target.value;draw()};$("#wsrt").onchange=e=>{sort=e.target.value;draw()};
-   const nm=st.web.name;fetchMenu(nm).then(L=>{all=L;if(!all.length){$("#items").innerHTML=emptyHtml("No menu found for this restaurant.");st.supOpen=true;const d=$("#sup");if(d)d.open=true;supWire();return}
+   const nm=st.web.name;fetchMenu(nm).then(L=>{all=L;if(!all.length){$("#items").innerHTML=emptyHtml("No menu found for this restaurant.");supWire();return}
     draw();$("#wf").innerHTML='Powered by <a href="https://www.fatsecret.com" style="color:inherit">fatsecret</a>. Up to 50 matches per lookup, so the menu may be incomplete. Check for oddities.'}).catch(()=>{all=supItems(nm);if(all.length)draw();else{$("#items").innerHTML=emptyHtml("Online menu lookup isn't available right now.");supWire()}})}
  if(st.tab==="rest"&&st.view){let sort="ra",mode="all";const draw=()=>{let L=ITEMS.filter(i=>MODES[mode][1](i)&&i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    L.sort((a,b)=>sort==="cal"?a.cal-b.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};

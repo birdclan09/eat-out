@@ -17,7 +17,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .row{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-top:10px;color:var(--ink)}
 .row .t{display:flex;justify-content:space-between;gap:10px;align-items:baseline}
 .nm{font-weight:600}.mu{color:var(--mute);font-size:13px}
-.pp{color:var(--accent);font-weight:700;white-space:nowrap}
+.pp{color:var(--accent);font-weight:700;white-space:nowrap}.ppc{flex:none;min-width:62px;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--accent);line-height:1.1;border-left:1px solid var(--line);padding-left:10px}.ppc b{font-size:20px;font-weight:700}.ppc span{font-size:11px;font-weight:600;margin-top:2px}
 .det{display:none;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:13.5px;color:var(--mute)}
 .det b{color:var(--ink)}.open .det{display:block}
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
@@ -358,9 +358,9 @@ function toggleFavR(name,k){const id=norm(name);if(FAV.r[id])delete FAV.r[id];el
 const heartH=(name,k)=>`<div class="hrow"><h1>${esc(name)}</h1><button class="heart${isFavR(name)?" on":""}" data-fr="${esc(name)}" data-k="${k||""}" aria-label="Favorite restaurant">${isFavR(name)?"♥":"♡"}</button></div>`;
 function favWire(){document.querySelectorAll(".heart").forEach(b=>b.onclick=()=>{const on=toggleFavR(b.dataset.fr,b.dataset.k);b.classList.toggle("on",on);b.textContent=on?"♥":"♡"})}
 function openRest(x){st.tab="rest";st.cv=false;st.iq="";st.cat="All";if(x.k&&R[x.k]){st.view=x.k;st.web=null}else{st.view=null;st.web={name:x.name}}render()}
-function itemRow(i,showR){const fk=fkey(i);FREG[fk]=i;return `<button class="row" onclick="this.classList.toggle('open')"><div class="rw"><span class="fh${isFavF(fk)?" on":""}" data-fav="${fk}" role="button" aria-label="Save to favorites">${isFavF(fk)?"♥":"♡"}</span><div style="flex:1;min-width:0"><div class="t"><span class="nm">${esc(i.n)}</span><span class="pp">${i.p} g protein</span></div>
+function itemRow(i,showR){const fk=fkey(i);FREG[fk]=i;return `<button class="row" onclick="this.classList.toggle('open')"><div class="rw"><span class="fh${isFavF(fk)?" on":""}" data-fav="${fk}" role="button" aria-label="Save to favorites">${isFavF(fk)?"♥":"♡"}</span><div style="flex:1;min-width:0"><div class="t"><span class="nm">${esc(i.n)}</span></div>
 <div class="mu">${showR?esc(i.r)+" · ":""}${i.cal} cal · ${i.ra} g protein per 100 cal</div>
-<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div></div></button>`}
+<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div><div class="ppc"><b>${i.p}</b><span>g protein</span></div></div></button>`}
 const PICKS={
  meal:{sh:"High Protein",t:"High protein meals",s:"40 g or more protein",f:i=>i.p>=40,o:(a,b)=>b.p-a.p},
  lean:{sh:"High Protein Low Calorie",t:"High protein, low calorie",s:"10 g+ protein per 100 calories",f:i=>i.ra>=10,o:(a,b)=>b.ra-a.ra},

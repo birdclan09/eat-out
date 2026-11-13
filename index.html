@@ -433,7 +433,7 @@ function render(){
    h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, favorites first, then nearest</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="ol"></div><div id="rl"></div><div id="cbar"></div>`;
   }
  }
- if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods and restaurants you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button></div><div class="sub" style="margin:2px 0 6px">Sort By <span style="opacity:.7">· Left To Right</span></div><div class="bar" id="fsort" style="margin:0 0 10px"></div><div id="fl"></div>`}
+ if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods and restaurants you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button></div><button class="frow" id="fsort" style="margin:0 0 10px"></button><div id="fl"></div>`}
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off"><div id="rr"></div><div id="fr"></div><div id="wr"></div>`}
  app.innerHTML=h;wire();supWire();favWire();window.scrollTo(0,0);
 }
@@ -535,8 +535,12 @@ function wire(){
  if(st.tab==="fav"){const draw=()=>{const foods=st.fseg!=="rest",el=$("#fl");
    document.querySelectorAll("#fseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===(foods?"foods":"rest")));const SC=foods?[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein",[["r","Best Ratio"],["h","High Protein"]]]]:[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["a","Name",[["a","A–Z"],["z","Z–A"]]]];
    const FS=st.fs=st.fs||{d:"n",c:"",p:"",a:""};
-   $("#fsort").innerHTML=SC.map(z=>`<select data-s="${z[0]}" class="${FS[z[0]]?"on":""}" style="min-width:0;padding:10px 4px;font-size:13px"><option value="">${z[1]}: Off</option>${z[2].map(o=>`<option value="${o[0]}"${FS[z[0]]===o[0]?" selected":""}>${o[1]}</option>`).join("")}</select>`).join("");
-   $("#fsort").querySelectorAll("select").forEach(e=>e.onchange=()=>{FS[e.dataset.s]=e.value;draw()});
+   const sum=()=>{const t=SC.map(z=>{const o=z[2].find(o=>o[0]===FS[z[0]]);return o?o[1]:""}).filter(Boolean);return t.length?t.join(" · "):"None"};
+   $("#fsort").innerHTML=`<span>Sort By <span style="color:var(--mute)">· ${sum()}</span></span><span style="color:var(--accent)">Choose ›</span>`;
+   $("#fsort").onclick=()=>{shClose();const sh=document.createElement("div");sh.id="sheet";document.body.appendChild(sh);document.body.style.overflow="hidden";
+    const paint=()=>{sh.innerHTML=`<div class="sh"><div class="shh"><b>Sort By</b><span class="mu">Applied Top To Bottom</span><button id="sh-x" aria-label="Close">✕</button></div>`+SC.map(z=>`<div class="sub" style="margin:14px 0 6px">${z[1]}</div><div class="seg" style="margin:0">${[["","Off"]].concat(z[2]).map(o=>`<button data-g="${z[0]}" data-v="${o[0]}" class="${(FS[z[0]]||"")===o[0]?"on":""}">${o[1]}</button>`).join("")}</div>`).join("")+`<button class="pri" id="so-done">Done</button></div>`;
+     sh.querySelector("#sh-x").onclick=sh.querySelector("#so-done").onclick=()=>{shClose();draw()};
+     sh.querySelectorAll("[data-g]").forEach(b=>b.onclick=()=>{FS[b.dataset.g]=b.dataset.v;paint()})};paint()};
    const dk=k=>k&&R[k]?dist(R[k]):null;
    const cmp=(a,b)=>{let r=0;
     if(FS.d)r=FS.d==="o"?a.t-b.t:b.t-a.t;

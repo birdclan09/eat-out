@@ -46,7 +46,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .pri{display:block;width:100%;padding:14px;border-radius:14px;border:0;background:var(--accent);color:var(--bg);font-size:16px;font-weight:600;margin-top:12px}
 #sheet{position:fixed;inset:0;z-index:3000;background:var(--bg);overflow:auto}#sheet .sh{max-width:640px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 14px 40px}
 .shh{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}.shh b{font-size:22px}.shh .mu{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.shh button{margin-left:auto;border:0;background:none;color:var(--mute);font-size:24px;padding:2px 8px}
-.frow{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:14px;margin:6px 0 10px}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 6px 6px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:14px;margin:0 0 6px}.srow select{width:150px;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:14px}.frow{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:14px;margin:6px 0 10px}
 .pk{display:flex;align-items:center;gap:10px;padding:12px 2px;border-top:1px solid var(--line)}.pk input{width:20px;height:20px;accent-color:var(--accent);flex:none}.pk .nm{flex:1;min-width:0}.pk .mu{flex:none}
 .hrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.hrow h1{min-width:0}.heart{flex:none;border:0;background:none;font-size:30px;line-height:1;color:var(--mute);padding:4px 6px}.heart.on{color:var(--accent)}
 .fh{flex:none;width:30px;text-align:center;font-size:23px;line-height:1;color:var(--mute);padding:8px 0;margin:-8px 0 -8px -4px}.fh.on{color:var(--accent)}
@@ -433,7 +433,7 @@ function render(){
    h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, favorites first, then nearest</div><input class="search" id="rq" placeholder="Search by name or town" value="${esc(st.rq)}"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="ol"></div><div id="rl"></div><div id="cbar"></div>`;
   }
  }
- if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods and restaurants you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button></div><div class="sub" style="margin:2px 0 6px">Sort By</div><div class="seg" id="fsort" style="margin-bottom:10px"></div><div id="fl"></div>`}
+ if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods and restaurants you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button></div><div class="sub" style="margin:2px 0 6px">Sort By <span style="opacity:.7">· Applied Top To Bottom</span></div><div id="fsort" style="margin-bottom:10px"></div><div id="fl"></div>`}
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off"><div id="rr"></div><div id="fr"></div><div id="wr"></div>`}
  app.innerHTML=h;wire();supWire();favWire();window.scrollTo(0,0);
 }
@@ -533,14 +533,20 @@ function wire(){
    L.sort((a,b)=>sort==="cal"?a.cal-b.cal:b[sort]-a[sort]);$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false)).join(""):'<div class="empty">Nothing matches.</div>'};
    draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()};$("#srt").onchange=e=>{sort=e.target.value;draw()};$("#mode").onchange=e=>{mode=e.target.value;draw()}}
  if(st.tab==="fav"){const draw=()=>{const foods=st.fseg!=="rest",el=$("#fl");
-   document.querySelectorAll("#fseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===(foods?"foods":"rest")));const SO=foods?[["t","Newest"],["o","Oldest"],["c","Closest"],["ra","Best Ratio"],["p","High Protein"]]:[["t","Newest"],["o","Oldest"],["c","Closest"],["a","A–Z"]];
-   let so=st.fsort||"t";if(!SO.some(z=>z[0]===so))so="t";
-   $("#fsort").innerHTML=SO.map(z=>`<button data-k="${z[0]}" class="${z[0]===so?"on":""}" style="flex:1 1 0;padding:9px 0;font-size:12px;white-space:nowrap">${z[1]}</button>`).join("");
-   $("#fsort").querySelectorAll("button").forEach(b=>b.onclick=()=>{st.fsort=b.dataset.k;draw()});
-   const dk=k=>k&&R[k]?dist(R[k]):1e9;
-   if(foods){const L=Object.values(FAV.f);L.sort((a,b)=>so==="ra"?b.ra-a.ra:so==="p"?b.p-a.p:so==="o"?a.t-b.t:so==="c"?dk(a.k)-dk(b.k):b.t-a.t);
+   document.querySelectorAll("#fseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===(foods?"foods":"rest")));const SC=foods?[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein",[["r","Best Ratio"],["h","High Protein"]]]]:[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["a","Name",[["a","A–Z"],["z","Z–A"]]]];
+   const FS=st.fs=st.fs||{d:"n",c:"",p:"",a:""};
+   $("#fsort").innerHTML=SC.map(z=>`<label class="srow"><span>${z[1]}</span><select data-s="${z[0]}"><option value="">Off</option>${z[2].map(o=>`<option value="${o[0]}"${FS[z[0]]===o[0]?" selected":""}>${o[1]}</option>`).join("")}</select></label>`).join("");
+   $("#fsort").querySelectorAll("select").forEach(e=>e.onchange=()=>{FS[e.dataset.s]=e.value;draw()});
+   const dk=k=>k&&R[k]?dist(R[k]):null;
+   const cmp=(a,b)=>{let r=0;
+    if(FS.d)r=FS.d==="o"?a.t-b.t:b.t-a.t;
+    if(!r&&FS.c){const x=dk(a.k),y=dk(b.k);r=x==null&&y==null?0:x==null?1:y==null?-1:FS.c==="f"?y-x:x-y}
+    if(!r&&foods&&FS.p)r=FS.p==="r"?b.ra-a.ra:b.p-a.p;
+    if(!r&&!foods&&FS.a)r=FS.a==="z"?b.name.localeCompare(a.name):a.name.localeCompare(b.name);
+    return r};
+   if(foods){const L=Object.values(FAV.f);L.sort(cmp);
     el.innerHTML=L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty">No favorite foods yet.<br>Open any food and tap “♡ Save to favorites”.</div>'}
-   else{const RL=Object.values(FAV.r).sort((a,b)=>so==="o"?a.t-b.t:so==="c"?dk(a.k)-dk(b.k):so==="a"?a.name.localeCompare(b.name):b.t-a.t);
+   else{const RL=Object.values(FAV.r).sort(cmp);
     el.innerHTML=RL.length?RL.map((x,n)=>{const hc=x.k&&R[x.k],c=hc?0:hasGet(x.name);return `<div class="row" data-r="${n}"><div class="rw"><div><div class="t"><span class="nm">${esc(x.name)}</span><span class="mu">${hc?(Math.round(dist(R[x.k])*10)/10)+" mi":""}</span></div><div class="mu">${hc?ITEMS.filter(i=>i.k===x.k).length+" items · hand-checked":c>0?c+" items":"Tap to open the menu"}</div></div><button class="hb" data-u="${n}" aria-label="Remove from favorites">♥</button></div></div>`}).join(""):'<div class="empty">No favorite restaurants yet.<br>Tap the ♡ next to a restaurant’s name to save it.</div>';
     el.querySelectorAll("[data-r]").forEach(r=>r.onclick=e=>{const x=RL[+r.dataset.r];if(e.target.closest("[data-u]")){toggleFavR(x.name);draw();return}openRest(x)})}};
    document.querySelectorAll("#fseg button").forEach(b=>b.onclick=()=>{st.fseg=b.dataset.k;draw()});draw()}

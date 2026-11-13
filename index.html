@@ -46,7 +46,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .pri{display:block;width:100%;padding:14px;border-radius:14px;border:0;background:var(--accent);color:var(--bg);font-size:16px;font-weight:600;margin-top:12px}
 #sheet{position:fixed;inset:0;z-index:3000;background:var(--bg);overflow:auto}#sheet .sh{max-width:640px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 14px 40px}
 .shh{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}.shh b{font-size:22px}.shh .mu{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.shh button{margin-left:auto;border:0;background:none;color:var(--mute);font-size:24px;padding:2px 8px}
-.srow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 6px 6px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:14px;margin:0 0 6px}.srow select{width:150px;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:14px}.bar select.on{border-color:var(--accent);color:var(--accent)}#sheet .sgb button{padding:7px 2px;font-size:13px}.frow{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:14px;margin:6px 0 10px}
+.srow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 6px 6px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:14px;margin:0 0 6px}.srow select{width:150px;padding:8px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:14px}.bar select.on{border-color:var(--accent);color:var(--accent)}#sheet .sgb button{padding:7px 2px;font-size:13px;min-width:0}#sheet .sg0 .sgb button{font-size:12px;line-height:1.15}.frow{display:flex;justify-content:space-between;align-items:center;width:100%;padding:11px 14px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:14px;margin:6px 0 10px}
 .pk{display:flex;align-items:center;gap:10px;padding:12px 2px;border-top:1px solid var(--line)}.pk input{width:20px;height:20px;accent-color:var(--accent);flex:none}.pk .nm{flex:1;min-width:0}.pk .mu{flex:none}
 .hrow{display:flex;align-items:center;justify-content:space-between;gap:10px}.hrow h1{min-width:0}.heart{flex:none;border:0;background:none;font-size:30px;line-height:1;color:var(--mute);padding:4px 6px}.heart.on{color:var(--accent)}
 .fh{flex:none;width:30px;text-align:center;font-size:23px;line-height:1;color:var(--mute);padding:8px 0;margin:-8px 0 -8px -4px}.fh.on{color:var(--accent)}
@@ -362,8 +362,8 @@ function itemRow(i,showR){const fk=fkey(i);FREG[fk]=i;return `<button class="row
 <div class="mu">${showR?esc(i.r)+" · ":""}${i.cal} cal · ${i.ra} g protein per 100 cal</div>
 <div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/180*100)}% of your 180 g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div></div></button>`}
 const PICKS={
- lean:{sh:"20 g+",t:"20 g+ protein",s:"Foods with 20 g or more protein",f:i=>i.p>=20,o:(a,b)=>b.ra-a.ra},
  meal:{sh:"High Protein",t:"High protein meals",s:"40 g+ protein, under 700 calories",f:i=>i.p>=40&&i.cal<700,o:(a,b)=>b.p-a.p},
+ lean:{sh:"High Protein Low Calorie",t:"High protein, low calorie",s:"Most protein for the fewest calories",f:i=>i.p>=20,o:(a,b)=>b.ra-a.ra},
  light:{sh:"Light",t:"Light bites",s:"Under 400 calories, 25 g+ protein",f:i=>i.cal<400&&i.p>=25,o:(a,b)=>b.ra-a.ra},
  all:{sh:"All",t:"All foods",s:"Everything",f:()=>true,o:(a,b)=>b.ra-a.ra,n:60}};
 
@@ -526,7 +526,7 @@ function wire(){
     paint()};
    const draw=()=>{if(!C)return;const ok=C.filter(c=>{const L=itemsOf(c);return L&&L.length}),pend=C.filter(c=>itemsOf(c)==null).length;
     $("#psub").textContent="Within 2 miles of you"+(pend?` · checking ${pend} more…`:"");
-    const FSn=st.fsn=st.fsn||{sh:"lean",fo:"",c:"",p:"r",l:"",g:""};if(FSn.fo===undefined)FSn.fo="";const P=PICKS[FSn.sh];let all=[];ok.filter(c=>!st.poff.has(c.id)).forEach(c=>{all=all.concat(itemsOf(c))});
+    const FSn=st.fsn=st.fsn||{sh:"meal",fo:"",c:"",p:"h",l:"",g:""};if(FSn.fo===undefined)FSn.fo="";const P=PICKS[FSn.sh];let all=[];ok.filter(c=>!st.poff.has(c.id)).forEach(c=>{all=all.concat(itemsOf(c))});
     const SCn=[["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein Rank",[["r","Per 100 Cal"],["h","Total Grams"]]],["l","Calories",[["w","Fewest"],["m","Most"]]],["g","Group By Restaurant",[["a","A–Z"],["z","Z–A"]]]];
     sortBar($("#psort"),SCn,FSn,"fson",draw,{rest:{txt:()=>{const n=ok.filter(c=>!st.poff.has(c.id)).length;return n===ok.length?"All "+ok.length:n+" of "+ok.length},open:back=>pkSheet(ok,back),clear:()=>st.poff.clear()}});
     const dmap={};C.forEach(c=>{dmap[norm(c.name)]=c.mi});const sc=sortCmp(SCn,FSn,i=>dmap[norm(i.r)]);
@@ -542,7 +542,7 @@ function wire(){
    const draw=()=>{if(!st.cmp.length){st.cv=false;render();return}
     $("#chips").innerHTML=st.cmp.map(c=>{const L=itemsOf(c);return `<span class="chip">${esc(c.name)} · ${L==null?"loading…":L.length+" items"}<button data-x="${c.id}" aria-label="Remove">✕</button></span>`}).join("")+'<button class="chip add" id="more">+ Add more</button>';
     $("#chips").querySelectorAll("[data-x]").forEach(b=>b.onclick=()=>{st.cmp=st.cmp.filter(c=>c.id!==b.dataset.x);draw()});$("#more").onclick=()=>{st.cv=false;render()};
-    const FSc=st.fsc=st.fsc||{sh:"lean",c:"",p:"r",l:"",g:""},SCc=[["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein Rank",[["r","Per 100 Cal"],["h","Total Grams"]]],["l","Calories",[["w","Fewest"],["m","Most"]]],["g","Group By Restaurant",[["a","A–Z"],["z","Z–A"]]]];
+    const FSc=st.fsc=st.fsc||{sh:"meal",c:"",p:"h",l:"",g:""},SCc=[["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein Rank",[["r","Per 100 Cal"],["h","Total Grams"]]],["l","Calories",[["w","Fewest"],["m","Most"]]],["g","Group By Restaurant",[["a","A–Z"],["z","Z–A"]]]];
     sortBar($("#csort"),SCc,FSc,"fsoc",draw);const P=PICKS[FSc.sh];let all=[];st.cmp.forEach(c=>{const L=itemsOf(c);if(L)all=all.concat(L)});
     const dm={};st.cmp.forEach(c=>{dm[norm(c.name)]=c.mi});const sc=sortCmp(SCc,FSc,i=>dm[norm(i.r)]);
     const L=all.filter(P.f).sort(byFav((a,b)=>sc(a,b)||P.o(a,b))).slice(0,P.n||20);$("#csub").textContent=P.s+" · top "+L.length;

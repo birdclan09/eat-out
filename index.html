@@ -467,7 +467,14 @@ async function shRun(body,label){SH.busy=true;SH.note=label+" This can take up t
   if(!body.replace){const ex=ITEMS.filter(o=>norm(o.r)===norm(SH.name)),w=s=>norm(String(s).split(/[ (,]/)[0]),dup=[];
    its=its.filter(i=>{const d=ex.find(o=>o.cal===i.cal&&o.p===i.p&&w(o.n)===w(i.n));if(d)dup.push(i.n);return!d});
    if(dup.length)nt.unshift(dup.length+" item"+(dup.length>1?"s":"")+" skipped because the same food is already in the app ("+dup.slice(0,3).join(", ")+(dup.length>3?", …":"")+").")}
-  st.rev={name:SH.name,items:its,notes:nt,source:j.source,replace:!!body.replace};SH.note=""}catch(e){SH.note=e.message}
+  let held=[],ver;const vb=body.mode==="file"?{mode:"file",mime:body.mime,data:body.data}:body.mode==="url"?{mode:"url",url:body.url}:j.source&&j.source.url?{mode:"url",url:j.source.url}:null;
+  if(vb&&its.length){SH.note="Checking "+its.length+" items against the source. This can take up to a minute.";shDraw();
+   try{const v=await api("/api/verify",{...vb,items:its.map(i=>[i.n,i.cal,i.p,i.cb,i.f])}),bad=new Map();
+    (v.problems||[]).forEach(q=>{if(!bad.has(q.i))bad.set(q.i,[]);bad.get(q.i).push(q)});
+    held=[...bad.keys()].sort((a,b)=>a-b).map(x=>({item:its[x],why:bad.get(x).map(q=>q.field==="notfound"?"not found in the source":q.field+": read "+q.got+", source says "+q.src).join("; ")}));
+    its=its.filter((_,x)=>!bad.has(x));ver={ok:true,n:v.checked}}catch(e){ver={ok:false,why:e.message}}}
+  else ver={ok:false,why:"no source to compare with"};
+  st.rev={name:SH.name,items:its,notes:nt,source:j.source,replace:!!body.replace,held,ver};SH.note=""}catch(e){SH.note=e.message}
  SH.busy=false;shDraw()}
 function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&st.rev.name===name?st.rev:null,H=SH.hand||{};
  const TABS=[["search","Search"],["link","Link"],["file","PDF/photo"],["hand","By hand"]],note=SH.note?`<div class="mu" style="margin-top:12px">${esc(SH.note)}</div>`:"";
@@ -477,12 +484,13 @@ function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&
   hand:`<input class="search" id="m-n" placeholder="Item name" value="${esc(H.n||"")}"><div class="bar"><input id="m-c" inputmode="decimal" placeholder="Cal" value="${esc(H.c||"")}"><input id="m-p" inputmode="decimal" placeholder="Protein" value="${esc(H.p||"")}"><input id="m-cb" inputmode="decimal" placeholder="Carbs" value="${esc(H.cb||"")}"><input id="m-f" inputmode="decimal" placeholder="Fat" value="${esc(H.f||"")}"></div><div class="mu" style="margin-top:6px">Grams for protein, carbs and fat.</div><button class="pri" id="t-hand">Add item</button>`};
  let body;
  if(SH.busy)body=`<div class="empty">${esc(SH.note)}</div>`;
- else if(r&&r.items.length){const have=(supOf(name)||{items:[]}).items.length,two=have&&!r.replace;
+ else if(r&&(r.items.length||(r.held||[]).length)){const have=(supOf(name)||{items:[]}).items.length,two=have&&!r.replace;
   const NT=[].concat(r.notes||[]),cats={};r.items.forEach((i,x)=>{const c=(i.c||"Other").trim()||"Other";(cats[c]=cats[c]||[]).push(x)});
   const nCat=Object.keys(cats).length,noCb=r.items.filter(i=>i.cb==null).length,row=(i,x)=>`<div class="rv"><span>${esc(i.n)}<br><span class="mu">${i.cal} cal · ${i.p} g protein${i.cb!=null?" · "+i.cb+" g carbs":""}${i.f!=null?" · "+i.f+" g fat":""}</span></span><button data-rx="${x}" aria-label="Remove">✕</button></div>`;
-  body=`<div style="position:sticky;top:0;z-index:2;background:var(--bg);padding:2px 0 10px"><div style="font-size:20px;font-weight:700">${r.items.length} items found</div><div class="mu">${r.source&&r.source.url?"From "+esc(host(r.source.url))+" · ":""}${nCat} section${nCat>1?"s":""}${noCb?" · "+noCb+" without carbs":""}</div>`+
-   `<button class="pri" id="rv-save" style="margin-top:10px">${two?"Add "+r.items.length+" items to menu":"Save "+r.items.length+" items"}</button>${two?'<button class="addb" style="width:100%;margin:8px 0 0;padding:10px" id="rv-rep">Replace the whole menu instead</button>':""}</div>`+
+  body=`<div style="position:sticky;top:0;z-index:2;background:var(--bg);padding:2px 0 10px"><div style="font-size:20px;font-weight:700">${r.items.length} items found</div><div class="mu">${r.source&&r.source.url?"From "+esc(host(r.source.url))+" · ":""}${nCat} section${nCat>1?"s":""}${noCb?" · "+noCb+" without carbs":""}</div><div class="mu" style="margin-top:2px">${r.ver&&r.ver.ok?"✓ Compared with the source"+((r.held||[]).length?" · "+r.held.length+" held back":" · all match"):"⚠ Not compared with the source ("+esc((r.ver&&r.ver.why)||"check unavailable")+")"}</div>`+
+   (r.items.length?`<button class="pri" id="rv-save" style="margin-top:10px">${two?"Add "+r.items.length+" items to menu":"Save "+r.items.length+" items"}</button>`:"")+`${two?'<button class="addb" style="width:100%;margin:8px 0 0;padding:10px" id="rv-rep">Replace the whole menu instead</button>':""}</div>`+
    (NT.length?`<div class="supbox" style="margin:0 0 10px"><b>Check before saving</b><ul style="margin:6px 0 0;padding-left:18px">${NT.map(n=>`<li class="mu" style="margin:3px 0">${esc(n)}</li>`).join("")}</ul></div>`:"")+
+   ((r.held||[]).length?`<details open class="supbox" style="margin:0 0 10px"><summary>Held back · ${r.held.length} didn't match the source</summary>${r.held.map((o,x)=>`<div class="rv"><span>${esc(o.item.n)}<br><span class="mu">${esc(o.why)}</span></span><button data-keep="${x}" style="font-size:13px;width:auto;padding:6px 10px">Keep</button></div>`).join("")}</details>`:"")+
    `<div class="mu" style="margin:0 0 4px">Tap ✕ to remove anything that looks wrong.</div>`+
    Object.keys(cats).map(c=>`<details${nCat===1?" open":""}><summary style="font-weight:600;padding:10px 0;border-top:1px solid var(--line)">${esc(c)} <span class="mu" style="font-weight:400">· ${cats[c].length}</span></summary>${cats[c].map(x=>row(r.items[x],x)).join("")}</details>`).join("")+
    `<div style="text-align:center;margin-top:12px"><a href="#" id="rv-no" style="color:var(--mute)">Discard</a></div>`+note}
@@ -499,6 +507,7 @@ function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&
   SH.hand={n:v("#m-n"),c:v("#m-c"),p:v("#m-p"),cb:v("#m-cb"),f:v("#m-f")};const it={n:SH.hand.n,cal:f("#m-c"),p:f("#m-p"),cb:f("#m-cb"),f:f("#m-f")};
   if(!it.n||!(it.cal>0)||it.p==null){SH.note="Needs a name, calories and protein.";return shDraw()}
   SH.busy=true;SH.note="Saving…";shDraw();try{await supSave(name,[it],null,false);SH.hand={};shClose();render();toast("Added")}catch(e){SH.busy=false;SH.note=e.message;shDraw()}};
+ s.querySelectorAll("[data-keep]").forEach(b=>b.onclick=()=>{const o=r.held.splice(+b.dataset.keep,1)[0];if(o)r.items.push(o.item);shDraw()});
  s.querySelectorAll("[data-rx]").forEach(b=>b.onclick=()=>{r.items.splice(+b.dataset.rx,1);shDraw()});
  const go=async rp=>{SH.busy=true;SH.note="Saving…";shDraw();try{await supSave(name,r.items,r.source,rp);st.rev=null;shClose();render();toast("Saved to your menu")}catch(e){SH.busy=false;SH.note=e.message;shDraw()}};
  if(g("#rv-save"))g("#rv-save").onclick=()=>go(r.replace);if(g("#rv-rep"))g("#rv-rep").onclick=()=>go(true);

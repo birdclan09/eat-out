@@ -29,6 +29,8 @@ module.exports = async (req, res) => {
         const cur = menus[id] || { name, items: [] };
         const src = b.source && b.source.url ? { url: String(b.source.url).slice(0, 500), kind: String(b.source.kind || "link").slice(0, 20), t: new Date().toISOString() } : null;
         // replace=true swaps in a fresh import from the source; otherwise append (skip same-name duplicates)
+        // v:1 = imported from a source link (restaurant page/PDF); hand-typed and file/photo additions stay unmarked
+        items.forEach(i => { i.v = src ? 1 : 0; });
         const keep = b.replace ? [] : cur.items.filter(o => !items.some(i => norm(i.n) === norm(o.n)));
         const now = new Date().toISOString();
         // updated = last save of any kind; log = the 10 most recent saves (when, how many items, how)

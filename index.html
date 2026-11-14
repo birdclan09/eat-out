@@ -415,7 +415,7 @@ function favMeals(el){const L=Object.values(FAV.m).sort((a,b)=>b.t-a.t);
   r.classList.toggle("open")})}
 function itemRow(i,showR,mf){const mt=mf?mf(i):[i.p+" g","protein"];const fk=fkey(i);FREG[fk]=i;return `<button class="row" onclick="this.classList.toggle('open')"><div class="rw"><span class="fh${isFavF(fk)?" on":""}" data-fav="${fk}" role="button" aria-label="Save to favorites">${isFavF(fk)?"♥":"♡"}</span><div style="flex:1;min-width:0"><div class="t"><span class="nm">${esc(i.n)}</span></div>${showR?`<div class="mu">${esc(i.r)}</div>`:""}
 <div class="mu">${i.cal} cal · ${i.ra} g protein per 100 cal</div>
-<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/GOAL.p*100)}% of your ${GOAL.p} g protein goal${i.s?`<br>Added by you${i.srcu?" from "+esc(host(i.srcu)):""}${i.b?" · per "+esc(i.b):""}. Not hand-checked.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div><span class="addm${mQty(fk)?" on":""}" data-add="${fk}" role="button" aria-label="Add to meal">${mQty(fk)||"+"}</span><div class="ppc"><b>${mt[0]}</b><span>${mt[1]}</span></div></div></button>`}
+<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/GOAL.p*100)}% of your ${GOAL.p} g protein goal${i.s?`<br>${i.v?"<b>✓ Verified</b> · imported from "+(i.srcu?esc(host(i.srcu)):"the restaurant"):"Added by you · not verified"}${i.b?" · per "+esc(i.b):""}.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div><span class="addm${mQty(fk)?" on":""}" data-add="${fk}" role="button" aria-label="Add to meal">${mQty(fk)||"+"}</span><div class="ppc"><b>${mt[0]}</b><span>${mt[1]}</span></div></div></button>`}
 const PICKS={
  meal:{sh:"High Protein",t:"High protein meals",s:"40 g or more protein",f:i=>i.p>=40,o:(a,b)=>b.p-a.p},
  lean:{sh:"High Protein Low Calorie",t:"High protein, low calorie",s:"10 g+ protein per 100 calories",f:i=>i.ra>=10,o:(a,b)=>b.ra-a.ra},
@@ -429,7 +429,7 @@ const supCache=()=>{try{localStorage.setItem("eo_sup",JSON.stringify(SUP))}catch
 const supOf=n=>SUP[norm(n)]||null;
 const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return String(u)}};
 const fmtD=t=>{try{return new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}catch(e){return""}};
-const supItems=n=>{const m=supOf(n);return m?m.items.map((i,x)=>({n:i.n,r:m.name||n,c:i.c||"Added",p:i.p,cal:i.cal,cb:i.cb==null?"–":i.cb,f:i.f==null?"–":i.f,ra:+(i.p/i.cal*100).toFixed(1),b:i.b||"",s:1,sx:x,srcu:m.source&&m.source.url})):[]};
+const supItems=n=>{const m=supOf(n);return m?m.items.map((i,x)=>({n:i.n,r:m.name||n,c:i.c||"Added",p:i.p,cal:i.cal,cb:i.cb==null?"–":i.cb,f:i.f==null?"–":i.f,ra:+(i.p/i.cal*100).toFixed(1),b:i.b||"",s:1,sx:x,v:i.v?1:0,srcu:i.v&&m.source&&m.source.url})):[]};
 function applySup(){for(let x=ITEMS.length-1;x>=0;x--)if(ITEMS[x].s)ITEMS.splice(x,1);
  Object.keys(R).forEach(k=>supItems(R[k].n).forEach(i=>{i.k=k;ITEMS.push(i)}));
  for(const [id,o] of ONL)MENU.set(id,o.L.concat(supItems(o.nm)));

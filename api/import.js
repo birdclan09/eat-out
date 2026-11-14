@@ -33,19 +33,35 @@ function parseOut(text, truncated) {
 }
 
 async function ask(content, tools) {
-  const r = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({ model: MODEL, max_tokens: 16000, messages: [{ role: "user", content }], ...(tools ? { tools } : {}) }),
-  });
-  const j = await r.json().catch(() => null);
-  if (!r.ok || !j) throw new Error("Claude API: " + ((j && j.error && j.error.message) || r.status));
-  const text = (j.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
-  try { return parseOut(text, j.stop_reason === "max_tokens"); }
+  const messages = [{ role: "user", content }];
+  const trace = { queries: [], hosts: [], errors: [] };
+  let j, text = "";
+  for (let turn = 0; turn < 4; turn++) {
+    const r = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      body: JSON.stringify({ model: MODEL, max_tokens: 16000, messages, ...(tools ? { tools } : {}) }),
+    });
+    j = await r.json().catch(() => null);
+    if (!r.ok || !j) throw new Error("Claude API: " + ((j && j.error && j.error.message) || r.status));
+    for (const b of j.content || []) {
+      if (b.type === "server_tool_use" && b.input && b.input.query) trace.queries.push(String(b.input.query));
+      if (b.type === "web_search_tool_result") {
+        if (Array.isArray(b.content)) b.content.forEach(x => { try { trace.hosts.push(new URL(x.url).hostname.replace(/^www\./, "")); } catch (e) {} });
+        else if (b.content && b.content.error_code) trace.errors.push(b.content.error_code);
+      }
+    }
+    text = (j.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
+    if (j.stop_reason !== "pause_turn") break;
+    messages.push({ role: "assistant", content: j.content });
+  }
+  trace.hosts = [...new Set(trace.hosts)].slice(0, 6);
+  try { const o = parseOut(text, j.stop_reason === "max_tokens"); o.trace = trace; return o; }
   catch (e) {
-    // Show what the model actually sent back, so a failure can be diagnosed instead of guessed at.
     const peek = text.replace(/\s+/g, " ").slice(0, 160) || "(empty reply)";
-    throw new Error(e.message + " [stop: " + (j.stop_reason || "?") + "; reply began: " + peek + "]");
+    const err = new Error(e.message + " [stop: " + (j.stop_reason || "?") + "; reply began: " + peek + "]");
+    err.trace = trace; err.reply = text;
+    throw err;
   }
 }
 
@@ -77,7 +93,13 @@ module.exports = async (req, res) => {
     const notes = [].concat(out.partial ? ["Only part of this source could be read (it was very long), so some items are missing."] : [], Array.isArray(out.notes) ? out.notes : out.notes ? [out.notes] : []).map(x => String(x).trim()).filter(Boolean).slice(0, 6);
     const items = (out.items || []).map(row).map(i => ({ n: String(i.name || "").trim(), c: String(i.category || "").trim(), b: String(i.serving || "").trim(), cal: num(i.calories), p: num(i.protein), cb: num(i.carbs), f: num(i.fat) })).filter(i => i.n && i.cal > 0 && i.p != null);
     if (b.mode === "search" && out.source) source = { url: String(out.source), kind: "search" };
+    const tr = out.trace;
+    if (b.mode === "search" && tr) notes.push(!tr.queries.length ? "The search tool did not run a single search." : "Searched " + tr.queries.length + " time" + (tr.queries.length > 1 ? "s" : "") + (tr.hosts.length ? ", saw: " + tr.hosts.join(", ") : ", no pages came back") + "." + (tr.errors.length ? " Search error: " + [...new Set(tr.errors)].join(", ") + "." : ""));
     if (!items.length) return res.status(200).json({ items: [], notes: notes.length ? notes : ["No items with calories and protein were found."], source });
     return res.status(200).json({ items, notes, source });
-  } catch (e) { return res.status(502).json({ error: String(e.message || e).slice(0, 220) }); }
+  } catch (e) {
+    const t = e.trace;
+    const extra = t ? " [searched " + t.queries.length + "x" + (t.errors.length ? "; error " + t.errors.join(",") : "") + "]" : "";
+    return res.status(502).json({ error: (String(e.message || e) + extra).slice(0, 260) });
+  }
 };

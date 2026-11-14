@@ -14,9 +14,15 @@ async function loadUrl(u) {
     if (buf.length > 20e6) throw new Error("That file is too large.");
     if (type === "application/pdf" || /\.pdf($|\?)/i.test(url.pathname)) return { kind: "pdf", data: buf.toString("base64") };
     if (/^image\/(png|jpe?g|gif|webp)$/.test(type)) return { kind: "image", mime: type.replace("jpg", "jpeg"), data: buf.toString("base64") };
-    const text = strip(buf.toString("utf8")).slice(0, 150000);
+    const html = buf.toString("utf8");
+    const links = [];
+    html.replace(/<a\s[^>]*href=["']([^"'#]+)["'][^>]*>([\s\S]*?)<\/a>/gi, (m, h, t) => {
+      try { const a = new URL(h, url); if (/^https?:$/.test(a.protocol) && /nutrition|calorie|allergen|menu|\.pdf($|\?)/i.test(a.pathname + " " + t.replace(/<[^>]+>/g, " "))) links.push(a.href); } catch (e) { /* skip */ }
+      return m;
+    });
+    const text = strip(html).slice(0, 150000);
     if (text.length < 200) throw new Error("That page has almost no readable text (it may load its menu with JavaScript). Upload the PDF or a screenshot instead.");
-    return { kind: "text", text };
+    return { kind: "text", text, links: [...new Set(links)].slice(0, 12) };
   } finally { clearTimeout(tm); }
 }
 

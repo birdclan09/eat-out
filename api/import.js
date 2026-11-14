@@ -34,7 +34,7 @@ function parseOut(text, truncated) {
 
 async function ask(content, tools) {
   const messages = [{ role: "user", content }];
-  const trace = { queries: [], hosts: [], errors: [] };
+  const trace = { queries: [], hosts: [], urls: [], errors: [] };
   let j, text = "";
   for (let turn = 0; turn < 4; turn++) {
     const r = await fetch("https://api.anthropic.com/v1/messages", {
@@ -47,7 +47,7 @@ async function ask(content, tools) {
     for (const b of j.content || []) {
       if (b.type === "server_tool_use" && b.input && b.input.query) trace.queries.push(String(b.input.query));
       if (b.type === "web_search_tool_result") {
-        if (Array.isArray(b.content)) b.content.forEach(x => { try { trace.hosts.push(new URL(x.url).hostname.replace(/^www\./, "")); } catch (e) {} });
+        if (Array.isArray(b.content)) b.content.forEach(x => { try { trace.hosts.push(new URL(x.url).hostname.replace(/^www\./, "")); trace.urls.push(x.url); } catch (e) {} });
         else if (b.content && b.content.error_code) trace.errors.push(b.content.error_code);
       }
     }
@@ -63,6 +63,30 @@ async function ask(content, tools) {
     err.trace = trace; err.reply = text;
     throw err;
   }
+}
+
+const AGG = /(yelp|facebook|instagram|tripadvisor|mynetdiary|bigoven|doordash|ubereats|grubhub|toasttab|toast\.app|opentable|tock|mapquest|aaa\.com|reddit|pinterest|tiktok|youtube|findmeglutenfree|restaurantguru|restaurantji|singleplatform|menuxp|nutritionix|fatsecret|calorieking|myfitnesspal|wikipedia|google|slugmag|utahstories|gastronomic|everyday\.vegas)/i;
+// Finds the restaurant's own host among the search results (its name appears in the host), then reads it and its nutrition/menu links.
+async function openOwnSite(name, urls) {
+  const toks = String(name).toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").split(/[^a-z0-9]+/).filter(t => t.length >= 4 && !/^(restaurant|kitchen|grill|house|cafe|steakhouse|japanese|southern|bistro|eatery|the)$/.test(t));
+  if (!toks.length) return null;
+  const own = [];
+  for (const u of urls) { try { const h = new URL(u).hostname.replace(/^www\./, ""); if (!AGG.test(h) && toks.some(t => h.replace(/[^a-z0-9]/g, "").includes(t)) && !own.includes(u)) own.push(u); } catch (e) { /* skip */ } }
+  const tried = new Set(); let calls = 0;
+  for (const start of own.slice(0, 2)) {
+    let d; try { d = await loadUrl(start); } catch (e) { continue; }
+    const queue = [{ url: start, d }];
+    for (const l of (d.links || []).slice(0, 12)) if (/nutrition|calorie|allergen|\.pdf/i.test(l)) queue.push({ url: l }); 
+    for (const l of (d.links || []).slice(0, 12)) if (!/nutrition|calorie|allergen|\.pdf/i.test(l)) queue.push({ url: l });
+    for (const q of queue) {
+      if (tried.has(q.url) || calls >= 4) continue; tried.add(q.url);
+      let dd = q.d; if (!dd) { try { dd = await loadUrl(q.url); } catch (e) { continue; } }
+      calls++;
+      const content = [dd.kind === "pdf" ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: dd.data } } : dd.kind === "image" ? { type: "image", source: { type: "base64", media_type: dd.mime, data: dd.data } } : { type: "text", text: "SOURCE PAGE TEXT:\n" + dd.text }, { type: "text", text: "Restaurant: " + name + "\n\n" + PROMPT }];
+      try { const o = await ask(content); if ((o.items || []).length) return { out: o, url: q.url }; } catch (e) { /* no numbers on this page */ }
+    }
+  }
+  return null;
 }
 
 module.exports = async (req, res) => {
@@ -87,14 +111,21 @@ module.exports = async (req, res) => {
       source = { url: String(b.url), kind: d.kind === "text" ? "page" : d.kind };
       content = [d.kind === "pdf" ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: d.data } } : d.kind === "image" ? { type: "image", source: { type: "base64", media_type: d.mime, data: d.data } } : { type: "text", text: "SOURCE PAGE TEXT:\n" + d.text }, { type: "text", text: `Restaurant: ${name}\n\n${PROMPT}` }];
     }
-    const out = await ask(content, tools);
+    let out = await ask(content, tools).catch(e => (b.mode === "search" && e.trace ? { items: [], notes: [], trace: e.trace } : Promise.reject(e)));
+    let opened = null;
+    if (b.mode === "search" && !(out.items || []).length) {
+      // The search tool only returns excerpts. Open the restaurant's own site (and its nutrition/menu links) and read them in full.
+      const r = await openOwnSite(name, (out.trace && out.trace.urls) || []);
+      if (r) { out = Object.assign(r.out, { trace: out.trace }); opened = r.url; }
+    }
     const num = v => { const x = parseFloat(v); return Number.isFinite(x) && x >= 0 ? x : null; };
     const row = i => Array.isArray(i) ? { name: i[0], category: i[1], serving: i[2], calories: i[3], protein: i[4], carbs: i[5], fat: i[6] } : (i || {});
     const notes = [].concat(out.partial ? ["Only part of this source could be read (it was very long), so some items are missing."] : [], Array.isArray(out.notes) ? out.notes : out.notes ? [out.notes] : []).map(x => String(x).trim()).filter(Boolean).slice(0, 6);
     const items = (out.items || []).map(row).map(i => ({ n: String(i.name || "").trim(), c: String(i.category || "").trim(), b: String(i.serving || "").trim(), cal: num(i.calories), p: num(i.protein), cb: num(i.carbs), f: num(i.fat) })).filter(i => i.n && i.cal > 0 && i.p != null);
     if (b.mode === "search" && out.source) source = { url: String(out.source), kind: "search" };
+    if (opened) { source = { url: opened, kind: "page" }; notes.unshift("Search found no numbers in its excerpts, so I opened the restaurant's own site and read this page in full."); }
     const tr = out.trace;
-    if (b.mode === "search" && tr) notes.push(!tr.queries.length ? "The search tool did not run a single search." : "Searched " + tr.queries.length + " time" + (tr.queries.length > 1 ? "s" : "") + (tr.hosts.length ? ", saw: " + tr.hosts.join(", ") : ", no pages came back") + "." + (tr.errors.length ? " Search error: " + [...new Set(tr.errors)].join(", ") + "." : ""));
+    if (b.mode === "search" && tr && !opened) notes.push(!tr.queries.length ? "The search tool did not run a single search." : "Searched " + tr.queries.length + " time" + (tr.queries.length > 1 ? "s" : "") + (tr.hosts.length ? ", saw: " + tr.hosts.join(", ") : ", no pages came back") + "." + (tr.errors.length ? " Search error: " + [...new Set(tr.errors)].join(", ") + "." : ""));
     if (!items.length) return res.status(200).json({ items: [], notes: notes.length ? notes : ["No items with calories and protein were found."], source });
     return res.status(200).json({ items, notes, source });
   } catch (e) {

@@ -34,8 +34,11 @@ module.exports = async (req, res) => {
         const keep = b.replace ? [] : cur.items.filter(o => !items.some(i => norm(i.n) === norm(o.n)));
         const now = new Date().toISOString();
         // updated = last save of any kind; log = the 10 most recent saves (when, how many items, how)
-        const log = [{ t: now, n: items.length, how: src ? src.kind : "manual", replace: !!b.replace }].concat(cur.log || []).slice(0, 10);
-        menus[id] = { name: cur.name || name, items: keep.concat(items).slice(0, 600), source: src || cur.source || null, updated: now, log };
+        // check = how the import compared with its source in the app (sent only with imports): ok, items compared, held back, kept anyway
+        const ci = x => Math.max(0, Math.min(9999, parseInt(x, 10) || 0));
+        const ck = b.check && typeof b.check === "object" ? { ok: !!b.check.ok, n: ci(b.check.n), held: ci(b.check.held), kept: ci(b.check.kept), t: now } : null;
+        const log = [{ t: now, n: items.length, how: src ? src.kind : "manual", replace: !!b.replace, ...(ck ? { check: ck } : {}) }].concat(cur.log || []).slice(0, 10);
+        menus[id] = { name: cur.name || name, items: keep.concat(items).slice(0, 600), source: src || cur.source || null, updated: now, log, ...((ck || cur.check) ? { check: ck || cur.check } : {}) };
       } else return res.status(400).json({ error: "Unknown action." });
       try { await writeMenus(menus, sha, `Menu data: ${b.action} ${name}`); return res.status(200).json({ ok: true, menu: menus[id] || null }); }
       catch (e) { if (e.status === 409 && attempt === 0) continue; throw e; }

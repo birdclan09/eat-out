@@ -421,7 +421,7 @@ function favMeals(el){const L=Object.values(FAV.m).sort((a,b)=>b.t-a.t);
   r.classList.toggle("open")})}
 function itemRow(i,showR,mf){const mt=mf?mf(i):[i.p+" g","protein"];const fk=fkey(i);FREG[fk]=i;return `<button class="row" onclick="this.classList.toggle('open')"><div class="rw"><span class="fh${isFavF(fk)?" on":""}" data-fav="${fk}" role="button" aria-label="Save to favorites">${isFavF(fk)?"♥":"♡"}</span><div style="flex:1;min-width:0"><div class="t"><span class="nm">${esc(i.n)}</span></div>${showR?`<div class="mu">${esc(i.r)}</div>`:""}
 <div class="mu">${i.cal} cal · ${i.ra} g protein per 100 cal</div>
-<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/GOAL.p*100)}% of your ${GOAL.p} g protein goal${i.s?`<br>${i.v?"<b>✓ Verified</b> · from "+(i.srcu?(offSrc(i.r,i.srcu)?"the restaurant's website, ":"")+esc(host(i.srcu)):"the restaurant"):"Added by you · not verified"}${i.b?" · per "+esc(i.b):""}.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div><span class="addm${mQty(fk)?" on":""}" data-add="${fk}" role="button" aria-label="Add to meal">${mQty(fk)||"+"}</span><div class="ppc"><b>${mt[0]}</b><span>${mt[1]}</span></div></div></button>`}
+<div class="det"><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/GOAL.p*100)}% of your ${GOAL.p} g protein goal${i.s?`<br>${i.v?"Imported from "+(i.srcu?(offSrc(i.r,i.srcu)?"the restaurant's website, ":"")+esc(host(i.srcu)):"the restaurant"):"Added by you · not verified"}${i.b?" · per "+esc(i.b):""}.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div><span class="addm${mQty(fk)?" on":""}" data-add="${fk}" role="button" aria-label="Add to meal">${mQty(fk)||"+"}</span><div class="ppc"><b>${mt[0]}</b><span>${mt[1]}</span></div></div></button>`}
 const PICKS={
  meal:{sh:"High Protein",t:"High protein meals",s:"40 g or more protein",f:i=>i.p>=40,o:(a,b)=>b.p-a.p},
  lean:{sh:"High Protein Low Calorie",t:"High protein, low calorie",s:"10 g+ protein per 100 calories",f:i=>i.ra>=10,o:(a,b)=>b.ra-a.ra},
@@ -444,7 +444,7 @@ async function api(path,body,retry){const r=await fetch(path,{method:"POST",head
  const j=await r.json().catch(()=>({}));
  if(r.status===401&&!retry){const k=prompt("Enter your edit key (the EDIT_KEY you set in Vercel):");if(k){EK.set(k.trim());return api(path,body,1)}}
  if(!r.ok)throw new Error(j.error||("Request failed ("+r.status+")"));return j}
-async function supSave(name,items,source,replace){const j=await api("/api/menus",{action:"save",name,items,source,replace:!!replace});SUP[norm(name)]=j.menu;supCache();applySup();return j}
+async function supSave(name,items,source,replace,check){const j=await api("/api/menus",{action:"save",name,items,source,replace:!!replace,...(check?{check}:{})});SUP[norm(name)]=j.menu;supCache();applySup();return j}
 async function supDel(name,x){const m=supOf(name);if(!m)return;const rest=m.items.filter((_,i)=>i!==x),y=window.scrollY;
  try{if(rest.length){const j=await api("/api/menus",{action:"save",name,items:rest,replace:true});SUP[norm(name)]=j.menu}else{await api("/api/menus",{action:"delete",name});delete SUP[norm(name)]}
   supCache();applySup();render();window.scrollTo(0,y);toast("Removed")}catch(e){toast(e.message.slice(0,80))}}
@@ -459,7 +459,11 @@ function readFile(f){return new Promise((ok,no)=>{const fr=new FileReader();fr.o
 const SH={name:"",tab:"search",note:"",busy:false,hand:{}};
 const near=()=>ME.la.toFixed(3)+", "+ME.lo.toFixed(3)+" (latitude, longitude)";
 const supBar=()=>{const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
- const upd=m&&(m.updated||(m.source&&m.source.t)),src=m&&m.source&&m.source.url?`${offSrc(n,m.source.url)?"From the restaurant's website: ":"From "}<a href="${esc(m.source.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(host(m.source.url))}</a> · Updated ${fmtD(upd)} · <a href="#" id="s-ref" style="color:var(--accent)">Refresh</a>`:cnt?cnt+" added by you"+(upd?" · Updated "+fmtD(upd):""):"";
+ const upd=m&&(m.updated||(m.source&&m.source.t)),ck=m&&m.check&&m.check.ok,su=m&&m.source&&m.source.url,off=su&&offSrc(n,m.source.url),
+  lk=su?`<a href="${esc(m.source.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(host(m.source.url))}</a>`:"",
+  kp=m&&m.check&&m.check.kept||0,
+  head=su?(ck?(kp?"<b>Compared with the source</b> · "+kp+" item"+(kp>1?"s":"")+" kept despite a mismatch · ":off?"<b>✓ Verified from the restaurant's website</b> · ":"<b>✓ Compared with the source</b> · ")+lk:(off?"From the restaurant's website: ":"From ")+lk+" (not compared)"):ck?"<b>✓ Compared with the uploaded file</b>":"",
+  src=su||ck?head+" · Updated "+fmtD(upd)+(su?` · <a href="#" id="s-ref" style="color:var(--accent)">Refresh</a>`:""):cnt?cnt+" added by you"+(upd?" · Updated "+fmtD(upd):""):"";
  return `<div class="supbar"><div class="mu">${src}</div><button class="addb" id="s-open">+ Add items</button></div>`};
 const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Search online for nutrition info</b><span>Official numbers, reviewed by you before saving</span></button><div style="text-align:center"><a href="#" id="s-open2" style="color:var(--accent)">Add items another way</a></div>`;
 function shClose(){const s=$("#sheet");if(s)s.remove();document.body.style.overflow="";SH.busy=false}
@@ -474,7 +478,7 @@ async function shRun(body,label){SH.busy=true;SH.note=label+" Long menus can tak
    try{const v=await api("/api/verify",{...vb,items:its.map(i=>[i.n,i.cal,i.p,i.cb,i.f])}),bad=new Map();
     (v.problems||[]).forEach(q=>{if(!bad.has(q.i))bad.set(q.i,[]);bad.get(q.i).push(q)});
     held=[...bad.keys()].sort((a,b)=>a-b).map(x=>({item:its[x],why:bad.get(x).map(q=>q.field==="notfound"?"not found in the source":q.field+": read "+q.got+", source says "+q.src).join("; ")}));
-    its=its.filter((_,x)=>!bad.has(x));ver={ok:true,n:v.checked}}catch(e){ver={ok:false,why:e.message}}}
+    its=its.filter((_,x)=>!bad.has(x));ver={ok:true,n:v.checked,held:held.length}}catch(e){ver={ok:false,why:e.message}}}
   else ver={ok:false,why:"no source to compare with"};
   st.rev={name:SH.name,items:its,notes:nt,source:j.source,replace:!!body.replace,held,ver};SH.note=""}catch(e){SH.note=e.message}
  SH.busy=false;shDraw()}
@@ -512,9 +516,9 @@ function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&
   SH.hand={n:v("#m-n"),c:v("#m-c"),p:v("#m-p"),cb:v("#m-cb"),f:v("#m-f")};const it={n:SH.hand.n,cal:f("#m-c"),p:f("#m-p"),cb:f("#m-cb"),f:f("#m-f")};
   if(!it.n||!(it.cal>0)||it.p==null){SH.note="Needs a name, calories and protein.";return shDraw()}
   SH.busy=true;SH.note="Saving…";shDraw();try{await supSave(name,[it],null,false);SH.hand={};shClose();render();toast("Added")}catch(e){SH.busy=false;SH.note=e.message;shDraw()}};
- s.querySelectorAll("[data-keep]").forEach(b=>b.onclick=()=>{const o=r.held.splice(+b.dataset.keep,1)[0];if(o)r.items.push(o.item);shDraw()});
+ s.querySelectorAll("[data-keep]").forEach(b=>b.onclick=()=>{const o=r.held.splice(+b.dataset.keep,1)[0];if(o){r.items.push(o.item);r.kept=(r.kept||0)+1}shDraw()});
  s.querySelectorAll("[data-rx]").forEach(b=>b.onclick=()=>{r.items.splice(+b.dataset.rx,1);shDraw()});
- const go=async rp=>{SH.busy=true;SH.note="Saving…";shDraw();try{await supSave(name,r.items,r.source,rp);st.rev=null;shClose();render();toast("Saved to your menu")}catch(e){SH.busy=false;SH.note=e.message;shDraw()}};
+ const go=async rp=>{SH.busy=true;SH.note="Saving…";shDraw();try{await supSave(name,r.items,r.source,rp,r.ver&&r.ver.ok?{ok:true,n:r.ver.n,held:r.ver.held,kept:r.kept||0}:{ok:false});st.rev=null;shClose();render();toast("Saved to your menu")}catch(e){SH.busy=false;SH.note=e.message;shDraw()}};
  if(g("#rv-save"))g("#rv-save").onclick=()=>go(r.replace);if(g("#rv-rep"))g("#rv-rep").onclick=()=>go(true);
  if(g("#rv-no"))g("#rv-no").onclick=e=>{e.preventDefault();st.rev=null;shDraw()}}
 function supWire(){const o=$("#s-open");if(o)o.onclick=()=>shOpen();const o2=$("#s-open2");if(o2)o2.onclick=e=>{e.preventDefault();shOpen("link")};

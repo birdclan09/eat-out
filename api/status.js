@@ -5,6 +5,7 @@ module.exports = (req, res) => {
   res.status(200).json({
     menu_saving: { GITHUB_TOKEN: has("GITHUB_TOKEN") },
     menu_import: { ANTHROPIC_API_KEY: has("ANTHROPIC_API_KEY") },
+    models_in_use: { import: process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5", check: process.env.VERIFY_MODEL || process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5" },
     edit_lock: { EDIT_KEY: has("EDIT_KEY") },
     nearby_and_town_search: { GEOAPIFY_KEY: has("GEOAPIFY_KEY") },
     online_lookup: { FATSECRET_CLIENT_ID: has("FATSECRET_CLIENT_ID"), FATSECRET_CLIENT_SECRET: has("FATSECRET_CLIENT_SECRET") },

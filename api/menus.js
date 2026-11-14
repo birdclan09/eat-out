@@ -30,7 +30,10 @@ module.exports = async (req, res) => {
         const src = b.source && b.source.url ? { url: String(b.source.url).slice(0, 500), kind: String(b.source.kind || "link").slice(0, 20), t: new Date().toISOString() } : null;
         // replace=true swaps in a fresh import from the source; otherwise append (skip same-name duplicates)
         const keep = b.replace ? [] : cur.items.filter(o => !items.some(i => norm(i.n) === norm(o.n)));
-        menus[id] = { name: cur.name || name, items: keep.concat(items).slice(0, 600), source: src || cur.source || null };
+        const now = new Date().toISOString();
+        // updated = last save of any kind; log = the 10 most recent saves (when, how many items, how)
+        const log = [{ t: now, n: items.length, how: src ? src.kind : "manual", replace: !!b.replace }].concat(cur.log || []).slice(0, 10);
+        menus[id] = { name: cur.name || name, items: keep.concat(items).slice(0, 600), source: src || cur.source || null, updated: now, log };
       } else return res.status(400).json({ error: "Unknown action." });
       try { await writeMenus(menus, sha, `Menu data: ${b.action} ${name}`); return res.status(200).json({ ok: true, menu: menus[id] || null }); }
       catch (e) { if (e.status === 409 && attempt === 0) continue; throw e; }

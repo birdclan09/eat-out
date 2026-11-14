@@ -453,7 +453,7 @@ function readFile(f){return new Promise((ok,no)=>{const fr=new FileReader();fr.o
 const SH={name:"",tab:"search",note:"",busy:false,hand:{}};
 const near=()=>ME.la.toFixed(3)+", "+ME.lo.toFixed(3)+" (latitude, longitude)";
 const supBar=()=>{const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
- const src=m&&m.source&&m.source.url?`<a href="${esc(m.source.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(host(m.source.url))}</a> · ${fmtD(m.source.t)} · <a href="#" id="s-ref" style="color:var(--accent)">Refresh</a>`:cnt?cnt+" added by you":"";
+ const upd=m&&(m.updated||(m.source&&m.source.t)),src=m&&m.source&&m.source.url?`<a href="${esc(m.source.url)}" target="_blank" rel="noopener" style="color:inherit">${esc(host(m.source.url))}</a> · Updated ${fmtD(upd)} · <a href="#" id="s-ref" style="color:var(--accent)">Refresh</a>`:cnt?cnt+" added by you"+(upd?" · Updated "+fmtD(upd):""):"";
  return `<div class="supbar"><div class="mu">${src}</div><button class="addb" id="s-open">+ Add items</button></div>`};
 const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Search online for nutrition info</b><span>Official numbers, reviewed by you before saving</span></button><div style="text-align:center"><a href="#" id="s-open2" style="color:var(--accent)">Add items another way</a></div>`;
 function shClose(){const s=$("#sheet");if(s)s.remove();document.body.style.overflow="";SH.busy=false}

@@ -295,6 +295,10 @@ const ITEMS=RAW.split("\n").filter(Boolean).map(l=>{const a=l.split("|"),p=+a[3]
 let HOME={la:40.60,lo:-112.00,label:"from 84084"};
 const MODES={all:["Everything",()=>true],hp:["High protein (30 g+)",i=>i.p>=30],lt:["Light (under 400 cal)",i=>i.cal<400],hc:["High calorie (700+)",i=>i.cal>=700]};
 const norm=s=>String(s).toLowerCase().replace(/[^a-z0-9]/g,"");
+// Same restaurant under a different spelling (Rumbi's vs Rumbi): names match after dropping 's/the/restaurant, or one contains the other and the places are within 300 m
+const rkey=s=>String(s).toLowerCase().replace(/['’`]s\b/g,"").replace(/&/g," and ").replace(/\b(the|and|restaurant|restaurants)\b/g," ").replace(/[^a-z0-9]/g,"");
+const meters=(a,b)=>{const t=Math.PI/180,dx=(a.lo-b.lo)*t*Math.cos(a.la*t),dy=(a.la-b.la)*t;return Math.sqrt(dx*dx+dy*dy)*6371000};
+const dupOfBuiltIn=x=>{const k=rkey(x.name);if(!k)return false;return Object.keys(R).some(id=>{const r=R[id],rk=rkey(r.n);if(k===rk)return true;if(x.la==null||x.lo==null)return false;return meters(x,r)<300&&rk.length>=4&&k.length>=4&&(k.includes(rk)||rk.includes(k))})};
 const HAS=(()=>{try{return JSON.parse(localStorage.getItem("eo_has")||"{}")}catch(e){return{}}})();
 const hasGet=n=>{const v=HAS[norm(n)],o=v&&Date.now()-v.t<864e5?v.n:null,m=SUP[norm(n)],s=m?m.items.length:0;return s?(o||0)+s:o};
 const hasSet=(n,c)=>{HAS[norm(n)]={t:Date.now(),n:c};try{localStorage.setItem("eo_has",JSON.stringify(HAS))}catch(e){}};
@@ -547,7 +551,7 @@ function wire(){
    const open=x=>{if(x.ok)st.view=x.k;else st.web={name:x.name};render()};
    const draw=()=>{if(my!==st.run||!$("#rl"))return;const q=st.rq.toLowerCase(),have=new Set(Object.keys(R).map(k=>norm(R[k].n)));
     E=Object.keys(R).filter(k=>dist(R[k])*1609.34<=st.rad&&(!q||(R[k].n+" "+R[k].a).toLowerCase().includes(q))).map(k=>({k,name:R[k].n,mi:dist(R[k]),la:R[k].la,lo:R[k].lo,has:Math.max(1,ITEMS.filter(i=>i.k===k).length),sub:R[k].a,ok:1}));
-    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&(!q||(x.name+" "+(x.addr||"")).toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?"":c===0?"no menu found":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
+    if(st.near&&st.near.items)st.near.items.filter(x=>!have.has(norm(x.name))&&!dupOfBuiltIn(x)&&(!q||(x.name+" "+(x.addr||"")).toLowerCase().includes(q))).forEach(x=>{const c=hasGet(x.name);E.push({name:x.name,mi:x.mi,la:x.la,lo:x.lo,has:c,sub:[x.addr||x.cuisine,c>0?"":c===0?"no menu found":"tap to look up menu"].filter(Boolean).join(" · "),ok:0})});
     E.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||a.mi-b.mi);EA=E.slice();if(st.menuOnly)E=E.filter(x=>x.has>0);if(st.favOnly)E=E.filter(x=>isFavR(x.name));
     const status=!st.near?'<div class="empty" style="padding:8px 0">Finding restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
     $("#rl").innerHTML=status+'<div class="mrow"><div class="mu">'+(st.menuOnly?E.length+" With Menus"+(EA.some(x=>x.has==null)?" · checking more…":""):E.length+" Restaurants · Number = Menu Items")+'</div><div style="display:flex;gap:6px;flex:none"><button class="mo'+(st.favOnly?" on":"")+'" id="fo">Favorites Only</button><button class="mo'+(st.menuOnly?" on":"")+'" id="mo">Menus Only</button></div></div>'+(st.menuOnly&&!E.length&&st.near&&!st.near.err?'<div class="empty" style="padding:14px 0">No menus found nearby yet.</div>':'')+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${x.has>0?'<span class="bd">'+x.has+'</span>':""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
@@ -634,7 +638,7 @@ function wire(){
  if(st.tab==="find"){const hit=(s,q)=>q.split(/\s+/).every(w=>s.includes(w)),hd=t=>`<div class="sub" style="margin:16px 0 4px">${t}</div>`;
    const rests=q=>{const seen=new Set(),out=[],add=o=>{const id=norm(o.name);if(seen.has(id))return;seen.add(id);out.push(o)};
     Object.keys(R).forEach(k=>{if(hit((R[k].n+" "+R[k].a).toLowerCase(),q))add({name:R[k].n,k,mi:dist(R[k]),sub:ITEMS.filter(i=>i.k===k).length+" items · hand-checked"})});
-    if(st.near&&st.near.items)st.near.items.forEach(x=>{if(hit(x.name.toLowerCase(),q)){const c=hasGet(x.name);add({name:x.name,mi:x.mi,sub:c>0?c+" items":c===0?"no menu found":"tap to look up the menu"})}});
+    if(st.near&&st.near.items)st.near.items.forEach(x=>{if(hit(x.name.toLowerCase(),q)&&!dupOfBuiltIn(x)){const c=hasGet(x.name);add({name:x.name,mi:x.mi,sub:c>0?c+" items":c===0?"no menu found":"tap to look up the menu"})}});
     Object.keys(SUP).forEach(id=>{const m=SUP[id];if(hit(m.name.toLowerCase(),q))add({name:m.name,sub:m.items.length+" items added by you"})});
     return out.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||(a.mi==null?99:a.mi)-(b.mi==null?99:b.mi)).slice(0,6)};
    const draw=()=>{const q=st.iq;

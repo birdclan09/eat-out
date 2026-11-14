@@ -1287,5 +1287,2124 @@
     "replace": false
    }
   ]
+ },
+ "cafzupas": {
+  "name": "Café Zupas",
+  "items": [
+   {
+    "n": "Chicken Enchilada Chili (half)",
+    "c": "Soups",
+    "cal": 180,
+    "p": 6,
+    "cb": 11,
+    "f": 12,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chicken Enchilada Chili (large)",
+    "c": "Soups",
+    "cal": 360,
+    "p": 13,
+    "cb": 22,
+    "f": 23,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chicken Noodle (half)",
+    "c": "Soups",
+    "cal": 130,
+    "p": 9,
+    "cb": 16,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chicken Noodle (large)",
+    "c": "Soups",
+    "cal": 260,
+    "p": 19,
+    "cb": 33,
+    "f": 6,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chickpea & Vegetable (half)",
+    "c": "Soups",
+    "cal": 60,
+    "p": 2,
+    "cb": 9,
+    "f": 1.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chickpea & Vegetable (large)",
+    "c": "Soups",
+    "cal": 120,
+    "p": 4,
+    "cb": 18,
+    "f": 3.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Golden Curry Soup (half)",
+    "c": "Soups",
+    "cal": 380,
+    "p": 4,
+    "cb": 13,
+    "f": 34,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Golden Curry Soup (large)",
+    "c": "Soups",
+    "cal": 760,
+    "p": 7,
+    "cb": 25,
+    "f": 68,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Lobster Bisque (half)",
+    "c": "Soups",
+    "cal": 350,
+    "p": 3,
+    "cb": 10,
+    "f": 35,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Lobster Bisque (large)",
+    "c": "Soups",
+    "cal": 700,
+    "p": 5,
+    "cb": 21,
+    "f": 69,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mushroom Bisque (half)",
+    "c": "Soups",
+    "cal": 250,
+    "p": 2,
+    "cb": 10,
+    "f": 23,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mushroom Bisque (large)",
+    "c": "Soups",
+    "cal": 500,
+    "p": 4,
+    "cb": 20,
+    "f": 46,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Southwest Potato & Green Chili (half)",
+    "c": "Soups",
+    "cal": 280,
+    "p": 3,
+    "cb": 15,
+    "f": 25,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Southwest Potato & Green Chili (large)",
+    "c": "Soups",
+    "cal": 560,
+    "p": 6,
+    "cb": 30,
+    "f": 49,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tomato Basil (half)",
+    "c": "Soups",
+    "cal": 280,
+    "p": 2,
+    "cb": 18,
+    "f": 23,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tomato Basil (large)",
+    "c": "Soups",
+    "cal": 560,
+    "p": 4,
+    "cb": 37,
+    "f": 47,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "The \"Chris\" Creamy Tomato Soup (half)",
+    "c": "Soups",
+    "cal": 330,
+    "p": 5,
+    "cb": 14,
+    "f": 27,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "The \"Chris\" Creamy Tomato Soup (large)",
+    "c": "Soups",
+    "cal": 660,
+    "p": 10,
+    "cb": 27,
+    "f": 54,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Wisconsin Cauliflower (half)",
+    "c": "Soups",
+    "cal": 430,
+    "p": 6,
+    "cb": 6,
+    "f": 43,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Wisconsin Cauliflower (large)",
+    "c": "Soups",
+    "cal": 860,
+    "p": 12,
+    "cb": 13,
+    "f": 86,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Golden Curry Bowl",
+    "c": "Good Life Bowls",
+    "cal": 750,
+    "p": 22,
+    "cb": 62,
+    "f": 46,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Korean Kick Bowl",
+    "c": "Good Life Bowls",
+    "cal": 630,
+    "p": 27,
+    "cb": 72,
+    "f": 27,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Korean Kick Bowl without dressing",
+    "c": "Good Life Bowls",
+    "cal": 520,
+    "p": 27,
+    "cb": 67,
+    "f": 17,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mediterranean Bowl",
+    "c": "Good Life Bowls",
+    "cal": 700,
+    "p": 30,
+    "cb": 62,
+    "f": 39,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mediterranean Bowl without dressing",
+    "c": "Good Life Bowls",
+    "cal": 570,
+    "p": 30,
+    "cb": 57,
+    "f": 26,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Nourish Bowl",
+    "c": "Good Life Bowls",
+    "cal": 610,
+    "p": 25,
+    "cb": 57,
+    "f": 32,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Nourish Bowl without dressing",
+    "c": "Good Life Bowls",
+    "cal": 450,
+    "p": 25,
+    "cb": 55,
+    "f": 15,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Power Bowl",
+    "c": "Good Life Bowls",
+    "cal": 570,
+    "p": 38,
+    "cb": 20,
+    "f": 37,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Power Bowl without dressing",
+    "c": "Good Life Bowls",
+    "cal": 470,
+    "p": 38,
+    "cb": 8,
+    "f": 27,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Southwest Avocado Bowl",
+    "c": "Good Life Bowls",
+    "cal": 700,
+    "p": 29,
+    "cb": 70,
+    "f": 36,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Southwest Avocado Bowl without dressing",
+    "c": "Good Life Bowls",
+    "cal": 590,
+    "p": 29,
+    "cb": 69,
+    "f": 23,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "BBQ Brisket (wheat)",
+    "c": "Sandwiches",
+    "cal": 700,
+    "p": 19,
+    "cb": 68,
+    "f": 39,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "BBQ Brisket (white)",
+    "c": "Sandwiches",
+    "cal": 710,
+    "p": 18,
+    "cb": 69,
+    "f": 40,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Brisket Grilled Cheese (wheat)",
+    "c": "Sandwiches",
+    "cal": 670,
+    "p": 26,
+    "cb": 51,
+    "f": 39,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Brisket Grilled Cheese (white)",
+    "c": "Sandwiches",
+    "cal": 670,
+    "p": 24,
+    "cb": 52,
+    "f": 39,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Ham & Provolone (wheat)",
+    "c": "Sandwiches",
+    "cal": 640,
+    "p": 23,
+    "cb": 53,
+    "f": 35,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Honey Bacon Club (wheat)",
+    "c": "Sandwiches",
+    "cal": 590,
+    "p": 22,
+    "cb": 53,
+    "f": 30,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Honey Bacon Club (white)",
+    "c": "Sandwiches",
+    "cal": 650,
+    "p": 23,
+    "cb": 61,
+    "f": 32,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Italian Club (wheat)",
+    "c": "Sandwiches",
+    "cal": 820,
+    "p": 21,
+    "cb": 54,
+    "f": 54,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Italian Club (white)",
+    "c": "Sandwiches",
+    "cal": 820,
+    "p": 20,
+    "cb": 55,
+    "f": 54,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mediterranean Chicken (wheat)",
+    "c": "Sandwiches",
+    "cal": 740,
+    "p": 23,
+    "cb": 67,
+    "f": 42,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mediterranean Chicken (white)",
+    "c": "Sandwiches",
+    "cal": 750,
+    "p": 22,
+    "cb": 68,
+    "f": 43,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Pesto Chicken (wheat)",
+    "c": "Sandwiches",
+    "cal": 670,
+    "p": 26,
+    "cb": 46,
+    "f": 40,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Pesto Chicken (white)",
+    "c": "Sandwiches",
+    "cal": 730,
+    "p": 27,
+    "cb": 54,
+    "f": 42,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Turkey Avocado Club (wheat)",
+    "c": "Sandwiches",
+    "cal": 590,
+    "p": 25,
+    "cb": 52,
+    "f": 30,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Turkey Avocado Club (white)",
+    "c": "Sandwiches",
+    "cal": 650,
+    "p": 26,
+    "cb": 60,
+    "f": 32,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Turkey Bacon Avocado (wheat)",
+    "c": "Sandwiches",
+    "cal": 580,
+    "p": 25,
+    "cb": 51,
+    "f": 29,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Turkey Bacon Avocado (white)",
+    "c": "Sandwiches",
+    "cal": 640,
+    "p": 26,
+    "cb": 59,
+    "f": 31,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Ultimate Grilled Cheese (wheat)",
+    "c": "Sandwiches",
+    "cal": 610,
+    "p": 16,
+    "cb": 44,
+    "f": 39,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Ultimate Grilled Cheese (white)",
+    "c": "Sandwiches",
+    "cal": 670,
+    "p": 17,
+    "cb": 52,
+    "f": 41,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Veggie Crispy Chick'n (wheat)",
+    "c": "Sandwiches",
+    "cal": 770,
+    "p": 25,
+    "cb": 66,
+    "f": 45,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Veggie Crunch (wheat)",
+    "c": "Sandwiches",
+    "cal": 650,
+    "p": 13,
+    "cb": 66,
+    "f": 38,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Veggie Crunch (white)",
+    "c": "Sandwiches",
+    "cal": 660,
+    "p": 12,
+    "cb": 67,
+    "f": 39,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Avocado Caesar Salad (half)",
+    "c": "Salads",
+    "cal": 320,
+    "p": 16,
+    "cb": 11,
+    "f": 22,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Avocado Caesar Salad (large)",
+    "c": "Salads",
+    "cal": 510,
+    "p": 33,
+    "cb": 20,
+    "f": 31,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Avocado Caesar Salad without dressing (half)",
+    "c": "Salads",
+    "cal": 170,
+    "p": 16,
+    "cb": 9,
+    "f": 8,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Avocado Caesar Salad without dressing (large)",
+    "c": "Salads",
+    "cal": 370,
+    "p": 32,
+    "cb": 18,
+    "f": 17,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "BBQ Chicken (half)",
+    "c": "Salads",
+    "cal": 340,
+    "p": 9,
+    "cb": 35,
+    "f": 18,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "BBQ Chicken (large)",
+    "c": "Salads",
+    "cal": 430,
+    "p": 20,
+    "cb": 38,
+    "f": 22,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "BBQ Chicken without dressing (half)",
+    "c": "Salads",
+    "cal": 230,
+    "p": 8,
+    "cb": 33,
+    "f": 8,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "BBQ Chicken without dressing (large)",
+    "c": "Salads",
+    "cal": 330,
+    "p": 19,
+    "cb": 36,
+    "f": 12,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "California Cobb with Ranch Dressing (half)",
+    "c": "Salads",
+    "cal": 280,
+    "p": 13,
+    "cb": 9,
+    "f": 21,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "California Cobb with Ranch Dressing (large)",
+    "c": "Salads",
+    "cal": 430,
+    "p": 29,
+    "cb": 12,
+    "f": 29,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "California Cobb with Fresh Herb Vinaigrette (half)",
+    "c": "Salads",
+    "cal": 330,
+    "p": 15,
+    "cb": 12,
+    "f": 25,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "California Cobb with Fresh Herb Vinaigrette (large)",
+    "c": "Salads",
+    "cal": 480,
+    "p": 31,
+    "cb": 16,
+    "f": 33,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "California Cobb without dressing (half)",
+    "c": "Salads",
+    "cal": 170,
+    "p": 12,
+    "cb": 7,
+    "f": 10,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "California Cobb without dressing (large)",
+    "c": "Salads",
+    "cal": 320,
+    "p": 28,
+    "cb": 11,
+    "f": 19,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chipotle Glazed Chicken (half)",
+    "c": "Salads",
+    "cal": 390,
+    "p": 12,
+    "cb": 38,
+    "f": 21,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chipotle Glazed Chicken (large)",
+    "c": "Salads",
+    "cal": 500,
+    "p": 23,
+    "cb": 41,
+    "f": 26,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chipotle Glazed Chicken without dressing (half)",
+    "c": "Salads",
+    "cal": 290,
+    "p": 12,
+    "cb": 36,
+    "f": 11,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chipotle Glazed Chicken without dressing (large)",
+    "c": "Salads",
+    "cal": 400,
+    "p": 23,
+    "cb": 40,
+    "f": 16,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mango Berry (half)",
+    "c": "Salads",
+    "cal": 190,
+    "p": 3,
+    "cb": 23,
+    "f": 10,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mango Berry (large)",
+    "c": "Salads",
+    "cal": 220,
+    "p": 3,
+    "cb": 30,
+    "f": 10,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mango Berry without dressing (half)",
+    "c": "Salads",
+    "cal": 80,
+    "p": 2,
+    "cb": 14,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mango Berry without dressing (large)",
+    "c": "Salads",
+    "cal": 110,
+    "p": 3,
+    "cb": 21,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Nuts About Berries (half)",
+    "c": "Salads",
+    "cal": 230,
+    "p": 2,
+    "cb": 22,
+    "f": 15,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Nuts About Berries (large)",
+    "c": "Salads",
+    "cal": 260,
+    "p": 3,
+    "cb": 30,
+    "f": 15,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Nuts About Berries without dressing (half)",
+    "c": "Salads",
+    "cal": 80,
+    "p": 2,
+    "cb": 13,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Nuts About Berries without dressing (large)",
+    "c": "Salads",
+    "cal": 110,
+    "p": 3,
+    "cb": 20,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Strawberry Harvest (half)",
+    "c": "Salads",
+    "cal": 300,
+    "p": 11,
+    "cb": 26,
+    "f": 17,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Strawberry Harvest (large)",
+    "c": "Salads",
+    "cal": 380,
+    "p": 22,
+    "cb": 30,
+    "f": 19,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Strawberry Harvest without dressing (half)",
+    "c": "Salads",
+    "cal": 180,
+    "p": 9,
+    "cb": 18,
+    "f": 8,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Strawberry Harvest without dressing (large)",
+    "c": "Salads",
+    "cal": 260,
+    "p": 20,
+    "cb": 23,
+    "f": 9,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Baby Arugula (large)",
+    "c": "Greens",
+    "cal": 15,
+    "p": 2,
+    "cb": 2,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Baby Butter Lettuce Blend (half)",
+    "c": "Greens",
+    "cal": 10,
+    "p": 1,
+    "cb": 2,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Baby Butter Lettuce Blend (large)",
+    "c": "Greens",
+    "cal": 15,
+    "p": 1,
+    "cb": 2,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mixed Greens (half)",
+    "c": "Greens",
+    "cal": 10,
+    "p": 1,
+    "cb": 2,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mixed Greens (large)",
+    "c": "Greens",
+    "cal": 15,
+    "p": 1,
+    "cb": 2,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Avocado",
+    "c": "Protein",
+    "cal": 10,
+    "p": 1,
+    "cb": null,
+    "f": 1,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Smoked Brisket",
+    "c": "Protein",
+    "cal": 140,
+    "p": 10,
+    "cb": 2,
+    "f": 11,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Cage-Free Egg",
+    "c": "Protein",
+    "cal": 60,
+    "p": 6,
+    "cb": 0,
+    "f": 4,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "All-Natural Grilled Chicken",
+    "c": "Protein",
+    "cal": 30,
+    "p": 5,
+    "cb": null,
+    "f": 0.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "All-Natural Roasted Chicken",
+    "c": "Protein",
+    "cal": 45,
+    "p": 5,
+    "cb": null,
+    "f": 2,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Applewood-Smoked Bacon",
+    "c": "Salad/Bowl Toppings",
+    "cal": 40,
+    "p": 3,
+    "cb": 0,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Baby Cucumbers",
+    "c": "Salad/Bowl Toppings",
+    "cal": 2,
+    "p": 0,
+    "cb": 0,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Basmati Rice",
+    "c": "Salad/Bowl Toppings",
+    "cal": 90,
+    "p": 2,
+    "cb": 16,
+    "f": 2,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Black Beans",
+    "c": "Salad/Bowl Toppings",
+    "cal": 10,
+    "p": 1,
+    "cb": 2,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Black Olives",
+    "c": "Salad/Bowl Toppings",
+    "cal": 20,
+    "p": 0,
+    "cb": 0,
+    "f": 1.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Blueberries",
+    "c": "Salad/Bowl Toppings",
+    "cal": 5,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Cage-Free Eggs",
+    "c": "Salad/Bowl Toppings",
+    "cal": 35,
+    "p": 3,
+    "cb": 0,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Diced Mango",
+    "c": "Salad/Bowl Toppings",
+    "cal": 10,
+    "p": 0,
+    "cb": 3,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Diced Red Onions",
+    "c": "Salad/Bowl Toppings",
+    "cal": 4,
+    "p": 0,
+    "cb": 1,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Edamame",
+    "c": "Salad/Bowl Toppings",
+    "cal": 20,
+    "p": 2,
+    "cb": 1,
+    "f": 1,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Fire-Roasted Corn",
+    "c": "Salad/Bowl Toppings",
+    "cal": 20,
+    "p": 1,
+    "cb": 4,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Goat Cheese",
+    "c": "Salad/Bowl Toppings",
+    "cal": 25,
+    "p": 2,
+    "cb": 0,
+    "f": 2,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Grape Tomatoes",
+    "c": "Salad/Bowl Toppings",
+    "cal": 5,
+    "p": 0,
+    "cb": 1,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mixed Berries [Raspberries & Blackberries]",
+    "c": "Salad/Bowl Toppings",
+    "cal": 30,
+    "p": 1,
+    "cb": 7,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Red Pepper Hummus",
+    "c": "Salad/Bowl Toppings",
+    "cal": 80,
+    "p": 2,
+    "cb": 4,
+    "f": 6,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Roasted Cauliflower",
+    "c": "Salad/Bowl Toppings",
+    "cal": 10,
+    "p": 0,
+    "cb": null,
+    "f": 0.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Roasted Sweet Potatoes",
+    "c": "Salad/Bowl Toppings",
+    "cal": 80,
+    "p": 0,
+    "cb": 2,
+    "f": 8,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheddar Cheese",
+    "c": "Salad/Bowl Toppings",
+    "cal": 50,
+    "p": 3,
+    "cb": 0,
+    "f": 4.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Shredded Fontina Cheese",
+    "c": "Salad/Bowl Toppings",
+    "cal": 30,
+    "p": 2,
+    "cb": 0,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Shaved Parmesan Cheese",
+    "c": "Salad/Bowl Toppings",
+    "cal": 40,
+    "p": 4,
+    "cb": 0,
+    "f": 2,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Apples",
+    "c": "Salad/Bowl Toppings",
+    "cal": 10,
+    "p": 0,
+    "cb": 3,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Grapes",
+    "c": "Salad/Bowl Toppings",
+    "cal": 25,
+    "p": 0,
+    "cb": 6,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Strawberries",
+    "c": "Salad/Bowl Toppings",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sugar Snap Peas",
+    "c": "Salad/Bowl Toppings",
+    "cal": 4,
+    "p": 0,
+    "cb": 1,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tri-Color Peppers",
+    "c": "Salad/Bowl Toppings",
+    "cal": 3,
+    "p": 0,
+    "cb": 0,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tzatziki",
+    "c": "Salad/Bowl Toppings",
+    "cal": 50,
+    "p": 1,
+    "cb": 2,
+    "f": 4.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Wild Rice Blend",
+    "c": "Salad/Bowl Toppings",
+    "cal": 80,
+    "p": 2,
+    "cb": 16,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Balsamic Vinaigrette",
+    "c": "Dressings/Spreads",
+    "cal": 160,
+    "p": 0,
+    "cb": 4,
+    "f": 17,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "BBQ Sauce",
+    "c": "Dressings/Spreads",
+    "cal": 60,
+    "p": 0,
+    "cb": 15,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Cafe Zupas Sauce",
+    "c": "Dressings/Spreads",
+    "cal": 150,
+    "p": 0,
+    "cb": 9,
+    "f": 11,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Fresh Herb Vinaigrette",
+    "c": "Dressings/Spreads",
+    "cal": 160,
+    "p": 0,
+    "cb": 6,
+    "f": 16,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Honey Cilantro Glaze",
+    "c": "Dressings/Spreads",
+    "cal": 60,
+    "p": 0,
+    "cb": 17,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Italian Spread",
+    "c": "Dressings/Spreads",
+    "cal": 210,
+    "p": 0,
+    "cb": 3,
+    "f": 21,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Lemon Oregano Vinaigrette",
+    "c": "Dressings/Spreads",
+    "cal": 140,
+    "p": 0,
+    "cb": 5,
+    "f": 14,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mayo Spread",
+    "c": "Dressings/Spreads",
+    "cal": 210,
+    "p": 0,
+    "cb": 2,
+    "f": 21,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Pesto Spread",
+    "c": "Dressings/Spreads",
+    "cal": 200,
+    "p": 0,
+    "cb": 2,
+    "f": 20,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Poppyseed Dressing",
+    "c": "Dressings/Spreads",
+    "cal": 160,
+    "p": 0,
+    "cb": 10,
+    "f": 13,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Red Pepper Hummus",
+    "c": "Dressings/Spreads",
+    "cal": 80,
+    "p": 2,
+    "cb": 4,
+    "f": 6,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Roasted Tomatillo Vinaigrette",
+    "c": "Dressings/Spreads",
+    "cal": 110,
+    "p": 0,
+    "cb": 1,
+    "f": 12,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Secret Sauce",
+    "c": "Dressings/Spreads",
+    "cal": 160,
+    "p": 0,
+    "cb": 6,
+    "f": 14,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Spicy Spread",
+    "c": "Dressings/Spreads",
+    "cal": 210,
+    "p": 0,
+    "cb": 2,
+    "f": 21,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Strawberry Champagne Vinaigrette",
+    "c": "Dressings/Spreads",
+    "cal": 130,
+    "p": 0,
+    "cb": 11,
+    "f": 9,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sweet Chili BBQ Sauce",
+    "c": "Dressings/Spreads",
+    "cal": 45,
+    "p": 0,
+    "cb": 11,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "White BBQ Sauce",
+    "c": "Dressings/Spreads",
+    "cal": 200,
+    "p": 0,
+    "cb": 2,
+    "f": 20,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Caramel Rockslide Brownie",
+    "c": "Desserts",
+    "cal": 550,
+    "p": 5,
+    "cb": 56,
+    "f": 35,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chocolate-Dipped Cookie",
+    "c": "Desserts",
+    "cal": 210,
+    "p": 3,
+    "cb": 31,
+    "f": 9,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chocolate-Dipped Strawberry",
+    "c": "Desserts",
+    "cal": 45,
+    "p": 1,
+    "cb": 7,
+    "f": 2,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chocolate Mousse Cake",
+    "c": "Desserts",
+    "cal": 630,
+    "p": 5,
+    "cb": 57,
+    "f": 44,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Crème Brûlée Cheesecake",
+    "c": "Desserts",
+    "cal": 350,
+    "p": 5,
+    "cb": 28,
+    "f": 24,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Crispy Marshmallow Bar",
+    "c": "Desserts",
+    "cal": 450,
+    "p": 5,
+    "cb": 69,
+    "f": 14,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Salted Caramel Crème Brûlée",
+    "c": "Desserts",
+    "cal": 420,
+    "p": 2,
+    "cb": 31,
+    "f": 34,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "All-Natural Grilled Chicken (soup mix-in)",
+    "c": "Soup Mix-Ins",
+    "cal": 45,
+    "p": 7,
+    "cb": 0,
+    "f": 1.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Applewood-Smoked Bacon (soup mix-in)",
+    "c": "Soup Mix-Ins",
+    "cal": 40,
+    "p": 3,
+    "cb": 0,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Crispy Onions",
+    "c": "Soup Mix-Ins",
+    "cal": 60,
+    "p": 0,
+    "cb": 5,
+    "f": 4.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Goat Cheese (soup mix-in)",
+    "c": "Soup Mix-Ins",
+    "cal": 35,
+    "p": 2,
+    "cb": 1,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Oyster Crackers",
+    "c": "Soup Mix-Ins",
+    "cal": 64,
+    "p": 1,
+    "cb": 9,
+    "f": 2.6,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Rotini Noodles",
+    "c": "Soup Mix-Ins",
+    "cal": 80,
+    "p": 2,
+    "cb": 13,
+    "f": 2,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Shaved Parmesan Cheese (soup mix-in)",
+    "c": "Soup Mix-Ins",
+    "cal": 40,
+    "p": 4,
+    "cb": 0,
+    "f": 2,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheddar Cheese (soup mix-in)",
+    "c": "Soup Mix-Ins",
+    "cal": 50,
+    "p": 3,
+    "cb": 0,
+    "f": 4.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Shredded Fontina Cheese (soup mix-in)",
+    "c": "Soup Mix-Ins",
+    "cal": 30,
+    "p": 2,
+    "cb": 0,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Avocado (soup mix-in)",
+    "c": "Soup Mix-Ins",
+    "cal": 70,
+    "p": 1,
+    "cb": 4,
+    "f": 7,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sour Cream",
+    "c": "Soup Mix-Ins",
+    "cal": 40,
+    "p": 1,
+    "cb": 1,
+    "f": 4,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tortilla Strips (soup mix-in)",
+    "c": "Soup Mix-Ins",
+    "cal": 90,
+    "p": 1,
+    "cb": 10,
+    "f": 4.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Applewood-Smoked Bacon (sandwich add-on)",
+    "c": "Sandwich Add-Ons",
+    "cal": 40,
+    "p": 3,
+    "cb": 0,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Avocado (sandwich add-on)",
+    "c": "Sandwich Add-Ons",
+    "cal": 70,
+    "p": 1,
+    "cb": 4,
+    "f": 7,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Cheddar Cheese",
+    "c": "Sandwich Add-Ons",
+    "cal": 80,
+    "p": 4,
+    "cb": 1,
+    "f": 7,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Ham",
+    "c": "Sandwich Add-Ons",
+    "cal": 15,
+    "p": 2,
+    "cb": null,
+    "f": 0.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Muenster Cheese",
+    "c": "Sandwich Add-Ons",
+    "cal": 80,
+    "p": 5,
+    "cb": 0,
+    "f": 6,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Smoked Gouda",
+    "c": "Sandwich Add-Ons",
+    "cal": 80,
+    "p": 5,
+    "cb": 1,
+    "f": 5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Turkey",
+    "c": "Sandwich Add-Ons",
+    "cal": 15,
+    "p": 3,
+    "cb": 0,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Candied Pecans",
+    "c": "Dry Toppings",
+    "cal": 40,
+    "p": 0,
+    "cb": 3,
+    "f": 3.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chopped Cashews",
+    "c": "Dry Toppings",
+    "cal": 50,
+    "p": 2,
+    "cb": 3,
+    "f": 4.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chopped Pistachios",
+    "c": "Dry Toppings",
+    "cal": 20,
+    "p": 1,
+    "cb": 0,
+    "f": 1.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Cinnamon Almonds",
+    "c": "Dry Toppings",
+    "cal": 45,
+    "p": 1,
+    "cb": 6,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Crispy Chickpeas",
+    "c": "Dry Toppings",
+    "cal": 45,
+    "p": 2,
+    "cb": 6,
+    "f": 1.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Dried Cranberries",
+    "c": "Dry Toppings",
+    "cal": 35,
+    "p": 0,
+    "cb": 9,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Pumpkin Seeds",
+    "c": "Dry Toppings",
+    "cal": 45,
+    "p": 2,
+    "cb": 2,
+    "f": 4,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sliced Almonds",
+    "c": "Dry Toppings",
+    "cal": 45,
+    "p": 2,
+    "cb": 1,
+    "f": 4,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tortilla Strips (dry topping)",
+    "c": "Dry Toppings",
+    "cal": 90,
+    "p": 1,
+    "cb": 10,
+    "f": 4.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Lays® Oven Baked Original",
+    "c": "Chips & Bread",
+    "cal": 140,
+    "p": 2,
+    "cb": 25,
+    "f": 4,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Miss Vickie's Sea Salt & Vinegar",
+    "c": "Chips & Bread",
+    "cal": 210,
+    "p": 2,
+    "cb": 23,
+    "f": 12,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Miss Vickie's Smokehouse BBQ",
+    "c": "Chips & Bread",
+    "cal": 210,
+    "p": 2,
+    "cb": 23,
+    "f": 12,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Fresh Baguette Bread",
+    "c": "Chips & Bread",
+    "cal": 130,
+    "p": 4,
+    "cb": 26,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chicken Strips",
+    "c": "Kids Meals",
+    "cal": 200,
+    "p": 13,
+    "cb": 10,
+    "f": 12,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Fresh Fruit Cup",
+    "c": "Kids Meals",
+    "cal": 35,
+    "p": 0,
+    "cb": 9,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Grilled Cheese-Ancient Grain",
+    "c": "Kids Meals",
+    "cal": 410,
+    "p": 16,
+    "cb": 41,
+    "f": 19,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Grilled Cheese-Italian Ciabatta",
+    "c": "Kids Meals",
+    "cal": 470,
+    "p": 17,
+    "cb": 49,
+    "f": 21,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Kid's Soup-Chicken Enchilada Chili",
+    "c": "Kids Meals",
+    "cal": 130,
+    "p": 5,
+    "cb": 8,
+    "f": 9,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Kid's Soup-Chicken Noodle",
+    "c": "Kids Meals",
+    "cal": 110,
+    "p": 8,
+    "cb": 16,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Kid's Soup-Chickpea & Vegetable",
+    "c": "Kids Meals",
+    "cal": 35,
+    "p": 1,
+    "cb": 5,
+    "f": 1,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Kid's Soup-Lobster Bisque",
+    "c": "Kids Meals",
+    "cal": 260,
+    "p": 2,
+    "cb": 8,
+    "f": 26,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Kid's Soup-Mushroom Bisque",
+    "c": "Kids Meals",
+    "cal": 190,
+    "p": 2,
+    "cb": 8,
+    "f": 17,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Kid's Soup-Southwest Potato & Green Chili",
+    "c": "Kids Meals",
+    "cal": 210,
+    "p": 2,
+    "cb": 11,
+    "f": 19,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Kid's Soup-Tomato Basil",
+    "c": "Kids Meals",
+    "cal": 210,
+    "p": 2,
+    "cb": 14,
+    "f": 18,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Kid's Soup-Wisconsin Cauliflower",
+    "c": "Kids Meals",
+    "cal": 320,
+    "p": 5,
+    "cb": 5,
+    "f": 32,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Gold Peak® Sweet Tea",
+    "c": "Bottled/Canned Drinks",
+    "cal": 190,
+    "p": 0,
+    "cb": 48,
+    "f": 0,
+    "b": "18.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Milk 2%",
+    "c": "Bottled/Canned Drinks",
+    "cal": 120,
+    "p": 8,
+    "cb": 12,
+    "f": 5,
+    "b": "8 oz",
+    "v": 1
+   },
+   {
+    "n": "Coke® (can)",
+    "c": "Bottled/Canned Drinks",
+    "cal": 140,
+    "p": 0,
+    "cb": 39,
+    "f": 0,
+    "b": "12 oz can",
+    "v": 1
+   },
+   {
+    "n": "Sprite® (can)",
+    "c": "Bottled/Canned Drinks",
+    "cal": 140,
+    "p": 0,
+    "cb": 38,
+    "f": 0,
+    "b": "12 oz can",
+    "v": 1
+   },
+   {
+    "n": "Barq's Root Beer®",
+    "c": "Fountain Drinks",
+    "cal": 190,
+    "p": 0,
+    "cb": 48,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Cherry Coke®",
+    "c": "Fountain Drinks",
+    "cal": 190,
+    "p": 0,
+    "cb": 46,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Coca-Cola Classic®",
+    "c": "Fountain Drinks",
+    "cal": 180,
+    "p": 0,
+    "cb": 44,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Hi-C Flashin' Fruit Punch®",
+    "c": "Fountain Drinks",
+    "cal": 170,
+    "p": 0,
+    "cb": 47,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Minute Maid® Light Lemonade",
+    "c": "Fountain Drinks",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Powerade® Mountain Blast",
+    "c": "Fountain Drinks",
+    "cal": 100,
+    "p": 0,
+    "cb": 24,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Sprite® (fountain)",
+    "c": "Fountain Drinks",
+    "cal": 160,
+    "p": 0,
+    "cb": 40,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Fresh Berry Tray",
+    "c": "Catered Items",
+    "cal": 60,
+    "p": 1,
+    "cb": 14,
+    "f": 0.5,
+    "b": "5 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Citrus Infusion",
+    "c": "House-Made Drinks",
+    "cal": 110,
+    "p": 0,
+    "cb": 30,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Orange Berry Infusion",
+    "c": "House-Made Drinks",
+    "cal": 100,
+    "p": 0,
+    "cb": 28,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Mojito Mocktail",
+    "c": "House-Made Drinks",
+    "cal": 60,
+    "p": 0,
+    "cb": 17,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Sunshine Shot",
+    "c": "House-Made Drinks",
+    "cal": 200,
+    "p": 0,
+    "cb": 47,
+    "f": 0,
+    "b": "16 oz",
+    "v": 1
+   },
+   {
+    "n": "Turkey Cranberry Brie (wheat)",
+    "c": "Seasonal Sandwiches",
+    "cal": 510,
+    "p": 22,
+    "cb": 65,
+    "f": 19,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Turkey Cranberry Brie (white)",
+    "c": "Seasonal Sandwiches",
+    "cal": 520,
+    "p": 21,
+    "cb": 66,
+    "f": 20,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Turkey Cranberry (wheat)",
+    "c": "Seasonal Sandwiches",
+    "cal": 500,
+    "p": 22,
+    "cb": 60,
+    "f": 18,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Turkey Cranberry (white)",
+    "c": "Seasonal Sandwiches",
+    "cal": 500,
+    "p": 21,
+    "cb": 61,
+    "f": 18,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Pumpkin Chorizo (half)",
+    "c": "Seasonal Soups",
+    "cal": 260,
+    "p": 5,
+    "cb": 16,
+    "f": 20,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Pumpkin Chorizo (large)",
+    "c": "Seasonal Soups",
+    "cal": 520,
+    "p": 10,
+    "cb": 32,
+    "f": 40,
+    "b": "",
+    "v": 1
+   }
+  ],
+  "source": {
+   "url": "https://cafezupas.com/assets/Cafe-Zupas_Nutrition.pdf",
+   "kind": "pdf",
+   "t": "2026-11-14T23:27:44.431Z"
+  },
+  "updated": "2026-11-14T23:27:44.431Z",
+  "log": [
+   {
+    "t": "2026-11-14T23:27:44.431Z",
+    "n": 210,
+    "how": "pdf",
+    "replace": false
+   }
+  ]
  }
 }

@@ -1,8 +1,9 @@
 // Turns a menu/nutrition page, PDF or screenshot (or a web search) into a list of items for the user to review.
 // Uses the Anthropic API (ANTHROPIC_API_KEY). Nothing is saved here; the app saves via /api/menus after review.
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
-const PROMPT = `Extract nutrition facts for menu items from the source. Return ONLY JSON, no prose:
-{"items":[{"name":"","category":"","serving":"","calories":0,"protein":0,"carbs":0,"fat":0}],"notes":""}
+const PROMPT = `Extract nutrition facts for menu items from the source. Return ONLY compact JSON on a single line (no indentation, no prose) in exactly this shape:
+{"items":[["name","category","serving",calories,protein,carbs,fat]],"notes":""}
+Each item is one array in that order. Use null for carbs or fat if not stated, and "" for category or serving if not stated.
 Rules: only include items where the source states calories and protein (grams). Never estimate or invent numbers. Use the numbers exactly as printed; if a size is listed, make the size part of the item name. Carbs and fat may be null if not stated. "notes" is one short sentence about anything the user should double-check (for example an outdated date, or items skipped).`;
 const bad = h => /^(localhost|0\.0\.0\.0|127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.|\[?::1)/i.test(h) || !h.includes(".");
 const strip = html => html.replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, " ").replace(/<\/(tr|p|div|li|h\d)>/gi, "\n").replace(/<\/(td|th)>/gi, " | ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/[ \t]+/g, " ").replace(/\n\s*\n+/g, "\n").trim();
@@ -25,6 +26,31 @@ async function loadUrl(u) {
   } finally { clearTimeout(tm); }
 }
 
+// Reads the model's reply. If the JSON is cut off (a very long table) or has stray text, keep every complete item.
+function parseOut(text, truncated) {
+  const a = text.indexOf("{"), z = text.lastIndexOf("}");
+  if (a < 0) throw new Error("Couldn't find any menu items in that source.");
+  if (!truncated && z > a) { try { return JSON.parse(text.slice(a, z + 1)); } catch (e) { /* fall through to salvage */ } }
+  const it = text.indexOf('"items"'), k = it < 0 ? -1 : text.indexOf("[", it);
+  const fail = () => new Error("The result couldn't be read. Try again or use a smaller source.");
+  if (k < 0) throw fail();
+  const items = []; let depth = 0, start = -1, inStr = false, esc = false, closed = false;
+  for (let p = k + 1; p < text.length; p++) {
+    const ch = text[p];
+    if (inStr) { if (esc) esc = false; else if (ch === "\\") esc = true; else if (ch === '"') inStr = false; continue; }
+    if (ch === '"') { inStr = true; continue; }
+    if (ch === "[" || ch === "{") { if (depth === 0) start = p; depth++; }
+    else if (ch === "]" || ch === "}") {
+      if (depth === 0) { closed = ch === "]"; break; }
+      depth--;
+      if (depth === 0 && start >= 0) { try { items.push(JSON.parse(text.slice(start, p + 1))); } catch (e) { /* skip one bad item */ } start = -1; }
+    }
+  }
+  if (!items.length) throw fail();
+  const m = text.match(/"notes"\s*:\s*"((?:[^"\\]|\\.)*)"/), sr = text.match(/"source"\s*:\s*"((?:[^"\\]|\\.)*)"/);
+  return { items, notes: m ? m[1] : "", source: sr ? sr[1] : undefined, partial: truncated || !closed };
+}
+
 async function ask(content, tools) {
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
@@ -34,9 +60,7 @@ async function ask(content, tools) {
   const j = await r.json().catch(() => null);
   if (!r.ok || !j) throw new Error("Claude API: " + ((j && j.error && j.error.message) || r.status));
   const text = (j.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
-  const a = text.indexOf("{"), z = text.lastIndexOf("}");
-  if (a < 0 || z < a) throw new Error("Couldn't find any menu items in that source.");
-  try { return JSON.parse(text.slice(a, z + 1)); } catch (e) { throw new Error("The result couldn't be read. Try again or use a smaller source."); }
+  return parseOut(text, j.stop_reason === "max_tokens");
 }
 
 module.exports = async (req, res) => {
@@ -63,9 +87,11 @@ module.exports = async (req, res) => {
     }
     const out = await ask(content, tools);
     const num = v => { const x = parseFloat(v); return Number.isFinite(x) && x >= 0 ? x : null; };
-    const items = (out.items || []).map(i => ({ n: String(i.name || "").trim(), c: String(i.category || "").trim(), b: String(i.serving || "").trim(), cal: num(i.calories), p: num(i.protein), cb: num(i.carbs), f: num(i.fat) })).filter(i => i.n && i.cal > 0 && i.p != null);
+    const row = i => Array.isArray(i) ? { name: i[0], category: i[1], serving: i[2], calories: i[3], protein: i[4], carbs: i[5], fat: i[6] } : (i || {});
+    const note = (out.partial ? "Only part of this source could be read (it was very long), so some items are missing. " : "") + (out.notes || "");
+    const items = (out.items || []).map(row).map(i => ({ n: String(i.name || "").trim(), c: String(i.category || "").trim(), b: String(i.serving || "").trim(), cal: num(i.calories), p: num(i.protein), cb: num(i.carbs), f: num(i.fat) })).filter(i => i.n && i.cal > 0 && i.p != null);
     if (b.mode === "search" && out.source) source = { url: String(out.source), kind: "search" };
-    if (!items.length) return res.status(200).json({ items: [], notes: out.notes || "No items with calories and protein were found.", source });
-    return res.status(200).json({ items, notes: out.notes || "", source });
+    if (!items.length) return res.status(200).json({ items: [], notes: note || "No items with calories and protein were found.", source });
+    return res.status(200).json({ items, notes: note, source });
   } catch (e) { return res.status(502).json({ error: String(e.message || e).slice(0, 220) }); }
 };

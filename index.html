@@ -470,10 +470,15 @@ function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&
  let body;
  if(SH.busy)body=`<div class="empty">${esc(SH.note)}</div>`;
  else if(r&&r.items.length){const have=(supOf(name)||{items:[]}).items.length,two=have&&!r.replace;
-  body=`<div class="mu" style="margin-bottom:6px"><b>${r.items.length} items found</b>${r.source&&r.source.url?" at "+esc(host(r.source.url)):""}. Remove any that look wrong, then save.${r.notes?"<br>"+esc(r.notes):""}</div>`+
-   r.items.map((i,x)=>`<div class="rv"><span>${esc(i.n)}<br><span class="mu">${i.cal} cal · ${i.p} g protein${i.cb!=null?" · "+i.cb+" g carbs":""}${i.f!=null?" · "+i.f+" g fat":""}</span></span><button data-rx="${x}" aria-label="Remove">✕</button></div>`).join("")+
-   `<button class="pri" id="rv-save">${two?"Add to menu":"Save to menu"}</button>${two?'<button class="addb" style="width:100%;margin:10px 0 0;padding:12px" id="rv-rep">Replace the whole menu instead</button>':""}<div style="text-align:center;margin-top:12px"><a href="#" id="rv-no" style="color:var(--mute)">Discard</a></div>`+note}
- else if(r)body=`<div class="empty">${esc(r.notes||"No items with calories and protein were found.")}</div><div style="text-align:center"><a href="#" id="rv-no" style="color:var(--accent)">Try another way</a></div>`+note;
+  const NT=[].concat(r.notes||[]),cats={};r.items.forEach((i,x)=>{const c=(i.c||"Other").trim()||"Other";(cats[c]=cats[c]||[]).push(x)});
+  const nCat=Object.keys(cats).length,noCb=r.items.filter(i=>i.cb==null).length,row=(i,x)=>`<div class="rv"><span>${esc(i.n)}<br><span class="mu">${i.cal} cal · ${i.p} g protein${i.cb!=null?" · "+i.cb+" g carbs":""}${i.f!=null?" · "+i.f+" g fat":""}</span></span><button data-rx="${x}" aria-label="Remove">✕</button></div>`;
+  body=`<div style="position:sticky;top:0;z-index:2;background:var(--bg);padding:2px 0 10px"><div style="font-size:20px;font-weight:700">${r.items.length} items found</div><div class="mu">${r.source&&r.source.url?"From "+esc(host(r.source.url))+" · ":""}${nCat} section${nCat>1?"s":""}${noCb?" · "+noCb+" without carbs":""}</div>`+
+   `<button class="pri" id="rv-save" style="margin-top:10px">${two?"Add "+r.items.length+" items to menu":"Save "+r.items.length+" items"}</button>${two?'<button class="addb" style="width:100%;margin:8px 0 0;padding:10px" id="rv-rep">Replace the whole menu instead</button>':""}</div>`+
+   (NT.length?`<div class="supbox" style="margin:0 0 10px"><b>Check before saving</b><ul style="margin:6px 0 0;padding-left:18px">${NT.map(n=>`<li class="mu" style="margin:3px 0">${esc(n)}</li>`).join("")}</ul></div>`:"")+
+   `<div class="mu" style="margin:0 0 4px">Tap ✕ to remove anything that looks wrong.</div>`+
+   Object.keys(cats).map(c=>`<details${nCat===1?" open":""}><summary style="font-weight:600;padding:10px 0;border-top:1px solid var(--line)">${esc(c)} <span class="mu" style="font-weight:400">· ${cats[c].length}</span></summary>${cats[c].map(x=>row(r.items[x],x)).join("")}</details>`).join("")+
+   `<div style="text-align:center;margin-top:12px"><a href="#" id="rv-no" style="color:var(--mute)">Discard</a></div>`+note}
+ else if(r)body=`<div class="empty">${esc([].concat(r.notes||[]).join(" ")||"No items with calories and protein were found.")}</div><div style="text-align:center"><a href="#" id="rv-no" style="color:var(--accent)">Try another way</a></div>`+note;
  else body=`<div class="seg" id="sh-t" style="margin-bottom:12px">${TABS.map(t=>`<button data-k="${t[0]}"${SH.tab===t[0]?' class="on"':""}>${t[1]}</button>`).join("")}</div>`+TB[SH.tab]+note;
  s.innerHTML=`<div class="sh"><div class="shh"><b>Add items</b><span class="mu">${esc(name)}</span><button id="sh-x" aria-label="Close">✕</button></div>${body}</div>`;
  const g=id=>s.querySelector(id);

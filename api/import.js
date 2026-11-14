@@ -2,9 +2,9 @@
 // Uses the Anthropic API (ANTHROPIC_API_KEY). Nothing is saved here; the app saves via /api/menus after review.
 const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-5-5";
 const PROMPT = `Extract nutrition facts for menu items from the source. Return ONLY compact JSON on a single line (no indentation, no prose) in exactly this shape:
-{"items":[["name","category","serving",calories,protein,carbs,fat]],"notes":""}
+{"items":[["name","category","serving",calories,protein,carbs,fat]],"notes":["",""]}
 Each item is one array in that order. Use null for carbs or fat if not stated, and "" for category or serving if not stated.
-Rules: only include items where the source states calories and protein (grams). Never estimate or invent numbers. Use the numbers exactly as printed; if a size is listed, make the size part of the item name. Carbs and fat may be null if not stated. "notes" is one short sentence about anything the user should double-check (for example an outdated date, or items skipped).`;
+Rules: only include items where the source states calories and protein (grams). Never estimate or invent numbers. Use the numbers exactly as printed; if a size is listed, make the size part of the item name. Carbs and fat may be null if not stated. "notes" is a list of at most 5 short plain-English bullets (under 15 words each) the user should double-check: first the date or revision shown on the source if any, then any items whose printed numbers look inconsistent (name the item), then anything skipped. Leave it as [] if nothing needs checking.`;
 const bad = h => /^(localhost|0\.0\.0\.0|127\.|10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.|\[?::1)/i.test(h) || !h.includes(".");
 const strip = html => html.replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, " ").replace(/<\/(tr|p|div|li|h\d)>/gi, "\n").replace(/<\/(td|th)>/gi, " | ").replace(/<[^>]+>/g, " ").replace(/&nbsp;/g, " ").replace(/&amp;/g, "&").replace(/[ \t]+/g, " ").replace(/\n\s*\n+/g, "\n").trim();
 
@@ -93,10 +93,10 @@ module.exports = async (req, res) => {
     const out = await ask(content, tools);
     const num = v => { const x = parseFloat(v); return Number.isFinite(x) && x >= 0 ? x : null; };
     const row = i => Array.isArray(i) ? { name: i[0], category: i[1], serving: i[2], calories: i[3], protein: i[4], carbs: i[5], fat: i[6] } : (i || {});
-    const note = (out.partial ? "Only part of this source could be read (it was very long), so some items are missing. " : "") + (out.notes || "");
+    const notes = [].concat(out.partial ? ["Only part of this source could be read (it was very long), so some items are missing."] : [], Array.isArray(out.notes) ? out.notes : out.notes ? [out.notes] : []).map(x => String(x).trim()).filter(Boolean).slice(0, 6);
     const items = (out.items || []).map(row).map(i => ({ n: String(i.name || "").trim(), c: String(i.category || "").trim(), b: String(i.serving || "").trim(), cal: num(i.calories), p: num(i.protein), cb: num(i.carbs), f: num(i.fat) })).filter(i => i.n && i.cal > 0 && i.p != null);
     if (b.mode === "search" && out.source) source = { url: String(out.source), kind: "search" };
-    if (!items.length) return res.status(200).json({ items: [], notes: note || "No items with calories and protein were found.", source });
-    return res.status(200).json({ items, notes: note, source });
+    if (!items.length) return res.status(200).json({ items: [], notes: notes.length ? notes : ["No items with calories and protein were found."], source });
+    return res.status(200).json({ items, notes, source });
   } catch (e) { return res.status(502).json({ error: String(e.message || e).slice(0, 220) }); }
 };

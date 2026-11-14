@@ -1,1 +1,1 @@
-{"functions":{"api/nearby.js":{"maxDuration":15},"api/places.js":{"maxDuration":15},"api/import.js":{"maxDuration":60},"api/menus.js":{"maxDuration":20},"api/verify.js":{"maxDuration":60}}}
+{"functions":{"api/nearby.js":{"maxDuration":15},"api/places.js":{"maxDuration":15},"api/import.js":{"maxDuration":300},"api/menus.js":{"maxDuration":20},"api/verify.js":{"maxDuration":300}}}

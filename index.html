@@ -462,13 +462,13 @@ const supBar=()=>{const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
 const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Search online for nutrition info</b><span>Official numbers, reviewed by you before saving</span></button><div style="text-align:center"><a href="#" id="s-open2" style="color:var(--accent)">Add items another way</a></div>`;
 function shClose(){const s=$("#sheet");if(s)s.remove();document.body.style.overflow="";SH.busy=false}
 function shOpen(tab,auto){shClose();SH.name=curName();SH.tab=tab||"search";SH.note="";const s=document.createElement("div");s.id="sheet";document.body.appendChild(s);document.body.style.overflow="hidden";shDraw();if(auto)shRun({mode:"search",near:near()},"Searching the web.")}
-async function shRun(body,label){SH.busy=true;SH.note=label+" This can take up to a minute.";st.rev=null;shDraw();
+async function shRun(body,label){SH.busy=true;SH.note=label+" Long menus can take a few minutes. Keep this screen open.";st.rev=null;shDraw();
  try{const j=await api("/api/import",{name:SH.name,...body});let its=j.items||[],nt=[].concat(j.notes||[]);
   if(!body.replace){const ex=ITEMS.filter(o=>norm(o.r)===norm(SH.name)),w=s=>norm(String(s).split(/[ (,]/)[0]),dup=[];
    its=its.filter(i=>{const d=ex.find(o=>o.cal===i.cal&&o.p===i.p&&w(o.n)===w(i.n));if(d)dup.push(i.n);return!d});
    if(dup.length)nt.unshift(dup.length+" item"+(dup.length>1?"s":"")+" skipped because the same food is already in the app ("+dup.slice(0,3).join(", ")+(dup.length>3?", …":"")+").")}
   let held=[],ver;const vb=body.mode==="file"?{mode:"file",mime:body.mime,data:body.data}:body.mode==="url"?{mode:"url",url:body.url}:j.source&&j.source.url?{mode:"url",url:j.source.url}:null;
-  if(vb&&its.length){SH.note="Checking "+its.length+" items against the source. This can take up to a minute.";shDraw();
+  if(vb&&its.length){SH.note="Checking "+its.length+" items against the source. Long menus can take a few minutes. Keep this screen open.";shDraw();
    try{const v=await api("/api/verify",{...vb,items:its.map(i=>[i.n,i.cal,i.p,i.cb,i.f])}),bad=new Map();
     (v.problems||[]).forEach(q=>{if(!bad.has(q.i))bad.set(q.i,[]);bad.get(q.i).push(q)});
     held=[...bad.keys()].sort((a,b)=>a-b).map(x=>({item:its[x],why:bad.get(x).map(q=>q.field==="notfound"?"not found in the source":q.field+": read "+q.got+", source says "+q.src).join("; ")}));

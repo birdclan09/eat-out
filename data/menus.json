@@ -1,1 +1,1291 @@
-{}
+{
+ "rumbiislandgrill": {
+  "name": "Rumbi Island Grill",
+  "items": [
+   {
+    "n": "Fire Grilled Chicken (Half Size)",
+    "c": "Half Size Rice Bowls - Protein",
+    "cal": 80,
+    "p": 19,
+    "cb": null,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mango Chicken (Half Size)",
+    "c": "Half Size Rice Bowls - Protein",
+    "cal": 60,
+    "p": 8,
+    "cb": 7,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tempura Chicken (Half Size)",
+    "c": "Half Size Rice Bowls - Protein",
+    "cal": 620,
+    "p": 16,
+    "cb": 25,
+    "f": 26,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Luau Pork (Half Size)",
+    "c": "Half Size Rice Bowls - Protein",
+    "cal": 90,
+    "p": 10,
+    "cb": 2,
+    "f": 5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork (Half Size)",
+    "c": "Half Size Rice Bowls - Protein",
+    "cal": 210,
+    "p": 12,
+    "cb": 29,
+    "f": 6,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Steak (Half Size)",
+    "c": "Half Size Rice Bowls - Protein",
+    "cal": 210,
+    "p": 16,
+    "cb": 2,
+    "f": 15,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Shrimp (Half Size)",
+    "c": "Half Size Rice Bowls - Protein",
+    "cal": 100,
+    "p": 18,
+    "cb": 8,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tofu (Half Size)",
+    "c": "Half Size Rice Bowls - Protein",
+    "cal": 200,
+    "p": 11,
+    "cb": 10,
+    "f": 13,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "All Veggie (Half Size)",
+    "c": "Half Size Rice Bowls - Protein",
+    "cal": 40,
+    "p": 3,
+    "cb": 9,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "White Rice (Half Size)",
+    "c": "Half Size Rice Bowls - Rice",
+    "cal": 360,
+    "p": 5,
+    "cb": 62,
+    "f": 8,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Brown Rice (Half Size)",
+    "c": "Half Size Rice Bowls - Rice",
+    "cal": 310,
+    "p": 6,
+    "cb": 52,
+    "f": 10,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Rumbi Rice (Half Size)",
+    "c": "Half Size Rice Bowls - Rice",
+    "cal": 320,
+    "p": 7,
+    "cb": 44,
+    "f": 12,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Noodles (Half Size)",
+    "c": "Half Size Rice Bowls - Rice",
+    "cal": 490,
+    "p": 15,
+    "cb": 100,
+    "f": 2,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Fire Grilled Chicken (Full Size)",
+    "c": "Full Size Rice Bowls - Protein",
+    "cal": 110,
+    "p": 27,
+    "cb": 1,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mango Chicken (Full Size)",
+    "c": "Full Size Rice Bowls - Protein",
+    "cal": 80,
+    "p": 11,
+    "cb": 10,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tempura Chicken (Full Size)",
+    "c": "Full Size Rice Bowls - Protein",
+    "cal": 930,
+    "p": 24,
+    "cb": 37,
+    "f": 39,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Luau Pork (Full Size)",
+    "c": "Full Size Rice Bowls - Protein",
+    "cal": 120,
+    "p": 13,
+    "cb": 2,
+    "f": 7,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork (Full Size)",
+    "c": "Full Size Rice Bowls - Protein",
+    "cal": 280,
+    "p": 16,
+    "cb": 38,
+    "f": 8,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Steak (Full Size)",
+    "c": "Full Size Rice Bowls - Protein",
+    "cal": 350,
+    "p": 26,
+    "cb": 4,
+    "f": 25,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Shrimp (Full Size)",
+    "c": "Full Size Rice Bowls - Protein",
+    "cal": 170,
+    "p": 29,
+    "cb": 15,
+    "f": 3.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tofu (Full Size)",
+    "c": "Full Size Rice Bowls - Protein",
+    "cal": 250,
+    "p": 16,
+    "cb": 12,
+    "f": 16,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "All Veggie (Full Size)",
+    "c": "Full Size Rice Bowls - Protein",
+    "cal": 50,
+    "p": 4,
+    "cb": 12,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "White Rice (Full Size)",
+    "c": "Full Size Rice Bowls - Rice",
+    "cal": 450,
+    "p": 6,
+    "cb": 78,
+    "f": 10,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Brown Rice (Full Size)",
+    "c": "Full Size Rice Bowls - Rice",
+    "cal": 390,
+    "p": 7,
+    "cb": 65,
+    "f": 13,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Rumbi Rice (Full Size)",
+    "c": "Full Size Rice Bowls - Rice",
+    "cal": 400,
+    "p": 9,
+    "cb": 55,
+    "f": 15,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Noodles (Full Size)",
+    "c": "Full Size Rice Bowls - Rice",
+    "cal": 660,
+    "p": 21,
+    "cb": 135,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Hawaiian Teriyaki Sauce",
+    "c": "Rice Bowl Sauces",
+    "cal": 100,
+    "p": 3,
+    "cb": 23,
+    "f": 0,
+    "b": "2 ounce cup",
+    "v": 1
+   },
+   {
+    "n": "Spicy Hawaiian Teriyaki Sauce",
+    "c": "Rice Bowl Sauces",
+    "cal": 120,
+    "p": 1,
+    "cb": 29,
+    "f": 0,
+    "b": "2 ounce cup",
+    "v": 1
+   },
+   {
+    "n": "Jamaican Jerk Sauce",
+    "c": "Rice Bowl Sauces",
+    "cal": 120,
+    "p": 1,
+    "cb": 29,
+    "f": 0,
+    "b": "2 ounce cup",
+    "v": 1
+   },
+   {
+    "n": "Bali Peanut Sauce",
+    "c": "Rice Bowl Sauces",
+    "cal": 150,
+    "p": 3,
+    "cb": 15,
+    "f": 9,
+    "b": "2 ounce cup",
+    "v": 1
+   },
+   {
+    "n": "Rumbi Orange Sauce",
+    "c": "Rice Bowl Sauces",
+    "cal": 130,
+    "p": 0,
+    "cb": 31,
+    "f": 0,
+    "b": "2 ounce cup",
+    "v": 1
+   },
+   {
+    "n": "Rumbi Sweet & Spicy Sauce",
+    "c": "Rice Bowl Sauces",
+    "cal": 110,
+    "p": 2,
+    "cb": 25,
+    "f": 0,
+    "b": "2 ounce cup",
+    "v": 1
+   },
+   {
+    "n": "Gluten Free Teriyaki Sauce",
+    "c": "Rice Bowl Sauces",
+    "cal": 80,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "2 ounce cup",
+    "v": 1
+   },
+   {
+    "n": "Veggies (Half Size)",
+    "c": "Veggies",
+    "cal": 20,
+    "p": 1,
+    "cb": 5,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Veggies (Full Size)",
+    "c": "Veggies",
+    "cal": 40,
+    "p": 3,
+    "cb": 9,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Black Beans",
+    "c": "Cabo Style",
+    "cal": 110,
+    "p": 5,
+    "cb": 13,
+    "f": 4.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Ranch Dressing (Cabo Style)",
+    "c": "Cabo Style - Dressings",
+    "cal": 210,
+    "p": 1,
+    "cb": 4,
+    "f": 22,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Jalepeno Ranch Dressing (Cabo Style)",
+    "c": "Cabo Style - Dressings",
+    "cal": 190,
+    "p": 1,
+    "cb": 5,
+    "f": 19,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Island Mac Bowl (Full Size)",
+    "c": "Island Mac Bowl",
+    "cal": 640,
+    "p": 1,
+    "cb": 29,
+    "f": 59,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Aloha Mango Salad (Full Size, no protein or dressing)",
+    "c": "Salads - Full Size",
+    "cal": 310,
+    "p": 12,
+    "cb": 33,
+    "f": 15,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Voodoo Salad (Full Size, no protein or dressing)",
+    "c": "Salads - Full Size",
+    "cal": 300,
+    "p": 16,
+    "cb": 27,
+    "f": 15,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork Salad (Full Size, no protein or dressing)",
+    "c": "Salads - Full Size",
+    "cal": 400,
+    "p": 11,
+    "cb": 53,
+    "f": 18,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Jamaican Jerk Caesar Salad (Full Size, no protein or dressing)",
+    "c": "Salads - Full Size",
+    "cal": 190,
+    "p": 13,
+    "cb": 17,
+    "f": 8,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Rumbi BBQ Salad (Full Size, no protein or dressing)",
+    "c": "Salads - Full Size",
+    "cal": 340,
+    "p": 16,
+    "cb": 43,
+    "f": 13,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Fire Grilled Chicken (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 70,
+    "p": 16,
+    "cb": null,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mango Chicken (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 60,
+    "p": 8,
+    "cb": 7,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tempura Chicken (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 470,
+    "p": 12,
+    "cb": 19,
+    "f": 19,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Steak (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 210,
+    "p": 16,
+    "cb": 2,
+    "f": 15,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Luau Pork (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 90,
+    "p": 10,
+    "cb": 2,
+    "f": 5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 210,
+    "p": 12,
+    "cb": 29,
+    "f": 6,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Shrimp (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 90,
+    "p": 14,
+    "cb": 8,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tofu (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 200,
+    "p": 11,
+    "cb": 10,
+    "f": 13,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Salmon (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 330,
+    "p": 30,
+    "cb": 0,
+    "f": 21,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mahi (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 160,
+    "p": 32,
+    "cb": 0,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Jerk Chicken (Salad Protein, Full Size)",
+    "c": "Salads - Protein (Full Size)",
+    "cal": 80,
+    "p": 16,
+    "cb": 1,
+    "f": 0.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mango Passion Vinaigrette (Full Size)",
+    "c": "Salads - Dressings (Full Size)",
+    "cal": 300,
+    "p": 0,
+    "cb": 7,
+    "f": 31,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Caesar Dressing (Full Size)",
+    "c": "Salads - Dressings (Full Size)",
+    "cal": 820,
+    "p": 9,
+    "cb": 5,
+    "f": 90,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Ranch Dressing (Full Size)",
+    "c": "Salads - Dressings (Full Size)",
+    "cal": 260,
+    "p": 1,
+    "cb": 5,
+    "f": 27,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Jalapeno Ranch Dressing (Full Size)",
+    "c": "Salads - Dressings (Full Size)",
+    "cal": 240,
+    "p": 1,
+    "cb": 6,
+    "f": 23,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Balsamic Vinaigrette (Full Size)",
+    "c": "Salads - Dressings (Full Size)",
+    "cal": 430,
+    "p": 0,
+    "cb": 21,
+    "f": 39,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Jamaican Jerk Sauce (Salad, Full Size)",
+    "c": "Salads - Dressings (Full Size)",
+    "cal": 30,
+    "p": 0,
+    "cb": 7,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Kahuku BBQ Sauce (Salad, Full Size)",
+    "c": "Salads - Dressings (Full Size)",
+    "cal": 25,
+    "p": 0,
+    "cb": 5,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "White Rice (Salad Add Rice, Full Size)",
+    "c": "Salads - Add Rice (Full Size)",
+    "cal": 130,
+    "p": 2,
+    "cb": 23,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Brown Rice (Salad Add Rice, Full Size)",
+    "c": "Salads - Add Rice (Full Size)",
+    "cal": 120,
+    "p": 2,
+    "cb": 19,
+    "f": 4,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Rumbi Rice (Salad Add Rice, Full Size)",
+    "c": "Salads - Add Rice (Full Size)",
+    "cal": 120,
+    "p": 3,
+    "cb": 17,
+    "f": 4.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Aloha Mango Salad (Half Size, no protein or dressing)",
+    "c": "Salads - Half Size",
+    "cal": 160,
+    "p": 5,
+    "cb": 21,
+    "f": 6,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Voodoo Salad (Half Size, no protein or dressing)",
+    "c": "Salads - Half Size",
+    "cal": 170,
+    "p": 9,
+    "cb": 18,
+    "f": 8,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork Salad (Half Size, no protein or dressing)",
+    "c": "Salads - Half Size",
+    "cal": 210,
+    "p": 6,
+    "cb": 28,
+    "f": 9,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Jamaican Jerk Caesar Salad (Half Size, no protein or dressing)",
+    "c": "Salads - Half Size",
+    "cal": 90,
+    "p": 6,
+    "cb": 13,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Rumbi BBQ Salad (Half Size, no protein or dressing)",
+    "c": "Salads - Half Size",
+    "cal": 190,
+    "p": 9,
+    "cb": 25,
+    "f": 7,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Fire Grilled Chicken (Salad Protein, Half Size)",
+    "c": "Salads - Protein (Half Size)",
+    "cal": 35,
+    "p": 8,
+    "cb": 0,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mango Chicken (Salad Protein, Half Size)",
+    "c": "Salads - Protein (Half Size)",
+    "cal": 30,
+    "p": 4,
+    "cb": 4,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tempura Chicken (Salad Protein, Half Size)",
+    "c": "Salads - Protein (Half Size)",
+    "cal": 310,
+    "p": 8,
+    "cb": 12,
+    "f": 13,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Steak (Salad Protein, Half Size)",
+    "c": "Salads - Protein (Half Size)",
+    "cal": 140,
+    "p": 11,
+    "cb": 2,
+    "f": 10,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Luau Pork (Salad Protein, Half Size)",
+    "c": "Salads - Protein (Half Size)",
+    "cal": 40,
+    "p": 4,
+    "cb": null,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork (Salad Protein, Half Size)",
+    "c": "Salads - Protein (Half Size)",
+    "cal": 90,
+    "p": 5,
+    "cb": 13,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Shrimp (Salad Protein, Half Size)",
+    "c": "Salads - Protein (Half Size)",
+    "cal": 70,
+    "p": 9,
+    "cb": 8,
+    "f": 2,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tofu (Salad Protein, Half Size)",
+    "c": "Salads - Protein (Half Size)",
+    "cal": 150,
+    "p": 6,
+    "cb": 9,
+    "f": 10,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Jerk Chicken (Salad Protein, Half Size)",
+    "c": "Salads - Protein (Half Size)",
+    "cal": 40,
+    "p": 8,
+    "cb": null,
+    "f": 0.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mango Passion Vinaigrette (Half Size)",
+    "c": "Salads - Dressings (Half Size)",
+    "cal": 180,
+    "p": 0,
+    "cb": 4,
+    "f": 19,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Caesar Dressing (Half Size)",
+    "c": "Salads - Dressings (Half Size)",
+    "cal": 500,
+    "p": 5,
+    "cb": 3,
+    "f": 54,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Balsamic Vinaigrette (Half Size)",
+    "c": "Salads - Dressings (Half Size)",
+    "cal": 260,
+    "p": 0,
+    "cb": 13,
+    "f": 24,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Jamaican Jerk Sauce (Salad, Half Size)",
+    "c": "Salads - Dressings (Half Size)",
+    "cal": 15,
+    "p": 0,
+    "cb": 4,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Kahuku BBQ Sauce (Salad, Half Size)",
+    "c": "Salads - Dressings (Half Size)",
+    "cal": 10,
+    "p": 0,
+    "cb": 3,
+    "f": 0,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "White Rice (Salad Add Rice, Half Size)",
+    "c": "Salads - Add Rice (Half Size)",
+    "cal": 90,
+    "p": 1,
+    "cb": 16,
+    "f": 2,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Brown Rice (Salad Add Rice, Half Size)",
+    "c": "Salads - Add Rice (Half Size)",
+    "cal": 80,
+    "p": 1,
+    "cb": 13,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Rumbi Rice (Salad Add Rice, Half Size)",
+    "c": "Salads - Add Rice (Half Size)",
+    "cal": 80,
+    "p": 2,
+    "cb": 11,
+    "f": 3,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Side Caesar (no dressing)",
+    "c": "Side Salads",
+    "cal": 70,
+    "p": 6,
+    "cb": 4,
+    "f": 4,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Side House (no dressing)",
+    "c": "Side Salads",
+    "cal": 250,
+    "p": 9,
+    "cb": 16,
+    "f": 18,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mahi- white rice",
+    "c": "Volcano Blackened Fish",
+    "cal": 680,
+    "p": 35,
+    "cb": 70,
+    "f": 27,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mahi- brown rice",
+    "c": "Volcano Blackened Fish",
+    "cal": 640,
+    "p": 36,
+    "cb": 59,
+    "f": 29,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mahi- rumbi rice",
+    "c": "Volcano Blackened Fish",
+    "cal": 690,
+    "p": 38,
+    "cb": 42,
+    "f": 42,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Mahi- noodles",
+    "c": "Volcano Blackened Fish",
+    "cal": 700,
+    "p": 41,
+    "cb": 85,
+    "f": 21,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Salmon- white rice",
+    "c": "Volcano Blackened Fish",
+    "cal": 850,
+    "p": 34,
+    "cb": 71,
+    "f": 45,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Salmon- brown rice",
+    "c": "Volcano Blackened Fish",
+    "cal": 800,
+    "p": 35,
+    "cb": 61,
+    "f": 47,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Salmon- rumbi rice",
+    "c": "Volcano Blackened Fish",
+    "cal": 860,
+    "p": 37,
+    "cb": 44,
+    "f": 59,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Salmon- noodles",
+    "c": "Volcano Blackened Fish",
+    "cal": 870,
+    "p": 40,
+    "cb": 86,
+    "f": 38,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Side House (ranch)",
+    "c": "Volcano Blackened Fish",
+    "cal": 410,
+    "p": 10,
+    "cb": 20,
+    "f": 34,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Side House (balsamic)",
+    "c": "Volcano Blackened Fish",
+    "cal": 510,
+    "p": 9,
+    "cb": 29,
+    "f": 42,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Side Caesar (with dressing)",
+    "c": "Volcano Blackened Fish",
+    "cal": 570,
+    "p": 11,
+    "cb": 7,
+    "f": 58,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork Tacos (ranch)",
+    "c": "Tacos",
+    "cal": 1220,
+    "p": 30,
+    "cb": 171,
+    "f": 47,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork Tacos (jalapeno ranch)",
+    "c": "Tacos",
+    "cal": 1190,
+    "p": 30,
+    "cb": 171,
+    "f": 44,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Cabo Fish Tacos- white rice",
+    "c": "Tacos",
+    "cal": 1070,
+    "p": 24,
+    "cb": 118,
+    "f": 57,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Cabo Fish Tacos- brown rice",
+    "c": "Tacos",
+    "cal": 1030,
+    "p": 25,
+    "cb": 107,
+    "f": 59,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Cabo Fish Tacos- rumbi rice",
+    "c": "Tacos",
+    "cal": 1080,
+    "p": 27,
+    "cb": 90,
+    "f": 72,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Cabo Fish Tacos- cabo style rice",
+    "c": "Tacos",
+    "cal": 1160,
+    "p": 28,
+    "cb": 128,
+    "f": 61,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Cabo Fish Tacos- noodles",
+    "c": "Tacos",
+    "cal": 1090,
+    "p": 31,
+    "cb": 133,
+    "f": 51,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Caribbean Chicken & Shrimp- white rice",
+    "c": "Entrees",
+    "cal": 730,
+    "p": 46,
+    "cb": 76,
+    "f": 28,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Caribbean Chicken & Shrimp- brown rice",
+    "c": "Entrees",
+    "cal": 690,
+    "p": 47,
+    "cb": 66,
+    "f": 30,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Caribbean Chicken & Shrimp- rumbi rice",
+    "c": "Entrees",
+    "cal": 740,
+    "p": 49,
+    "cb": 49,
+    "f": 43,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Caribbean Chicken & Shrimp- noodles",
+    "c": "Entrees",
+    "cal": 760,
+    "p": 53,
+    "cb": 94,
+    "f": 22,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Hawaiian Teriyaki Bowl",
+    "c": "Little Kahunas",
+    "cal": 370,
+    "p": 18,
+    "cb": 64,
+    "f": 5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Rumbi Orange Bowl",
+    "c": "Little Kahunas",
+    "cal": 700,
+    "p": 15,
+    "cb": 72,
+    "f": 19,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chicken Dippers",
+    "c": "Little Kahunas",
+    "cal": 960,
+    "p": 15,
+    "cb": 49,
+    "f": 54,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Bahama Mama's Soup Med. Bowl",
+    "c": "Extras",
+    "cal": 430,
+    "p": 20,
+    "cb": 33,
+    "f": 28,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Bahama Mama's Soup Large Bowl",
+    "c": "Extras",
+    "cal": 770,
+    "p": 39,
+    "cb": 55,
+    "f": 50,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Rumbi Fries (fry sauce included)",
+    "c": "Extras",
+    "cal": 1010,
+    "p": 5,
+    "cb": 78,
+    "f": 46,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Sweet Potato Fries (fry sauce included)",
+    "c": "Extras",
+    "cal": 960,
+    "p": 3,
+    "cb": 69,
+    "f": 41,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Tempura Shrimp",
+    "c": "Extras",
+    "cal": 550,
+    "p": 9,
+    "cb": 37,
+    "f": 21,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Pineapple Upside Down Cake",
+    "c": "Island Treats",
+    "cal": 420,
+    "p": 5,
+    "cb": 62,
+    "f": 16,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chocolate Lava Cake",
+    "c": "Island Treats",
+    "cal": 530,
+    "p": 7,
+    "cb": 57,
+    "f": 31,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Brownie",
+    "c": "Island Treats",
+    "cal": 430,
+    "p": 6,
+    "cb": 57,
+    "f": 22,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Chocolate Chip Cookie",
+    "c": "Island Treats",
+    "cal": 500,
+    "p": 4,
+    "cb": 66,
+    "f": 24,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Salted Caramel Cookie",
+    "c": "Island Treats",
+    "cal": 350,
+    "p": 3,
+    "cb": 49,
+    "f": 16,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Marshmallow Treat",
+    "c": "Island Treats",
+    "cal": 250,
+    "p": 2,
+    "cb": 43,
+    "f": 5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Whipped Cream",
+    "c": "Island Treats",
+    "cal": 15,
+    "p": 0,
+    "cb": 1,
+    "f": 1,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Maraschino Cherry",
+    "c": "Island Treats",
+    "cal": 8,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "",
+    "v": 1
+   }
+  ],
+  "source": {
+   "url": "https://rumbi.com/wp-content/uploads/2025/05/Rumbi-Nutrition-Allergy-5-2020.pdf",
+   "kind": "pdf",
+   "t": "2026-11-14T23:11:16.459Z"
+  },
+  "updated": "2026-11-14T23:11:16.459Z",
+  "log": [
+   {
+    "t": "2026-11-14T23:11:16.459Z",
+    "n": 127,
+    "how": "pdf",
+    "replace": false
+   }
+  ]
+ }
+}

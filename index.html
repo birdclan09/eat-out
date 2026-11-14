@@ -463,7 +463,11 @@ const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search
 function shClose(){const s=$("#sheet");if(s)s.remove();document.body.style.overflow="";SH.busy=false}
 function shOpen(tab,auto){shClose();SH.name=curName();SH.tab=tab||"search";SH.note="";const s=document.createElement("div");s.id="sheet";document.body.appendChild(s);document.body.style.overflow="hidden";shDraw();if(auto)shRun({mode:"search",near:near()},"Searching the web.")}
 async function shRun(body,label){SH.busy=true;SH.note=label+" This can take up to a minute.";st.rev=null;shDraw();
- try{const j=await api("/api/import",{name:SH.name,...body});st.rev={name:SH.name,items:j.items||[],notes:j.notes,source:j.source,replace:!!body.replace};SH.note=""}catch(e){SH.note=e.message}
+ try{const j=await api("/api/import",{name:SH.name,...body});let its=j.items||[],nt=[].concat(j.notes||[]);
+  if(!body.replace){const ex=ITEMS.filter(o=>norm(o.r)===norm(SH.name)),w=s=>norm(String(s).split(/[ (,]/)[0]),dup=[];
+   its=its.filter(i=>{const d=ex.find(o=>o.cal===i.cal&&o.p===i.p&&w(o.n)===w(i.n));if(d)dup.push(i.n);return!d});
+   if(dup.length)nt.unshift(dup.length+" item"+(dup.length>1?"s":"")+" skipped because the same food is already in the app ("+dup.slice(0,3).join(", ")+(dup.length>3?", …":"")+").")}
+  st.rev={name:SH.name,items:its,notes:nt,source:j.source,replace:!!body.replace};SH.note=""}catch(e){SH.note=e.message}
  SH.busy=false;shDraw()}
 function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&st.rev.name===name?st.rev:null,H=SH.hand||{};
  const TABS=[["search","Search"],["link","Link"],["file","PDF/photo"],["hand","By hand"]],note=SH.note?`<div class="mu" style="margin-top:12px">${esc(SH.note)}</div>`:"";

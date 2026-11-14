@@ -27,10 +27,10 @@ module.exports = async (req, res) => {
         const items = clean(b.items);
         if (!items.length) return res.status(400).json({ error: "No valid items (each needs a name, calories and protein)." });
         const cur = menus[id] || { name, items: [] };
-        const src = b.source && b.source.url ? { url: String(b.source.url).slice(0, 500), kind: String(b.source.kind || "link").slice(0, 20), t: new Date().toISOString() } : null;
+        const src = b.source && b.source.url ? { url: String(b.source.url).slice(0, 500), kind: String(b.source.kind || "link").slice(0, 20), t: new Date().toISOString(), official: !!b.source.official } : null;
         // replace=true swaps in a fresh import from the source; otherwise append (skip same-name duplicates)
-        // v:1 = imported from a source link (restaurant page/PDF); hand-typed and file/photo additions stay unmarked
-        items.forEach(i => { i.v = src ? 1 : 0; });
+        // v:1 = imported from the restaurant's own site, v:2 = imported from a third-party site; hand-typed and file/photo additions stay 0
+        items.forEach(i => { i.v = src ? (src.official ? 1 : 2) : 0; });
         const keep = b.replace ? [] : cur.items.filter(o => !items.some(i => norm(i.n) === norm(o.n)));
         const now = new Date().toISOString();
         // updated = last save of any kind; log = the 10 most recent saves (when, how many items, how)

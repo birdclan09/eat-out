@@ -55,12 +55,17 @@ async function ask(content, tools) {
   const r = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: { "x-api-key": process.env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({ model: MODEL, max_tokens: 8000, messages: [{ role: "user", content }], ...(tools ? { tools } : {}) }),
+    body: JSON.stringify({ model: MODEL, max_tokens: 16000, messages: [{ role: "user", content }], ...(tools ? { tools } : {}) }),
   });
   const j = await r.json().catch(() => null);
   if (!r.ok || !j) throw new Error("Claude API: " + ((j && j.error && j.error.message) || r.status));
   const text = (j.content || []).filter(b => b.type === "text").map(b => b.text).join("\n");
-  return parseOut(text, j.stop_reason === "max_tokens");
+  try { return parseOut(text, j.stop_reason === "max_tokens"); }
+  catch (e) {
+    // Show what the model actually sent back, so a failure can be diagnosed instead of guessed at.
+    const peek = text.replace(/\s+/g, " ").slice(0, 160) || "(empty reply)";
+    throw new Error(e.message + " [stop: " + (j.stop_reason || "?") + "; reply began: " + peek + "]");
+  }
 }
 
 module.exports = async (req, res) => {

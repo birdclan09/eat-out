@@ -82,6 +82,7 @@ body{font-family:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,sans-serif}
 .tgs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}.tg{border-radius:16px;padding:10px 4px;text-align:center;color:#fff}.tg b{display:block;font-size:20px;line-height:1.1}.tg span{font-size:11px;opacity:.9}
 .rw>.av+div{flex:1;min-width:0}
 .crv{padding:18px 0}.crvh{font-size:20px;font-weight:800;margin-bottom:12px}.crvg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.crt{border:0;border-radius:18px;padding:14px;color:#fff;font:700 17px/1.1 inherit;font-family:inherit;text-align:left;display:flex;align-items:center;gap:10px;min-height:64px}.crt span{font-size:30px}.crt:active{transform:scale(.96)}
+.rx{margin:6px 0 0}
 .fe{text-align:center;padding:30px 16px}.fei{width:96px;height:96px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:46px;box-shadow:0 6px 18px rgba(0,0,0,.18)}.fet{font-size:21px;font-weight:800}.feb{color:var(--mute);margin:8px auto 18px;max-width:290px}.fgo{width:auto;padding:12px 26px;display:block;margin:0 auto}.seg button{white-space:nowrap}.seg .cn{display:inline-block;margin-left:4px;min-width:18px;padding:0 5px;border-radius:10px;background:var(--accent2);color:var(--accent);font-size:12px;font-weight:800}.seg .on .cn{background:rgba(255,255,255,.25);color:inherit}
 .empty:not([style*=padding])::before{content:"🍽️";display:block;font-size:36px;margin-bottom:6px}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -827,7 +828,11 @@ function wire(){
     const RL=rests(q);
     $("#rr").innerHTML=hd("Restaurants")+RL.map((x,n)=>`<div class="row" data-r="${n}"><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
      `<button class="big" id="rlook" style="margin-top:10px"><b>Look up “${esc(st.iqRaw||q)}” online</b><span>Find it as a restaurant in the nutrition database</span></button>`;
-    $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=()=>openRest(RL[+r.dataset.r]));
+    (st.pmx||[]).forEach(m=>{try{m.remove()}catch(e){}});st.pmx=[];
+    $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=async()=>{const x=RL[+r.dataset.r],nx=r.nextElementSibling;if(nx&&nx.classList.contains("rx")){nx.remove();r.classList.remove("open");return}
+     r.classList.add("open");const bx=document.createElement("div");bx.className="rx";bx.innerHTML='<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(x.name)+'”…</div>';r.insertAdjacentElement("afterend",bx);
+     const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div><div style="display:flex;gap:8px;margin-top:10px"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pfind">Search online for menu</button></div></div>';bx.querySelector("#pmenu").onclick=()=>openRest(x);bx.querySelector("#pfind").onclick=()=>{openRest(x);shOpen("search",true)}};
+     try{const j=await loadPlace(x.name);if(!bx.isConnected)return;if(!j.found)noInfo("No location details found for this one.");else showPlace(j,"",bx,"x")}catch(e){if(bx.isConnected)noInfo("Couldn't look up the location right now.")}});
     $("#rlook").onclick=()=>{st.tab="rest";st.cv=false;st.view=null;st.web={name:(st.iqRaw||q).trim()};st.iq="";render()};
     const all=ITEMS.concat(...MENU.values()),seenI=new Set(),L=all.filter(i=>{const k=norm(i.r+i.n+i.p+i.cal);if(seenI.has(k))return false;seenI.add(k);return hit((i.n+" "+i.r+" "+i.c).toLowerCase(),q)}).sort(byFav((a,b)=>b.ra-a.ra)).slice(0,40);
     $("#fr").innerHTML=hd("Foods"+(L.length?" · favorites first, then best protein per calorie":""))+(L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty" style="padding:8px 0">No food matched in the menus loaded so far.</div>')};
@@ -843,22 +848,26 @@ function wire(){
     }catch(e){if(my===seq)box.innerHTML=""}};
    const PLC=new Map();let pseq=0;
    const dirUrl=p=>"https://maps.apple.com/?daddr="+p.la+","+p.lo+"&q="+encodeURIComponent(p.name);
-   const showPlace=(j,q)=>{const box=$("#pc");if(!box)return;const p=j.place,who=(HOME.label||"you").replace(/^from /,"");
+   const showPlace=(j,q,box0,tag)=>{const box=box0||$("#pc");if(!box)return;const p=j.place,who=(HOME.label||"you").replace(/^from /,"");
     const hrs=p.hours?p.hours.split(/;\s*/).filter(Boolean).map(esc).join("<br>"):"";
-    box.innerHTML=hd("Nearest location")+`<div class="supbox" style="margin:0"><div style="font-size:18px;font-weight:700">${esc(p.name)}</div><div class="mu" style="margin-top:2px">${p.addr?esc(p.addr):"Address not listed"} · ${Math.round(p.mi*10)/10} mi from ${esc(who)}</div>`+
+    box.innerHTML=(box0?"":hd("Nearest location"))+`<div class="supbox" style="margin:0"><div style="font-size:18px;font-weight:700">${esc(p.name)}</div><div class="mu" style="margin-top:2px">${p.addr?esc(p.addr):"Address not listed"} · ${Math.round(p.mi*10)/10} mi from ${esc(who)}</div>`+
      `<div style="margin-top:10px"><b>Hours</b><div class="mu">${j.fallback?"Couldn't load hours right now":hrs||"Not listed"}</div></div>`+
      (p.phone?`<div style="margin-top:8px"><b>Phone</b><div class="mu"><a href="tel:${esc(p.phone.replace(/[^+0-9]/g,""))}" style="color:var(--accent)">${esc(p.phone)}</a></div></div>`:"")+
      (p.website&&/^https?:\/\//i.test(p.website)?`<div style="margin-top:8px"><b>Website</b><div class="mu"><a href="${esc(p.website)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(host(p.website))}</a></div></div>`:"")+
-     `<div id="pmap" style="height:220px;border-radius:14px;overflow:hidden;margin-top:12px"></div>`+
+     `<div class="pm" style="height:220px;border-radius:14px;overflow:hidden;margin-top:12px"></div>`+
      `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pdir">Directions</button><button class="addb" id="pfind">Search online for menu</button></div>`+
      (j.count>1?`<div class="mu" style="margin-top:10px">${j.count-1} other location${j.count>2?"s":""} nearby: ${j.others.map(o=>esc((o.addr||o.name).split(",")[0])+" ("+(Math.round(o.mi*10)/10)+" mi)").join(" · ")}${j.count>4?" …":""}</div>`:"")+
      `<div class="foot" style="margin:10px 0 0">Address, hours and phone come from OpenStreetMap data, so they can be missing or out of date.</div></div>`;
-    $("#pmenu").onclick=()=>openRest({name:p.name});$("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");$("#pfind").onclick=()=>{openRest({name:p.name});shOpen("search",true)};
-    try{if(st.pmap){st.pmap.remove();st.pmap=null}}catch(e){st.pmap=null}
-    if(window.L&&$("#pmap")){const m=st.pmap=L.map("pmap",{zoomControl:false}).setView([p.la,p.lo],15);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
+    box.querySelector("#pmenu").onclick=()=>openRest({name:p.name});box.querySelector("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");box.querySelector("#pfind").onclick=()=>{openRest({name:p.name});shOpen("search",true)};
+    const pm=box.querySelector(".pm");if(!box0){try{if(st.pmap){st.pmap.remove();st.pmap=null}}catch(e){st.pmap=null}}
+    if(window.L&&pm){const m=L.map(pm,{zoomControl:false});if(box0)(st.pmx=st.pmx||[]).push(m);else st.pmap=m;m.setView([p.la,p.lo],15);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
      L.marker([p.la,p.lo],{icon:L.divIcon({className:"",html:'<div class="pin ok sel"></div>',iconSize:[26,26],iconAnchor:[13,13]}),interactive:false}).addTo(m);
      L.marker([HOME.la,HOME.lo],{icon:L.divIcon({className:"",html:'<div class="pin me"></div>',iconSize:[16,16],iconAnchor:[8,8]}),interactive:false}).addTo(m);
-     if(p.mi>0.05)m.fitBounds([[p.la,p.lo],[HOME.la,HOME.lo]],{padding:[30,30],maxZoom:15})}else if($("#pmap"))$("#pmap").style.display="none"};
+     if(p.mi>0.05)m.fitBounds([[p.la,p.lo],[HOME.la,HOME.lo]],{padding:[30,30],maxZoom:15})}else if(pm)pm.style.display="none"};
+   const loadPlace=async nm=>{const key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);let j=PLC.get(key);if(j)return j;
+    try{const r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));PLC.set(key,j);return j}
+    catch(e){const sn=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,""),want=sn(nm),m=((st.near&&st.near.items)||[]).filter(x=>hit(sn(x.name),want)).sort((a,b)=>a.mi-b.mi)[0];
+     if(m)return{found:true,fallback:1,count:1,others:[],place:{name:m.name,addr:m.addr||"",mi:m.mi,la:m.la,lo:m.lo,hours:"",phone:"",website:"",cuisine:m.cuisine||""}};throw e}};
    const placeLook=async()=>{const q=st.iq,box=$("#pc");if(!box)return;const my=++pseq;
     if(q.length<3){box.innerHTML="";return}
     const top=rests(q)[0],nm=(top&&top.name)||(st.iqRaw||q),key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);

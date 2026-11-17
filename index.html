@@ -829,14 +829,13 @@ function wire(){
    const draw=()=>{const q=st.iq;
     if(q.length<2){$("#rr").innerHTML="";$("#fr").innerHTML=crvH;return}
     const RL=rests(q);
-    $("#rr").innerHTML=hd("Restaurants")+RL.map((x,n)=>`<div class="row" data-r="${n}"><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
-     `<button class="big" id="rlook" style="margin-top:10px"><b>Look up “${esc(st.iqRaw||q)}” online</b><span>Find it as a restaurant in the nutrition database</span></button>`;
+    $("#rr").innerHTML=(RL.length?hd("Restaurants"):"")+RL.map((x,n)=>`<div class="row" data-r="${n}"><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
+     "";
     (st.pmx||[]).forEach(m=>{try{m.remove()}catch(e){}});st.pmx=[];
     $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=async()=>{const x=RL[+r.dataset.r],nx=r.nextElementSibling;if(nx&&nx.classList.contains("rx")){nx.remove();r.classList.remove("open");return}
      r.classList.add("open");const bx=document.createElement("div");bx.className="rx";bx.innerHTML=ldH(x.name);r.insertAdjacentElement("afterend",bx);
-     const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div><div class="pbt" style="grid-template-columns:1fr"><button class="addb" id="pmenu">Open menu</button></div></div>';bx.querySelector("#pmenu").onclick=()=>openRest(x)};
+     const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div><div class="pbt" style="grid-template-columns:1fr 1fr"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pfind">Search online</button></div></div>';bx.querySelector("#pmenu").onclick=()=>openRest(x);bx.querySelector("#pfind").onclick=()=>{openRest(x);shOpen("search",true)}};
      try{const j=await loadPlace(x.name);if(!bx.isConnected)return;if(!j.found)noInfo("No location details found for this one.");else showPlace(j,"",bx,"x")}catch(e){if(bx.isConnected)noInfo("Couldn't look up the location right now.")}});
-    $("#rlook").onclick=()=>{st.tab="rest";st.cv=false;st.view=null;st.web={name:(st.iqRaw||q).trim()};st.iq="";render()};
     const all=ITEMS.concat(...MENU.values()),seenI=new Set(),L=all.filter(i=>{const k=norm(i.r+i.n+i.p+i.cal);if(seenI.has(k))return false;seenI.add(k);return hit((i.n+" "+i.r+" "+i.c).toLowerCase(),q)}).sort(byFav((a,b)=>b.ra-a.ra)).slice(0,40);
     $("#fr").innerHTML=hd("Foods"+(L.length?" · favorites first, then best protein per calorie":""))+(L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty" style="padding:8px 0">No food matched in the menus loaded so far.</div>')};
    let tm=null,seq=0;
@@ -858,10 +857,10 @@ function wire(){
      (p.phone?`<div style="margin-top:8px"><b>Phone</b><div class="mu"><a href="tel:${esc(p.phone.replace(/[^+0-9]/g,""))}" style="color:var(--accent)">${esc(p.phone)}</a></div></div>`:"")+
      (p.website&&/^https?:\/\//i.test(p.website)?`<div style="margin-top:8px"><b>Website</b><div class="mu"><a href="${esc(p.website)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(host(p.website))}</a></div></div>`:"")+
      `<div class="pm" style="height:220px;border-radius:14px;overflow:hidden;margin-top:12px"></div>`+
-     `<div class="pbt" style="grid-template-columns:1fr 1fr"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pdir">Directions</button></div>`+
+     `<div class="pbt"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pdir">Directions</button><button class="addb" id="pfind">Search online</button></div>`+
      (j.count>1?`<div class="mu" style="margin-top:10px">${j.count-1} other location${j.count>2?"s":""} nearby: ${j.others.map(o=>esc((o.addr||o.name).split(",")[0])+" ("+(Math.round(o.mi*10)/10)+" mi)").join(" · ")}${j.count>4?" …":""}</div>`:"")+
      `<div class="foot" style="margin:10px 0 0">Address, hours and phone come from OpenStreetMap data, so they can be missing or out of date.</div></div>`;
-    box.querySelector("#pmenu").onclick=()=>openRest({name:p.name});box.querySelector("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");
+    box.querySelector("#pmenu").onclick=()=>openRest({name:p.name});box.querySelector("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");box.querySelector("#pfind").onclick=()=>{openRest({name:p.name});shOpen("search",true)};
     const pm=box.querySelector(".pm");if(!box0){try{if(st.pmap){st.pmap.remove();st.pmap=null}}catch(e){st.pmap=null}}
     if(window.L&&pm){const m=L.map(pm,{zoomControl:false});if(box0)(st.pmx=st.pmx||[]).push(m);else st.pmap=m;m.setView([p.la,p.lo],15);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
      L.marker([p.la,p.lo],{icon:L.divIcon({className:"",html:'<div class="pin ok sel"></div>',iconSize:[26,26],iconAnchor:[13,13]}),interactive:false}).addTo(m);

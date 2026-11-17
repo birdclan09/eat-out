@@ -339,9 +339,56 @@ st.menuOnly=(()=>{try{return localStorage.getItem("eo_mo")==="1"}catch(e){return
 const $=s=>document.querySelector(s),app=$("#app");
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function dist(r){const t=Math.PI/180,dx=(r.lo-HOME.lo)*t*Math.cos(HOME.la*t),dy=(r.la-HOME.la)*t;return Math.sqrt(dx*dx+dy*dy)*3958.8}
-/* ---- Favorites (kept on this device in localStorage) ---- */
+/* ---- Sync: favorites, current meal, macro targets and filters are saved on the server (/api/state) so every device matches.
+   localStorage stays as the fast local copy; changes are sent about 2 seconds after the last tap. ---- */
+const lsg=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lss=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const SY={rev:+(lsg("eo_rev")||0),dirty:lsg("eo_dirty")==="1",tm:0,busy:false,applying:false,status:"idle",t:lsg("eo_synct")||"",err:""};
+function syState(){return{fav:FAV,meal:MEAL,goals:{p:GOAL.p,c:GOAL.c,cb:GOAL.cb,f:GOAL.f},prefs:{fo:!!st.favOnly,mo:!!st.menuOnly}}}
+function syncSoon(){if(SY.applying)return;SY.dirty=true;lss("eo_dirty","1");clearTimeout(SY.tm);SY.tm=setTimeout(()=>syncRun(),1800)}
+const syHdr=()=>({"x-edit-key":(typeof EK!=="undefined"&&EK.get())||""});
+function syApply(s){SY.applying=true;try{
+  FAV={f:s.fav.f||{},r:s.fav.r||{},m:s.fav.m||{}};MEAL={r:s.meal.r||"",items:s.meal.items||[]};
+  GOAL.p=s.goals.p>0?s.goals.p:180;GOAL.c=s.goals.c||0;GOAL.cb=s.goals.cb||0;GOAL.f=s.goals.f||0;st.favOnly=!!s.prefs.fo;st.menuOnly=!!s.prefs.mo;
+  favSave();mealSave();goalSave();lss("eo_fo",st.favOnly?"1":"");lss("eo_mo",st.menuOnly?"1":"");
+  SY.rev=s.rev;lss("eo_rev",String(s.rev));SY.dirty=false;lss("eo_dirty","");SY.t=s.t||"";lss("eo_synct",SY.t);
+ }finally{SY.applying=false}
+ try{mealUI()}catch(e){} if(!$("#sheet"))render()}
+const hasLocal=()=>Object.keys(FAV.f).length+Object.keys(FAV.r).length+Object.keys(FAV.m||{}).length+MEAL.items.length>0||GOAL.c>0||GOAL.cb>0||GOAL.f>0||GOAL.p!==180||st.favOnly||st.menuOnly;
+function syMerge(s){ // the server has newer data than we last synced: keep both sides' favorites; for meal, targets and filters our value wins unless ours is still empty
+  FAV.f={...s.fav.f,...FAV.f};FAV.r={...s.fav.r,...FAV.r};FAV.m={...(s.fav.m||{}),...(FAV.m||{})};
+  if(!MEAL.items.length&&s.meal&&s.meal.items.length)MEAL={r:s.meal.r||"",items:s.meal.items};
+  if(GOAL.p===180&&s.goals.p>0)GOAL.p=s.goals.p;for(const k of["c","cb","f"])if(!GOAL[k]&&s.goals[k])GOAL[k]=s.goals[k];
+  if(!st.favOnly&&s.prefs.fo)st.favOnly=true;if(!st.menuOnly&&s.prefs.mo)st.menuOnly=true;
+  SY.rev=s.rev;favSave0();mealSaveQ();goalSaveQ()}
+const mealSaveQ=()=>{try{localStorage.setItem("eo_meal",JSON.stringify(MEAL))}catch(e){}},goalSaveQ=()=>{for(const k in GKEY){try{if(GOAL[k]>0)localStorage.setItem(GKEY[k],String(GOAL[k]));else localStorage.removeItem(GKEY[k])}catch(e){}}};
+// One round: read the server, then either adopt its copy, or send ours (first time, or when we have unsent changes).
+async function syncRun(manual){if(SY.busy)return;SY.busy=true;SY.err="";
+ try{const r=await fetch("/api/state?u=me",{headers:syHdr(),cache:"no-store"});
+  if(r.status===401){SY.status="locked";return}
+  const j=await r.json().catch(()=>({}));if(!r.ok)throw new Error(j.error||"Server error "+r.status);
+  if(!j.configured){SY.status="off";return}
+  const srv=j.state;
+  const has=hasLocal();
+  if(!srv&&!has&&!SY.dirty){SY.status="ok";return} // nothing here and nothing there: don't save an empty copy
+  if(srv&&!SY.dirty&&!(SY.rev===0&&has)){if(srv.rev!==SY.rev||manual)syApply(srv);SY.status="ok";return} // a device that has never synced but has its own data merges instead of being overwritten
+  if(srv&&srv.rev!==SY.rev)syMerge(srv);
+  for(let n=0;n<2;n++){
+   const pr=await fetch("/api/state",{method:"POST",headers:{"Content-Type":"application/json",...syHdr()},body:JSON.stringify({u:"me",state:syState(),baseRev:SY.rev})}),pj=await pr.json().catch(()=>({}));
+   if(pr.status===401){SY.status="locked";return}
+   if(!pr.ok)throw new Error(pj.error||"Server error "+pr.status);
+   if(pj.conflict){syMerge(pj.state);continue}
+   SY.rev=pj.rev;lss("eo_rev",String(pj.rev));SY.t=pj.t||new Date().toISOString();lss("eo_synct",SY.t);SY.dirty=false;lss("eo_dirty","");SY.status="ok";return}
+  throw new Error("Couldn't merge, try again")
+ }catch(e){SY.status="err";SY.err=String(e.message||e).slice(0,120)}
+ finally{SY.busy=false;if($("#sy-msg"))syPaint()}}
+const favSave0=()=>{try{localStorage.setItem("eo_fav",JSON.stringify(FAV))}catch(e){}};
+function syLabel(){const t=SY.t?new Date(SY.t).toLocaleTimeString([],{hour:"numeric",minute:"2-digit"}):"";
+ return SY.status==="ok"?"Synced"+(t?" · last saved "+t:"")+(SY.dirty?" · saving…":""):SY.status==="locked"?"Enter your edit key to sync this device.":SY.status==="off"?"Sync isn't set up on the server yet.":SY.status==="err"?"Sync problem: "+SY.err:SY.busy?"Syncing…":"Not synced yet on this device."}
+function syPaint(){const m=$("#sy-msg");if(m)m.textContent=syLabel()}
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible"&&!SY.dirty)syncRun()});
+/* ---- Favorites (a local copy in localStorage, synced to the server) ---- */
 let FAV=(()=>{try{const j=JSON.parse(localStorage.getItem("eo_fav")||"{}");return{f:j.f||{},r:j.r||{},m:j.m||{}}}catch(e){return{f:{},r:{}}}})();
-const FREG={},favSave=()=>{try{localStorage.setItem("eo_fav",JSON.stringify(FAV))}catch(e){}};
+const FREG={},favSave=()=>{try{localStorage.setItem("eo_fav",JSON.stringify(FAV))}catch(e){}syncSoon()};
 const fkey=i=>norm(i.r+"|"+i.n)+"|"+Math.round(i.cal)+"|"+Math.round(i.p),isFavF=k=>!!FAV.f[k],isFavR=n=>!!FAV.r[norm(n)];
 function toggleFavF(k){if(FAV.f[k])delete FAV.f[k];else{const i=FREG[k];if(!i)return false;FAV.f[k]={n:i.n,r:i.r,c:i.c||"",p:i.p,cal:i.cal,cb:i.cb,f:i.f,ra:i.ra,b:i.b||"",u:!!i.u,t:Date.now()}}favSave();return isFavF(k)}
 const MSC=()=>[["p","Protein Rank",[["r","Per 100 Cal"],["h","Total Grams"]]],["l","Calories",[["w","Fewest"],["m","Most"]]]];
@@ -381,9 +428,9 @@ function metricFn(SC,FS,P,dfn){let key=null;for(const z of SC){const v=FS[z[0]];
 /* ---- Meal builder (kept on this device in localStorage) ---- */
 const GKEY={p:"eo_gp",c:"eo_gc",cb:"eo_gcb",f:"eo_gf"},gget=(k,d)=>{try{const v=+localStorage.getItem(GKEY[k]);return v>0?v:d}catch(e){return d}};
 const GOAL={p:gget("p",180),c:gget("c",0),cb:gget("cb",0),f:gget("f",0)}; // p defaults to 180 g; calories, carbs and fat are 0 = not set
-function goalSave(){for(const k in GKEY){try{if(GOAL[k]>0)localStorage.setItem(GKEY[k],String(GOAL[k]));else localStorage.removeItem(GKEY[k])}catch(e){}}}
+function goalSave(){for(const k in GKEY){try{if(GOAL[k]>0)localStorage.setItem(GKEY[k],String(GOAL[k]));else localStorage.removeItem(GKEY[k])}catch(e){}}syncSoon()}
 let MEAL=(()=>{try{const j=JSON.parse(localStorage.getItem("eo_meal")||"null");return j&&Array.isArray(j.items)?j:{r:"",items:[]}}catch(e){return{r:"",items:[]}}})();
-const mealSave=()=>{try{localStorage.setItem("eo_meal",JSON.stringify(MEAL))}catch(e){}};
+const mealSave=()=>{try{localStorage.setItem("eo_meal",JSON.stringify(MEAL))}catch(e){}syncSoon()};
 const HCK=new Set(ITEMS.map(fkey)),isHC=i=>HCK.has(fkey(i));
 const fmt=n=>Math.round(n).toLocaleString("en-US"),num=v=>{const x=parseFloat(v);return isNaN(x)?null:x};
 const mSnap=i=>({k:fkey(i),n:i.n,r:i.r,c:i.c||"",p:i.p,cal:i.cal,cb:i.cb,f:i.f,b:i.b||"",u:i.u,s:i.s?1:0});
@@ -595,7 +642,8 @@ function render(){
  }
  if(st.tab==="me"){const gr=(id,t,s,v,ph)=>`<label class="rv" style="border-top:1px solid var(--line)"><span>${t}<br><span class="mu">${s}</span></span><input class="gin" id="${id}" type="number" inputmode="numeric" min="0" placeholder="${ph}" value="${v||""}"></label>`;
   h=`<h1>Profile</h1><div class="sub">Your daily macro targets</div><div class="supbox" style="margin:0 0 12px">${gr("g-p","Protein","grams per day",GOAL.p,"180")}${gr("g-c","Calories","per day",GOAL.c,"Not set")}${gr("g-cb","Carbs","grams per day",GOAL.cb,"Not set")}${gr("g-f","Fat","grams per day",GOAL.f,"Not set")}<button class="pri" id="g-save">Save targets</button><div class="mu" style="margin-top:8px">Protein is used for the meal goal bar and the “% of your protein goal” on each food. Calories, carbs and fat show in your meal when set. Leave a box empty to turn it off (protein goes back to 180 g).</div></div>
-  <div class="supbox" style="margin:0"><b>Account</b><div class="mu" style="margin-top:4px">Sign-in and account settings will live here later. For now your targets are saved on this device.</div></div>`}
+  <div class="supbox" style="margin:0"><b>Account</b><div class="mu" style="margin-top:4px">Your favorites, meal and targets are saved on the server so every device matches. Real sign-in comes later.</div><div id="sy-msg" style="margin-top:10px;font-weight:600">${esc(syLabel())}</div>
+  <input class="search" id="sy-key" type="password" autocomplete="off" autocapitalize="off" placeholder="Edit key (once per device)" style="margin-top:10px"><button class="pri" id="sy-go">Connect and sync</button></div>`}
  if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods, restaurants and meals you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button><button data-k="meals">Meals</button><button data-k="added">Added</button></div><button class="frow" id="fsort" style="margin:0 0 10px"></button><div id="fl"></div>`}
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off"><div id="rr"></div><div id="pc"></div><div id="fr"></div><div id="wr"></div>`}
  app.innerHTML=h;wire();supWire();favWire();window.scrollTo(0,0);
@@ -629,8 +677,8 @@ function wire(){
     E.sort((a,b)=>isFavR(b.name)-isFavR(a.name)||a.mi-b.mi);EA=E.slice();if(st.menuOnly)E=E.filter(x=>x.has>0);if(st.favOnly)E=E.filter(x=>isFavR(x.name));
     const status=!st.near?'<div class="empty" style="padding:8px 0">Finding restaurants…</div>':st.near.err?'<div class="empty" style="padding:8px 0">'+esc(st.near.err)+'</div>':'';
     $("#rl").innerHTML=status+'<div class="mrow"><div class="mu">'+(st.menuOnly?E.length+" With Menus"+(EA.some(x=>x.has==null)?" · checking more…":""):E.length+" Restaurants · Number = Menu Items")+'</div><div style="display:flex;gap:6px;flex:none"><button class="mo'+(st.favOnly?" on":"")+'" id="fo">Favorites Only</button><button class="mo'+(st.menuOnly?" on":"")+'" id="mo">Menus Only</button></div></div>'+(st.menuOnly&&!E.length&&st.near&&!st.near.err?'<div class="empty" style="padding:14px 0">No menus found nearby yet.</div>':'')+E.map((x,n)=>`<div class="row" data-e="${n}"><div class="rw"><div><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${x.has>0?'<span class="bd">'+x.has+'</span>':""}${esc(x.name)}</span><span class="mu">${(Math.round(x.mi*10)/10)} mi</span></div><div class="mu">${esc(x.sub)}</div></div>${x.has===0?"":`<button class="selb${cmpHas(x)?" on":""}" data-s="${n}" aria-label="Add to compare">${cmpHas(x)?"✓":"+"}</button>`}</div></div>`).join("");
-    $("#fo").onclick=()=>{st.favOnly=!st.favOnly;try{localStorage.setItem("eo_fo",st.favOnly?"1":"")}catch(e){}draw()};
-    $("#mo").onclick=()=>{st.menuOnly=!st.menuOnly;try{localStorage.setItem("eo_mo",st.menuOnly?"1":"")}catch(e){}draw()};
+    $("#fo").onclick=()=>{st.favOnly=!st.favOnly;try{localStorage.setItem("eo_fo",st.favOnly?"1":"")}catch(e){}syncSoon();draw()};
+    $("#mo").onclick=()=>{st.menuOnly=!st.menuOnly;try{localStorage.setItem("eo_mo",st.menuOnly?"1":"")}catch(e){}syncSoon();draw()};
     $("#rl").querySelectorAll("[data-e]").forEach(r=>r.onclick=e=>{if(e.target.closest("[data-s]"))return;open(E[+r.dataset.e])});
     $("#rl").querySelectorAll("[data-s]").forEach(b=>b.onclick=e=>{e.stopPropagation();cmpToggle(E[+b.dataset.s]);draw()});
     if(layer){layer.clearLayers();L.marker([ME.la,ME.lo],{icon:icon(1,1),interactive:false}).addTo(layer);
@@ -670,7 +718,8 @@ function wire(){
  if(st.tab==="rest"&&st.view){const draw=()=>{const FSm=st.fsm=st.fsm||{sh:"all",p:"r",l:""},P=PICKS[FSm.sh];const SCm=MSC();sortBar($("#msort"),SCm,FSm,"fsom",draw);let L=ITEMS.filter(i=>P.f(i)&&i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    const sc=sortCmp(SCm,FSm,()=>null),mf=metricFn(SCm,FSm,P,()=>null);L.sort((a,b)=>sc(a,b)||P.o(a,b));$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false,mf)).join(""):'<div class="empty">Nothing matches.</div>'};
    draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()}}
- if(st.tab==="me"){$("#g-save").onclick=()=>{const rd=(id,lo,hi)=>{const s=$(id).value.trim();if(!s)return 0;const v=Math.round(+s);return v>=lo&&v<=hi?v:NaN};
+ if(st.tab==="me"){$("#sy-go").onclick=async()=>{const k=$("#sy-key").value.trim();if(k){EK.set(k);$("#sy-key").value=""}SY.status="idle";syPaint();await syncRun(true);syPaint();toast(SY.status==="ok"?"Synced":SY.status==="locked"?"That key didn't work":"Sync problem")};syncRun().then(syPaint);
+  $("#g-save").onclick=()=>{const rd=(id,lo,hi)=>{const s=$(id).value.trim();if(!s)return 0;const v=Math.round(+s);return v>=lo&&v<=hi?v:NaN};
    const n={p:rd("#g-p",1,500),c:rd("#g-c",1,10000),cb:rd("#g-cb",1,1000),f:rd("#g-f",1,500)};
    if(Object.values(n).some(Number.isNaN)){toast("Check the numbers: protein 1–500 g, calories 1–10,000, carbs 1–1,000 g, fat 1–500 g");return}
    GOAL.p=n.p||180;GOAL.c=n.c;GOAL.cb=n.cb;GOAL.f=n.f;goalSave();$("#g-p").value=GOAL.p;toast("Targets saved")}}
@@ -747,4 +796,6 @@ function wire(){
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.view=null;st.web=null;st.cv=false;st.pick=null;st.iq="";st.rq="";st.cat="All";render()});
 mealUI();render();
+
+syncRun();
 </script></body></html>

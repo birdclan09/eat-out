@@ -1,3 +1,4 @@
+const gridFix = require("./_grid");
 // Nearby restaurants via OpenStreetMap Overpass, asked from the server (no key). Tries 3 mirrors in parallel.
 const HOSTS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter", "https://overpass.private.coffee/api/interpreter"];
 module.exports = async (req, res) => {
@@ -23,7 +24,7 @@ module.exports = async (req, res) => {
       const dx = (x - lo) * t * Math.cos(la * t), dy = (y - la) * t, mi = Math.sqrt(dx * dx + dy * dy) * 3958.8;
       if (mi * 1609.34 > rad) continue;
       const k = e.tags.name.toLowerCase().replace(/[^a-z0-9]/g, "");
-      const addr = [e.tags["addr:housenumber"], e.tags["addr:street"]].filter(Boolean).join(" ");
+      const addr = gridFix([e.tags["addr:housenumber"], e.tags["addr:street"]].filter(Boolean).join(" "), y, x);
       if (!seen.has(k) || seen.get(k).mi > mi) seen.set(k, { name: e.tags.name, web: e.tags.website || e.tags["contact:website"] || e.tags["brand:website"] || "", mi, addr, cuisine: e.tags.cuisine || "", la: y, lo: x });
     }
     res.status(200).json({ items: [...seen.values()].sort((a, b) => a.mi - b.mi), source: "overpass" });

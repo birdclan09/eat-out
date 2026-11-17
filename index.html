@@ -581,11 +581,11 @@ function render(){
    h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button>${heartH(r.n,st.view)}<div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
    ${supBar()}<input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select></div><button class="frow" id="msort" style="margin:10px 0 6px"></button><div id="items"></div>`;
   }else{
-   h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, favorites first, then nearest</div><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="rl"></div><div id="cbar"></div>`;
+   h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, favorites first, then nearest</div><input class="search" id="cq" placeholder="Enter city name" enterkeyhint="search" autocapitalize="words" autocorrect="off"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="rl"></div><div id="cbar"></div>`;
   }
  }
  if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods, restaurants and meals you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button><button data-k="meals">Meals</button></div><button class="frow" id="fsort" style="margin:0 0 10px"></button><div id="fl"></div>`}
- if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off"><div id="rr"></div><div id="fr"></div><div id="wr"></div>`}
+ if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off"><div id="rr"></div><div id="pc"></div><div id="fr"></div><div id="wr"></div>`}
  app.innerHTML=h;wire();supWire();favWire();window.scrollTo(0,0);
 }
 function wire(){
@@ -631,9 +631,14 @@ function wire(){
     const cb=$("#cbar");cb.innerHTML=st.cmp.length?`<button id="cgo">Compare ${st.cmp.length} restaurant${st.cmp.length>1?"s":""} ›</button><button id="cclr">Deselect all</button>`:"";if(st.cmp.length){$("#cgo").onclick=()=>{st.cv=true;render()};$("#cclr").onclick=()=>{st.cmp=[];draw()}}};
    const scan=async()=>{const T=EA.filter(x=>!x.ok&&x.has==null).slice(0,30);let k=0;for(const x of T){if(my!==st.run)return;try{await hasMenu(x.name)}catch(e){return}if(++k%5===0&&my===st.run)draw()}if(my===st.run&&k)draw()};
    const load=(recenter=true,keep=false)=>{const q=++lq;if(!keep)st.near=null;if(recenter)center(HOME.la,HOME.lo);draw();nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(my!==st.run||q!==lq)return;st.near=j;draw();scan()}).catch(e=>{if(my!==st.run||q!==lq)return;st.near={err:"Couldn't reach the map service ("+String(e&&e.message||e).slice(0,160)+"). Tap Refresh to try again."};draw()})};
+   const goCity=async()=>{const q=$("#cq").value.trim();if(q.length<2)return;$("#cq").blur();toast("Finding “"+q+"”…");
+     try{const r=await fetch(`/api/geocode?q=${encodeURIComponent(q)}&type=city&lat=${HOME.la}&lon=${HOME.lo}`),j=await r.json().catch(()=>({}));if(my!==st.run)return;if(!r.ok||j.la==null)throw new Error(j.error||"Not found");
+      HOME={la:j.la,lo:j.lo,label:j.name||q};$("#cq").value="";load();toast("Showing restaurants near "+(j.name||q))}
+     catch(e){if(my===st.run)toast(String(e.message||"").indexOf("No city")===0?"Couldn't find a city named “"+q+"”":"Couldn't look up that city")}};
    const locate=()=>{draw();const ok=p=>{ME={la:p.coords.latitude,lo:p.coords.longitude};HOME={la:ME.la,lo:ME.lo,label:"from you"};if(my===st.run)load()};
     try{navigator.geolocation.getCurrentPosition(ok,()=>{if(my===st.run)load()},{timeout:7000,maximumAge:60000})}catch(e){load()}};
    if(!st.geoTried){st.geoTried=1;locate()}else if(!st.near||st.near.err)load();else{draw();scan()}
+   $("#cq").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();goCity()}};
    $("#rad").onchange=e=>{st.rad=+e.target.value;load()};$("#nb").onclick=()=>load();
    $("#sa").onclick=()=>{if(!map)return;const c=map.getCenter();HOME={la:c.lat,lo:c.lng,label:"map area"};$("#sa").style.display="none";load(false)};
    $("#loc").onclick=locate}
@@ -690,8 +695,36 @@ function wire(){
      const have=new Set(ITEMS.concat(...MENU.values()).map(i=>norm(i.n)+Math.round(i.cal)+Math.round(i.p))),fresh=j.items.filter(i=>!have.has(norm(i.name)+Math.round(i.n.cal||0)+Math.round(i.n.p||0)));
      box.innerHTML='<div class="sub" style="margin:16px 0 4px">More from the online database (not hand-checked)</div>'+(fresh.length?fresh.map(i=>`<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.name)}</span><span class="pp">${n(i.n.p)} g</span></div><div class="mu">${esc(i.brand)}${i.brand?" · ":""}${n(i.n.cal)} cal · per ${esc(i.basis)}${i.verified?"":" · unverified"}</div><div class="det"><b>${n(i.n.p)} g</b> protein · <b>${n(i.n.c)}</b> g carbs · <b>${n(i.n.f)}</b> g fat · <b>${n(i.n.cal)}</b> cal<br>Per ${esc(i.basis)}. Source: ${esc(j.source)} database, not the restaurant itself${i.verified?"":" (unverified entry)"}.</div></button>`).join(""):'<div class="empty">Nothing found online.</div>')+'<div class="foot">'+(j.source==='fatsecret'?'Powered by <a href="https://www.fatsecret.com" style="color:inherit">fatsecret</a>. ':'Source: '+esc(j.source)+'. ')+'Not hand-checked against the restaurant; check for oddities.</div>'
     }catch(e){if(my===seq)box.innerHTML=""}};
-   draw();online(st.iq);if(!st.near){nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(!st.near)st.near=j;if(st.tab==="find")draw()}).catch(()=>{})}
-   $("#fq").oninput=e=>{st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();clearTimeout(tm);tm=setTimeout(()=>online(st.iq),500)}}
+   const PLC=new Map();let pseq=0;
+   const dirUrl=p=>"https://maps.apple.com/?daddr="+p.la+","+p.lo+"&q="+encodeURIComponent(p.name);
+   const showPlace=(j,q)=>{const box=$("#pc");if(!box)return;const p=j.place,who=HOME.label==="from you"||!HOME.label?"you":HOME.label;
+    const hrs=p.hours?p.hours.split(/;\s*/).filter(Boolean).map(esc).join("<br>"):"";
+    box.innerHTML=hd("Nearest location")+`<div class="supbox" style="margin:0"><div style="font-size:18px;font-weight:700">${esc(p.name)}</div><div class="mu" style="margin-top:2px">${p.addr?esc(p.addr):"Address not listed"} · ${Math.round(p.mi*10)/10} mi from ${esc(who)}</div>`+
+     `<div style="margin-top:10px"><b>Hours</b><div class="mu">${hrs||"Not listed"}</div></div>`+
+     (p.phone?`<div style="margin-top:8px"><b>Phone</b><div class="mu"><a href="tel:${esc(p.phone.replace(/[^+0-9]/g,""))}" style="color:var(--accent)">${esc(p.phone)}</a></div></div>`:"")+
+     (p.website&&/^https?:\/\//i.test(p.website)?`<div style="margin-top:8px"><b>Website</b><div class="mu"><a href="${esc(p.website)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(host(p.website))}</a></div></div>`:"")+
+     `<div id="pmap" style="height:220px;border-radius:14px;overflow:hidden;margin-top:12px"></div>`+
+     `<div style="display:flex;gap:8px;margin-top:10px"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pdir">Directions</button></div>`+
+     (j.count>1?`<div class="mu" style="margin-top:10px">${j.count-1} other location${j.count>2?"s":""} nearby: ${j.others.map(o=>esc((o.addr||o.name).split(",")[0])+" ("+(Math.round(o.mi*10)/10)+" mi)").join(" · ")}${j.count>4?" …":""}</div>`:"")+
+     `<div class="foot" style="margin:10px 0 0">Address, hours and phone come from OpenStreetMap, so they can be missing or out of date.</div></div>`;
+    $("#pmenu").onclick=()=>openRest({name:p.name});$("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");
+    try{if(st.pmap){st.pmap.remove();st.pmap=null}}catch(e){st.pmap=null}
+    if(window.L&&$("#pmap")){const m=st.pmap=L.map("pmap",{zoomControl:false}).setView([p.la,p.lo],15);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
+     L.marker([p.la,p.lo],{icon:L.divIcon({className:"",html:'<div class="pin ok sel"></div>',iconSize:[26,26],iconAnchor:[13,13]}),interactive:false}).addTo(m);
+     L.marker([HOME.la,HOME.lo],{icon:L.divIcon({className:"",html:'<div class="pin me"></div>',iconSize:[16,16],iconAnchor:[8,8]}),interactive:false}).addTo(m);
+     if(p.mi>0.05)m.fitBounds([[p.la,p.lo],[HOME.la,HOME.lo]],{padding:[30,30],maxZoom:15})}else if($("#pmap"))$("#pmap").style.display="none"};
+   const placeLook=async()=>{const q=st.iq,box=$("#pc");if(!box)return;const my=++pseq;
+    if(q.length<3){box.innerHTML="";return}
+    const top=rests(q)[0],nm=(top&&top.name)||(st.iqRaw||q),key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);
+    let j=PLC.get(key);
+    if(!j){box.innerHTML=hd("Nearest location")+'<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(nm)+'”…</div>';
+     try{const r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(my!==pseq)return;if(!r.ok)throw new Error(j.error||"Lookup failed");PLC.set(key,j)}
+     catch(e){if(my===pseq)box.innerHTML=hd("Nearest location")+'<div class="empty" style="padding:8px 0">Couldn\'t look up the location right now.</div>';return}}
+    if(my!==pseq)return;
+    if(!j.found){box.innerHTML="";return}
+    showPlace(j,q)};
+   draw();online(st.iq);placeLook();if(!st.near){nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(!st.near)st.near=j;if(st.tab==="find")draw()}).catch(()=>{})}
+   $("#fq").oninput=e=>{st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();clearTimeout(tm);tm=setTimeout(()=>{online(st.iq);placeLook()},500)}}
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.view=null;st.web=null;st.cv=false;st.pick=null;st.iq="";st.rq="";st.cat="All";render()});
 mealUI();render();

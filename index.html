@@ -697,16 +697,16 @@ function wire(){
     }catch(e){if(my===seq)box.innerHTML=""}};
    const PLC=new Map();let pseq=0;
    const dirUrl=p=>"https://maps.apple.com/?daddr="+p.la+","+p.lo+"&q="+encodeURIComponent(p.name);
-   const showPlace=(j,q)=>{const box=$("#pc");if(!box)return;const p=j.place,who=HOME.label==="from you"||!HOME.label?"you":HOME.label;
+   const showPlace=(j,q)=>{const box=$("#pc");if(!box)return;const p=j.place,who=(HOME.label||"you").replace(/^from /,"");
     const hrs=p.hours?p.hours.split(/;\s*/).filter(Boolean).map(esc).join("<br>"):"";
     box.innerHTML=hd("Nearest location")+`<div class="supbox" style="margin:0"><div style="font-size:18px;font-weight:700">${esc(p.name)}</div><div class="mu" style="margin-top:2px">${p.addr?esc(p.addr):"Address not listed"} · ${Math.round(p.mi*10)/10} mi from ${esc(who)}</div>`+
-     `<div style="margin-top:10px"><b>Hours</b><div class="mu">${hrs||"Not listed"}</div></div>`+
+     `<div style="margin-top:10px"><b>Hours</b><div class="mu">${j.fallback?"Couldn't load hours right now":hrs||"Not listed"}</div></div>`+
      (p.phone?`<div style="margin-top:8px"><b>Phone</b><div class="mu"><a href="tel:${esc(p.phone.replace(/[^+0-9]/g,""))}" style="color:var(--accent)">${esc(p.phone)}</a></div></div>`:"")+
      (p.website&&/^https?:\/\//i.test(p.website)?`<div style="margin-top:8px"><b>Website</b><div class="mu"><a href="${esc(p.website)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(host(p.website))}</a></div></div>`:"")+
      `<div id="pmap" style="height:220px;border-radius:14px;overflow:hidden;margin-top:12px"></div>`+
      `<div style="display:flex;gap:8px;margin-top:10px"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pdir">Directions</button></div>`+
      (j.count>1?`<div class="mu" style="margin-top:10px">${j.count-1} other location${j.count>2?"s":""} nearby: ${j.others.map(o=>esc((o.addr||o.name).split(",")[0])+" ("+(Math.round(o.mi*10)/10)+" mi)").join(" · ")}${j.count>4?" …":""}</div>`:"")+
-     `<div class="foot" style="margin:10px 0 0">Address, hours and phone come from OpenStreetMap, so they can be missing or out of date.</div></div>`;
+     `<div class="foot" style="margin:10px 0 0">Address, hours and phone come from OpenStreetMap data, so they can be missing or out of date.</div></div>`;
     $("#pmenu").onclick=()=>openRest({name:p.name});$("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");
     try{if(st.pmap){st.pmap.remove();st.pmap=null}}catch(e){st.pmap=null}
     if(window.L&&$("#pmap")){const m=st.pmap=L.map("pmap",{zoomControl:false}).setView([p.la,p.lo],15);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
@@ -718,8 +718,11 @@ function wire(){
     const top=rests(q)[0],nm=(top&&top.name)||(st.iqRaw||q),key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);
     let j=PLC.get(key);
     if(!j){box.innerHTML=hd("Nearest location")+'<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(nm)+'”…</div>';
-     try{const r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(my!==pseq)return;if(!r.ok)throw new Error(j.error||"Lookup failed");PLC.set(key,j)}
-     catch(e){if(my===pseq)box.innerHTML=hd("Nearest location")+'<div class="empty" style="padding:8px 0">Couldn\'t look up the location right now.</div>';return}}
+     try{const r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(my!==pseq)return;if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));PLC.set(key,j)}
+     catch(e){if(my!==pseq)return;
+      const sn=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,""),want=sn(nm),m=((st.near&&st.near.items)||[]).filter(x=>hit(sn(x.name),want)).sort((a,b)=>a.mi-b.mi)[0];
+      if(m){showPlace({found:true,fallback:1,count:1,others:[],place:{name:m.name,addr:m.addr||"",mi:m.mi,la:m.la,lo:m.lo,hours:"",phone:"",website:"",cuisine:m.cuisine||""}},q);return}
+      box.innerHTML=hd("Nearest location")+'<div class="empty" style="padding:8px 0">Couldn\'t look up the location right now.<br><span class="mu">'+esc(String(e.message||e).slice(0,160))+'</span></div>';return}}
     if(my!==pseq)return;
     if(!j.found){box.innerHTML="";return}
     showPlace(j,q)};

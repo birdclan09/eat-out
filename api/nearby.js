@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
       if (mi * 1609.34 > rad) continue;
       const k = e.tags.name.toLowerCase().replace(/[^a-z0-9]/g, "");
       const addr = [e.tags["addr:housenumber"], e.tags["addr:street"]].filter(Boolean).join(" ");
-      if (!seen.has(k) || seen.get(k).mi > mi) seen.set(k, { name: e.tags.name, mi, addr, cuisine: e.tags.cuisine || "", la: y, lo: x });
+      if (!seen.has(k) || seen.get(k).mi > mi) seen.set(k, { name: e.tags.name, web: e.tags.website || e.tags["contact:website"] || e.tags["brand:website"] || "", mi, addr, cuisine: e.tags.cuisine || "", la: y, lo: x });
     }
     res.status(200).json({ items: [...seen.values()].sort((a, b) => a.mi - b.mi), source: "overpass" });
   } catch (e) {

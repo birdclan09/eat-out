@@ -19,6 +19,28 @@ module.exports = async (req, res) => {
     try { return await fetch(u, { ...opt, signal: c.signal }); } finally { clearTimeout(tm); }
   };
 
+  // Address text. Geoapify's tidied address_line2 can drop a Utah-style direction ("5639 7800 South" instead of "5639 West 7800 South"), so also build one from the raw OpenStreetMap tags and from the formatted line, expand abbreviations (W -> West), and keep the most complete version.
+  const DIR = { N: "North", S: "South", E: "East", W: "West" };
+  const expand = a => String(a || "").replace(/\b([NSEW])\.?(?=\s+\d)/g, (_, d) => DIR[d]).replace(/(\d\s+)([NSEW])\.?(?=\s*(,|$))/g, (_, n, d) => n + DIR[d]);
+  const bestAddr = p => {
+    const clean = a => expand(String(a || "").replace(/,\s*United States( of America)?$/i, "").trim());
+    const raw = (p.datasource && p.datasource.raw) || {}, cands = [clean(p.address_line2)];
+    const hn = raw["addr:housenumber"] || p.housenumber || "";
+    if (raw["addr:street"] && hn) {
+      const pre = raw["addr:street:prefix"] || raw["addr:street:direction"] || "", suf = raw["addr:street:suffix"] || "";
+      let st = raw["addr:street"];
+      if (pre && !new RegExp("^" + pre.replace(/[^A-Za-z]/g, ""), "i").test(st)) st = pre + " " + st;
+      if (suf && !new RegExp(suf.replace(/[^A-Za-z]/g, "") + "$", "i").test(st)) st = st + " " + suf;
+      const tail = String(p.address_line2 || "").split(",").slice(1).join(",");
+      cands.push(clean(hn + " " + st + (tail ? "," + tail : "")));
+    }
+    const seg = String(p.formatted || "").split(",").map(x => x.trim());
+    const i = seg.findIndex(x => hn && x.startsWith(hn + " "));
+    if (i >= 0) cands.push(clean(seg.slice(i).join(", ")));
+    // street part (before the first comma): the longest wins, since a dropped direction makes it shorter
+    return cands.filter(Boolean).sort((a, b) => a.split(",")[0].length - b.split(",")[0].length).pop() || "";
+  };
+
   // 1) Geoapify (key from env): finds the places by name quickly; Place Details then adds hours, phone and website when OpenStreetMap has them.
   const viaGeoapify = async () => {
     if (!key) return null;
@@ -29,7 +51,7 @@ module.exports = async (req, res) => {
     for (const f of j.features || []) {
       const p = f.properties || {};
       if (!p.name || p.lat == null || p.lon == null || !words.every(w => sq(p.name).includes(w))) continue;
-      list.push({ name: p.name, addr: String(p.address_line2 || "").replace(/,\s*United States( of America)?$/i, ""), mi: miTo(p.lat, p.lon), la: p.lat, lo: p.lon, hours: "", phone: "", website: "", cuisine: "", id: p.place_id });
+      list.push({ name: p.name, addr: bestAddr(p), mi: miTo(p.lat, p.lon), la: p.lat, lo: p.lon, hours: "", phone: "", website: "", cuisine: "", id: p.place_id });
     }
     if (!list.length) return null;
     list.sort((a, b) => a.mi - b.mi);

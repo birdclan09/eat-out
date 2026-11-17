@@ -7572,5 +7572,2019 @@
    "kept": 0,
    "t": "2026-11-17T15:49:23.028Z"
   }
+ },
+ "costavida": {
+  "name": "Costa Vida",
+  "items": [
+   {
+    "n": "Flour Tortilla 12\"",
+    "c": "Burritos",
+    "cal": 480,
+    "p": 10,
+    "cb": 72,
+    "f": 15,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice",
+    "c": "Burritos",
+    "cal": 140,
+    "p": 3,
+    "cb": 28,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans",
+    "c": "Burritos",
+    "cal": 80,
+    "p": 5,
+    "cb": 14,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans",
+    "c": "Burritos",
+    "cal": 80,
+    "p": 5,
+    "cb": 15,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans",
+    "c": "Burritos",
+    "cal": 120,
+    "p": 5,
+    "cb": 14,
+    "f": 5,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Red Enchilada Sauce",
+    "c": "Burritos",
+    "cal": 120,
+    "p": 2,
+    "cb": 14,
+    "f": 6,
+    "b": "5 oz",
+    "v": 1
+   },
+   {
+    "n": "Roasted Green Chile Sauce",
+    "c": "Burritos",
+    "cal": 130,
+    "p": 2,
+    "cb": 24,
+    "f": 3,
+    "b": "5 oz",
+    "v": 1
+   },
+   {
+    "n": "Tomatillo Cilantro Sauce",
+    "c": "Burritos",
+    "cal": 60,
+    "p": 2,
+    "cb": 12,
+    "f": 1,
+    "b": "5 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce",
+    "c": "Burritos",
+    "cal": 120,
+    "p": 0,
+    "cb": 29,
+    "f": 0.5,
+    "b": "5 oz",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese",
+    "c": "Burritos",
+    "cal": 220,
+    "p": 14,
+    "cb": 0,
+    "f": 18,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Pico de Gallo",
+    "c": "Burritos",
+    "cal": 10,
+    "p": 0,
+    "cb": 1,
+    "f": 0.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Habanero Salsa",
+    "c": "Burritos",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Roja",
+    "c": "Burritos",
+    "cal": 30,
+    "p": 0.6,
+    "cb": 3,
+    "f": 1.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Salsa",
+    "c": "Burritos",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Corn Tortilla 6\" (Small)",
+    "c": "Salads",
+    "cal": 120,
+    "p": 3,
+    "cb": 25,
+    "f": 1.5,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla 6\" (Small)",
+    "c": "Salads",
+    "cal": 160,
+    "p": 3,
+    "cb": 24,
+    "f": 5,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice (Small)",
+    "c": "Salads",
+    "cal": 70,
+    "p": 2,
+    "cb": 14,
+    "f": 1,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans (Small)",
+    "c": "Salads",
+    "cal": 50,
+    "p": 3,
+    "cb": 10,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans (Small)",
+    "c": "Salads",
+    "cal": 60,
+    "p": 3,
+    "cb": 10,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans (Small)",
+    "c": "Salads",
+    "cal": 80,
+    "p": 3,
+    "cb": 9,
+    "f": 3.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Grilled Chicken (Small)",
+    "c": "Salads",
+    "cal": 90,
+    "p": 14,
+    "cb": 0.6,
+    "f": 3.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Barbacoa Beef (Small)",
+    "c": "Salads",
+    "cal": 60,
+    "p": 7,
+    "cb": 1,
+    "f": 2.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Grilled Steak (Small)",
+    "c": "Salads",
+    "cal": 140,
+    "p": 14,
+    "cb": 0,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork (Small)",
+    "c": "Salads",
+    "cal": 150,
+    "p": 7,
+    "cb": 11,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Butter Shrimp (Small)",
+    "c": "Salads",
+    "cal": 130,
+    "p": 9,
+    "cb": 8,
+    "f": 7,
+    "b": "2.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Lettuce (Small)",
+    "c": "Salads",
+    "cal": 10,
+    "p": 0.7,
+    "cb": 2,
+    "f": 0,
+    "b": "2.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Tomatillo Ranch Dressing (Small)",
+    "c": "Salads",
+    "cal": 170,
+    "p": 1,
+    "cb": 2,
+    "f": 17,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Vinaigrette (Small)",
+    "c": "Salads",
+    "cal": 180,
+    "p": 0.8,
+    "cb": 25,
+    "f": 15,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Dressing (Small)",
+    "c": "Salads",
+    "cal": 160,
+    "p": 0,
+    "cb": 12,
+    "f": 12,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Pico de Gallo (Small)",
+    "c": "Salads",
+    "cal": 10,
+    "p": 0,
+    "cb": 1,
+    "f": 0.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Roja (Small)",
+    "c": "Salads",
+    "cal": 30,
+    "p": 0.6,
+    "cb": 3,
+    "f": 1.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Habanero Salsa (Small)",
+    "c": "Salads",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Salsa (Small)",
+    "c": "Salads",
+    "cal": 35,
+    "p": 0,
+    "cb": 9,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Guacamole (Small)",
+    "c": "Salads",
+    "cal": 40,
+    "p": 0.5,
+    "cb": 2,
+    "f": 3.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Cotija Cheese (Small)",
+    "c": "Salads",
+    "cal": 25,
+    "p": 2,
+    "cb": 0,
+    "f": 2,
+    "b": "0.33 oz",
+    "v": 1
+   },
+   {
+    "n": "Fried Tortilla Strips (Small)",
+    "c": "Salads",
+    "cal": 150,
+    "p": 2,
+    "cb": 17,
+    "f": 8,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce (Small)",
+    "c": "Salads",
+    "cal": 120,
+    "p": 0,
+    "cb": 29,
+    "f": 0.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla 12\" (Regular)",
+    "c": "Salads",
+    "cal": 480,
+    "p": 10,
+    "cb": 72,
+    "f": 15,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice (Regular)",
+    "c": "Salads",
+    "cal": 140,
+    "p": 3,
+    "cb": 28,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans (Regular)",
+    "c": "Salads",
+    "cal": 110,
+    "p": 7,
+    "cb": 19,
+    "f": 0.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans (Regular)",
+    "c": "Salads",
+    "cal": 110,
+    "p": 7,
+    "cb": 21,
+    "f": 0.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans (Regular)",
+    "c": "Salads",
+    "cal": 160,
+    "p": 6,
+    "cb": 19,
+    "f": 7,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Butter Shrimp (Regular)",
+    "c": "Salads",
+    "cal": 130,
+    "p": 9,
+    "cb": 8,
+    "f": 7,
+    "b": "2.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Lettuce (Regular)",
+    "c": "Salads",
+    "cal": 25,
+    "p": 2,
+    "cb": 5,
+    "f": 0,
+    "b": "5 oz",
+    "v": 1
+   },
+   {
+    "n": "Tomatillo Ranch Dressing (Regular)",
+    "c": "Salads",
+    "cal": 340,
+    "p": 2,
+    "cb": 4,
+    "f": 35,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Vinaigrette (Regular)",
+    "c": "Salads",
+    "cal": 350,
+    "p": 0.8,
+    "cb": 25,
+    "f": 29,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Dressing (Regular)",
+    "c": "Salads",
+    "cal": 310,
+    "p": 0,
+    "cb": 24,
+    "f": 24,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Pico de Gallo (Regular)",
+    "c": "Salads",
+    "cal": 20,
+    "p": 0.5,
+    "cb": 3,
+    "f": 1,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Roja (Regular)",
+    "c": "Salads",
+    "cal": 60,
+    "p": 1,
+    "cb": 6,
+    "f": 3.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Fresca (Regular)",
+    "c": "Salads",
+    "cal": 15,
+    "p": 0.6,
+    "cb": 3,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Habanero Salsa (Regular)",
+    "c": "Salads",
+    "cal": 45,
+    "p": 0.7,
+    "cb": 8,
+    "f": 1.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Salsa (Regular)",
+    "c": "Salads",
+    "cal": 70,
+    "p": 1,
+    "cb": 18,
+    "f": 0,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Guacamole (Regular)",
+    "c": "Salads",
+    "cal": 40,
+    "p": 0.5,
+    "cb": 2,
+    "f": 3.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Cotija Cheese (Regular)",
+    "c": "Salads",
+    "cal": 25,
+    "p": 2,
+    "cb": 0,
+    "f": 2,
+    "b": "0.33 oz",
+    "v": 1
+   },
+   {
+    "n": "Fried Tortilla Strips (Regular)",
+    "c": "Salads",
+    "cal": 300,
+    "p": 3,
+    "cb": 35,
+    "f": 16,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce (Regular)",
+    "c": "Salads",
+    "cal": 240,
+    "p": 0,
+    "cb": 58,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Corn Tortilla 6\" (Single)",
+    "c": "Enchiladas",
+    "cal": 120,
+    "p": 3,
+    "cb": 25,
+    "f": 1.5,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla 6\" (Single)",
+    "c": "Enchiladas",
+    "cal": 160,
+    "p": 3,
+    "cb": 24,
+    "f": 5,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice (Single)",
+    "c": "Enchiladas",
+    "cal": 140,
+    "p": 3,
+    "cb": 28,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans (Single)",
+    "c": "Enchiladas",
+    "cal": 80,
+    "p": 5,
+    "cb": 14,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans (Single)",
+    "c": "Enchiladas",
+    "cal": 80,
+    "p": 5,
+    "cb": 15,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans (Single)",
+    "c": "Enchiladas",
+    "cal": 120,
+    "p": 5,
+    "cb": 14,
+    "f": 5,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Grilled Chicken (Single)",
+    "c": "Enchiladas",
+    "cal": 90,
+    "p": 14,
+    "cb": 0.6,
+    "f": 3.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Barbacoa Beef (Single)",
+    "c": "Enchiladas",
+    "cal": 60,
+    "p": 7,
+    "cb": 1,
+    "f": 2.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Grilled Steak (Single)",
+    "c": "Enchiladas",
+    "cal": 140,
+    "p": 14,
+    "cb": 0,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork (Single)",
+    "c": "Enchiladas",
+    "cal": 150,
+    "p": 7,
+    "cb": 11,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Butter Shrimp (Single)",
+    "c": "Enchiladas",
+    "cal": 130,
+    "p": 9,
+    "cb": 8,
+    "f": 7,
+    "b": "2.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Red Enchilada Sauce (Single)",
+    "c": "Enchiladas",
+    "cal": 60,
+    "p": 1,
+    "cb": 7,
+    "f": 3,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Roasted Green Chile Sauce (Single)",
+    "c": "Enchiladas",
+    "cal": 60,
+    "p": 1,
+    "cb": 12,
+    "f": 1.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Tomatillo Cilantro Sauce (Single)",
+    "c": "Enchiladas",
+    "cal": 30,
+    "p": 0.8,
+    "cb": 6,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce (Single)",
+    "c": "Enchiladas",
+    "cal": 120,
+    "p": 0,
+    "cb": 29,
+    "f": 0.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese (Single)",
+    "c": "Enchiladas",
+    "cal": 110,
+    "p": 7,
+    "cb": 0,
+    "f": 9,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Pico de Gallo (Single)",
+    "c": "Enchiladas",
+    "cal": 10,
+    "p": 0,
+    "cb": 1,
+    "f": 0.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Habanero Salsa (Single)",
+    "c": "Enchiladas",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Roja (Single)",
+    "c": "Enchiladas",
+    "cal": 30,
+    "p": 0.6,
+    "cb": 3,
+    "f": 1.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Salsa (Single)",
+    "c": "Enchiladas",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Corn Tortilla 6\" x2 (Double)",
+    "c": "Enchiladas",
+    "cal": 240,
+    "p": 5,
+    "cb": 50,
+    "f": 2.5,
+    "b": "2 each",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla 6\" x2 (Double)",
+    "c": "Enchiladas",
+    "cal": 320,
+    "p": 7,
+    "cb": 48,
+    "f": 10,
+    "b": "2 each",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice (Double)",
+    "c": "Enchiladas",
+    "cal": 140,
+    "p": 3,
+    "cb": 28,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans (Double)",
+    "c": "Enchiladas",
+    "cal": 80,
+    "p": 5,
+    "cb": 14,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans (Double)",
+    "c": "Enchiladas",
+    "cal": 80,
+    "p": 5,
+    "cb": 15,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans (Double)",
+    "c": "Enchiladas",
+    "cal": 120,
+    "p": 5,
+    "cb": 14,
+    "f": 5,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Butter Shrimp (Double)",
+    "c": "Enchiladas",
+    "cal": 130,
+    "p": 9,
+    "cb": 8,
+    "f": 7,
+    "b": "2.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Red Enchilada Sauce (Double)",
+    "c": "Enchiladas",
+    "cal": 80,
+    "p": 2,
+    "cb": 9,
+    "f": 4,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Roasted Green Chile Sauce (Double)",
+    "c": "Enchiladas",
+    "cal": 80,
+    "p": 1,
+    "cb": 15,
+    "f": 2,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Tomatillo Cilantro Sauce (Double)",
+    "c": "Enchiladas",
+    "cal": 35,
+    "p": 1,
+    "cb": 8,
+    "f": 0.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce (Double)",
+    "c": "Enchiladas",
+    "cal": 240,
+    "p": 0,
+    "cb": 58,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese (Double)",
+    "c": "Enchiladas",
+    "cal": 220,
+    "p": 14,
+    "cb": 0,
+    "f": 18,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Pico de Gallo (Double)",
+    "c": "Enchiladas",
+    "cal": 10,
+    "p": 0,
+    "cb": 1,
+    "f": 0.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Habanero Salsa (Double)",
+    "c": "Enchiladas",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Roja (Double)",
+    "c": "Enchiladas",
+    "cal": 30,
+    "p": 0.6,
+    "cb": 3,
+    "f": 1.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Salsa (Double)",
+    "c": "Enchiladas",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Corn Tortilla 6\" (Single)",
+    "c": "Tacos",
+    "cal": 120,
+    "p": 3,
+    "cb": 25,
+    "f": 1.5,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla 6\" (Single)",
+    "c": "Tacos",
+    "cal": 160,
+    "p": 3,
+    "cb": 24,
+    "f": 5,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice (Single)",
+    "c": "Tacos",
+    "cal": 140,
+    "p": 3,
+    "cb": 28,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans (Single)",
+    "c": "Tacos",
+    "cal": 80,
+    "p": 5,
+    "cb": 14,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans (Single)",
+    "c": "Tacos",
+    "cal": 80,
+    "p": 5,
+    "cb": 15,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans (Single)",
+    "c": "Tacos",
+    "cal": 120,
+    "p": 5,
+    "cb": 14,
+    "f": 5,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Grilled Chicken (Single)",
+    "c": "Tacos",
+    "cal": 90,
+    "p": 14,
+    "cb": 0.6,
+    "f": 3.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Barbacoa Beef (Single)",
+    "c": "Tacos",
+    "cal": 60,
+    "p": 7,
+    "cb": 1,
+    "f": 2.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Grilled Steak (Single)",
+    "c": "Tacos",
+    "cal": 140,
+    "p": 14,
+    "cb": 0,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork (Single)",
+    "c": "Tacos",
+    "cal": 150,
+    "p": 7,
+    "cb": 11,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Butter Shrimp (Single)",
+    "c": "Tacos",
+    "cal": 130,
+    "p": 9,
+    "cb": 8,
+    "f": 7,
+    "b": "2.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce (Single)",
+    "c": "Tacos",
+    "cal": 60,
+    "p": 0,
+    "cb": 15,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese (Single)",
+    "c": "Tacos",
+    "cal": 50,
+    "p": 4,
+    "cb": 0,
+    "f": 4.5,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Pico de Gallo (Single)",
+    "c": "Tacos",
+    "cal": 20,
+    "p": 0.5,
+    "cb": 3,
+    "f": 1,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Habanero Salsa (Single)",
+    "c": "Tacos",
+    "cal": 45,
+    "p": 0.7,
+    "cb": 8,
+    "f": 1.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Fresca (Single)",
+    "c": "Tacos",
+    "cal": 15,
+    "p": 0.6,
+    "cb": 3,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Roja (Single)",
+    "c": "Tacos",
+    "cal": 60,
+    "p": 1,
+    "cb": 6,
+    "f": 3.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Salsa (Single)",
+    "c": "Tacos",
+    "cal": 35,
+    "p": 0,
+    "cb": 9,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Corn Tortilla 6\" x2 (Double)",
+    "c": "Tacos",
+    "cal": 240,
+    "p": 5,
+    "cb": 50,
+    "f": 2.5,
+    "b": "2 each",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla 6\" x2 (Double)",
+    "c": "Tacos",
+    "cal": 320,
+    "p": 7,
+    "cb": 48,
+    "f": 10,
+    "b": "2 each",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice (Double)",
+    "c": "Tacos",
+    "cal": 140,
+    "p": 3,
+    "cb": 28,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans (Double)",
+    "c": "Tacos",
+    "cal": 80,
+    "p": 5,
+    "cb": 14,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans (Double)",
+    "c": "Tacos",
+    "cal": 80,
+    "p": 5,
+    "cb": 15,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans (Double)",
+    "c": "Tacos",
+    "cal": 120,
+    "p": 5,
+    "cb": 14,
+    "f": 5,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Butter Shrimp (Double)",
+    "c": "Tacos",
+    "cal": 130,
+    "p": 9,
+    "cb": 8,
+    "f": 7,
+    "b": "2.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce (Double)",
+    "c": "Tacos",
+    "cal": 60,
+    "p": 0,
+    "cb": 15,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese (Double)",
+    "c": "Tacos",
+    "cal": 110,
+    "p": 7,
+    "cb": 0,
+    "f": 9,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Lettuce (Double)",
+    "c": "Tacos",
+    "cal": 10,
+    "p": 0.7,
+    "cb": 2,
+    "f": 0,
+    "b": "2.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Pico de Gallo (Double)",
+    "c": "Tacos",
+    "cal": 20,
+    "p": 0.5,
+    "cb": 3,
+    "f": 1,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Habanero Salsa (Double)",
+    "c": "Tacos",
+    "cal": 45,
+    "p": 0.7,
+    "cb": 8,
+    "f": 1.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Fresca (Double)",
+    "c": "Tacos",
+    "cal": 15,
+    "p": 0.6,
+    "cb": 3,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Roja (Double)",
+    "c": "Tacos",
+    "cal": 110,
+    "p": 2,
+    "cb": 12,
+    "f": 7,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Salsa (Double)",
+    "c": "Tacos",
+    "cal": 35,
+    "p": 0,
+    "cb": 9,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla 12\"",
+    "c": "Quesadillas",
+    "cal": 480,
+    "p": 10,
+    "cb": 72,
+    "f": 15,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice",
+    "c": "Quesadillas",
+    "cal": 140,
+    "p": 3,
+    "cb": 28,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans",
+    "c": "Quesadillas",
+    "cal": 80,
+    "p": 5,
+    "cb": 14,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans",
+    "c": "Quesadillas",
+    "cal": 80,
+    "p": 5,
+    "cb": 15,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans",
+    "c": "Quesadillas",
+    "cal": 120,
+    "p": 5,
+    "cb": 14,
+    "f": 5,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese",
+    "c": "Quesadillas",
+    "cal": 440,
+    "p": 28,
+    "cb": 0,
+    "f": 36,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Butter Shrimp",
+    "c": "Quesadillas",
+    "cal": 130,
+    "p": 9,
+    "cb": 8,
+    "f": 7,
+    "b": "2.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce",
+    "c": "Quesadillas",
+    "cal": 60,
+    "p": 0,
+    "cb": 15,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Tortilla Chips (Small)",
+    "c": "Nachos",
+    "cal": 360,
+    "p": 4,
+    "cb": 45,
+    "f": 18,
+    "b": "2.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans (Small)",
+    "c": "Nachos",
+    "cal": 50,
+    "p": 3,
+    "cb": 10,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans (Small)",
+    "c": "Nachos",
+    "cal": 60,
+    "p": 3,
+    "cb": 10,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans (Small)",
+    "c": "Nachos",
+    "cal": 80,
+    "p": 3,
+    "cb": 9,
+    "f": 3.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Grilled Chicken (Small)",
+    "c": "Nachos",
+    "cal": 90,
+    "p": 14,
+    "cb": 0.6,
+    "f": 3.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Barbacoa Beef (Small)",
+    "c": "Nachos",
+    "cal": 60,
+    "p": 7,
+    "cb": 1,
+    "f": 2.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Grilled Steak (Small)",
+    "c": "Nachos",
+    "cal": 140,
+    "p": 14,
+    "cb": 0,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork (Small)",
+    "c": "Nachos",
+    "cal": 150,
+    "p": 7,
+    "cb": 11,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Butter Shrimp (Small)",
+    "c": "Nachos",
+    "cal": 130,
+    "p": 9,
+    "cb": 8,
+    "f": 7,
+    "b": "2.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese (Small)",
+    "c": "Nachos",
+    "cal": 110,
+    "p": 7,
+    "cb": 0,
+    "f": 9,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Queso (Small)",
+    "c": "Nachos",
+    "cal": 110,
+    "p": 5,
+    "cb": 3,
+    "f": 8,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce (Small)",
+    "c": "Nachos",
+    "cal": 60,
+    "p": 0,
+    "cb": 15,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Guacamole (Small)",
+    "c": "Nachos",
+    "cal": 40,
+    "p": 0.5,
+    "cb": 2,
+    "f": 3.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Sour Cream (Small)",
+    "c": "Nachos",
+    "cal": 60,
+    "p": 0.9,
+    "cb": 2,
+    "f": 6,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Pico de Gallo (Small)",
+    "c": "Nachos",
+    "cal": 10,
+    "p": 0,
+    "cb": 1,
+    "f": 0.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Salsa (Small)",
+    "c": "Nachos",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Habanero Salsa (Small)",
+    "c": "Nachos",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Roja (Small)",
+    "c": "Nachos",
+    "cal": 30,
+    "p": 0.6,
+    "cb": 3,
+    "f": 1.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Tortilla Chips (Regular)",
+    "c": "Nachos",
+    "cal": 720,
+    "p": 9,
+    "cb": 90,
+    "f": 36,
+    "b": "5 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans (Regular)",
+    "c": "Nachos",
+    "cal": 80,
+    "p": 5,
+    "cb": 14,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans (Regular)",
+    "c": "Nachos",
+    "cal": 80,
+    "p": 5,
+    "cb": 15,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans (Regular)",
+    "c": "Nachos",
+    "cal": 120,
+    "p": 5,
+    "cb": 14,
+    "f": 5,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Butter Shrimp (Regular)",
+    "c": "Nachos",
+    "cal": 130,
+    "p": 9,
+    "cb": 8,
+    "f": 7,
+    "b": "2.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese (Regular)",
+    "c": "Nachos",
+    "cal": 220,
+    "p": 14,
+    "cb": 0,
+    "f": 18,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Queso (Regular)",
+    "c": "Nachos",
+    "cal": 220,
+    "p": 11,
+    "cb": 6,
+    "f": 16,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce (Regular)",
+    "c": "Nachos",
+    "cal": 60,
+    "p": 0,
+    "cb": 15,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Guacamole (Regular)",
+    "c": "Nachos",
+    "cal": 40,
+    "p": 0.5,
+    "cb": 2,
+    "f": 3.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Sour Cream (Regular)",
+    "c": "Nachos",
+    "cal": 60,
+    "p": 0.9,
+    "cb": 2,
+    "f": 6,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Pico de Gallo (Regular)",
+    "c": "Nachos",
+    "cal": 20,
+    "p": 0.5,
+    "cb": 3,
+    "f": 1,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Salsa (Regular)",
+    "c": "Nachos",
+    "cal": 35,
+    "p": 0,
+    "cb": 9,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Habanero Salsa (Regular)",
+    "c": "Nachos",
+    "cal": 45,
+    "p": 0.7,
+    "cb": 8,
+    "f": 1.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Fresca (Regular)",
+    "c": "Nachos",
+    "cal": 15,
+    "p": 0.6,
+    "cb": 3,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Roja (Regular)",
+    "c": "Nachos",
+    "cal": 60,
+    "p": 1,
+    "cb": 6,
+    "f": 3.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice",
+    "c": "Baja Bowls",
+    "cal": 140,
+    "p": 3,
+    "cb": 28,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans",
+    "c": "Baja Bowls",
+    "cal": 80,
+    "p": 5,
+    "cb": 14,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans",
+    "c": "Baja Bowls",
+    "cal": 80,
+    "p": 5,
+    "cb": 15,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans",
+    "c": "Baja Bowls",
+    "cal": 120,
+    "p": 5,
+    "cb": 14,
+    "f": 5,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Butter Shrimp",
+    "c": "Baja Bowls",
+    "cal": 130,
+    "p": 9,
+    "cb": 8,
+    "f": 7,
+    "b": "2.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Red Enchilada Sauce",
+    "c": "Baja Bowls",
+    "cal": 60,
+    "p": 1,
+    "cb": 7,
+    "f": 3,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Roasted Green Chile Sauce",
+    "c": "Baja Bowls",
+    "cal": 60,
+    "p": 1,
+    "cb": 12,
+    "f": 1.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Tomatillo Cilantro Sauce",
+    "c": "Baja Bowls",
+    "cal": 30,
+    "p": 0.8,
+    "cb": 6,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Raspberry Chipotle Sauce",
+    "c": "Baja Bowls",
+    "cal": 120,
+    "p": 0,
+    "cb": 29,
+    "f": 0.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese",
+    "c": "Baja Bowls",
+    "cal": 110,
+    "p": 7,
+    "cb": 0,
+    "f": 9,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Pico de Gallo",
+    "c": "Baja Bowls",
+    "cal": 10,
+    "p": 0,
+    "cb": 1,
+    "f": 0.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Salsa",
+    "c": "Baja Bowls",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Habanero Salsa",
+    "c": "Baja Bowls",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Salsa Roja",
+    "c": "Baja Bowls",
+    "cal": 30,
+    "p": 0.6,
+    "cb": 3,
+    "f": 1.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Cotija Cheese",
+    "c": "Baja Bowls",
+    "cal": 25,
+    "p": 2,
+    "cb": 0,
+    "f": 2,
+    "b": "0.33 oz",
+    "v": 1
+   },
+   {
+    "n": "Fried Tortilla Strips",
+    "c": "Baja Bowls",
+    "cal": 70,
+    "p": 0.9,
+    "cb": 9,
+    "f": 4,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Corn Tortilla 6\"",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 120,
+    "p": 3,
+    "cb": 25,
+    "f": 1.5,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla 6\"",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 160,
+    "p": 3,
+    "cb": 24,
+    "f": 5,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 70,
+    "p": 2,
+    "cb": 14,
+    "f": 1,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 50,
+    "p": 3,
+    "cb": 10,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 60,
+    "p": 3,
+    "cb": 10,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Refried Beans",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 80,
+    "p": 3,
+    "cb": 9,
+    "f": 3.5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 110,
+    "p": 7,
+    "cb": 0,
+    "f": 9,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Grilled Chicken",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 45,
+    "p": 7,
+    "cb": 0,
+    "f": 2,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Barbacoa Beef",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 30,
+    "p": 3,
+    "cb": 0.5,
+    "f": 1.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Grilled Steak",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 70,
+    "p": 7,
+    "cb": 0,
+    "f": 4.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Sweet Pork",
+    "c": "Kids Meals - Quesadilla",
+    "cal": 70,
+    "p": 1,
+    "cb": 2,
+    "f": 1,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Corn Tortilla 6\"",
+    "c": "Kids Meals - Enchilada",
+    "cal": 120,
+    "p": 3,
+    "cb": 25,
+    "f": 1.5,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla 6\"",
+    "c": "Kids Meals - Enchilada",
+    "cal": 160,
+    "p": 3,
+    "cb": 24,
+    "f": 5,
+    "b": "1 each",
+    "v": 1
+   },
+   {
+    "n": "Shredded Cheese",
+    "c": "Kids Meals - Enchilada",
+    "cal": 110,
+    "p": 7,
+    "cb": 0,
+    "f": 9,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Cilantro Lime Rice",
+    "c": "Kids Meals - Enchilada",
+    "cal": 70,
+    "p": 2,
+    "cb": 14,
+    "f": 1,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans",
+    "c": "Kids Meals - Enchilada",
+    "cal": 50,
+    "p": 3,
+    "cb": 10,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   }
+  ],
+  "source": {
+   "url": "https://www.costavida.com/nutrition-allergen-information/",
+   "kind": "page",
+   "t": "2026-11-17T16:04:30.039Z",
+   "official": true
+  },
+  "updated": "2026-11-17T16:04:30.039Z",
+  "log": [
+   {
+    "t": "2026-11-17T16:04:30.039Z",
+    "n": 198,
+    "how": "page",
+    "replace": false,
+    "check": {
+     "ok": true,
+     "n": 198,
+     "held": 0,
+     "kept": 0,
+     "t": "2026-11-17T16:04:30.039Z"
+    }
+   }
+  ],
+  "check": {
+   "ok": true,
+   "n": 198,
+   "held": 0,
+   "kept": 0,
+   "t": "2026-11-17T16:04:30.039Z"
+  }
  }
 }

@@ -5475,5 +5475,219 @@
    "kept": 0,
    "t": "2026-11-16T20:40:43.796Z"
   }
+ },
+ "einsteinbrosbagels": {
+  "name": "Einstein Bros. Bagels",
+  "items": [
+   {
+    "n": "Ancient Grain Bagel",
+    "c": "Bagels",
+    "cal": 290,
+    "p": 13,
+    "cb": 50,
+    "f": 5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Ancient Grain Thin Bagel",
+    "c": "Bagels",
+    "cal": 190,
+    "p": 9,
+    "cb": 35,
+    "f": 2.5,
+    "b": "",
+    "v": 1
+   },
+   {
+    "n": "Apple Cinnamon Bagel",
+    "c": "Bagels",
+    "cal": 420,
+    "p": 9,
+    "cb": 78,
+    "f": 7,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Cheddar Jalapeno Bagel",
+    "c": "Bagels",
+    "cal": 330,
+    "p": 13,
+    "cb": 51,
+    "f": 8,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Chocolate Chip Bagel",
+    "c": "Bagels",
+    "cal": 280,
+    "p": 10,
+    "cb": 56,
+    "f": 3,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Cinnamon Sugar Bagel",
+    "c": "Bagels",
+    "cal": 300,
+    "p": 10,
+    "cb": 61,
+    "f": 2,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Country Sausage Gourmet Bagel",
+    "c": "Bagels",
+    "cal": 440,
+    "p": 16,
+    "cb": 53,
+    "f": 18,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Power Protein Bagel",
+    "c": "Bagels",
+    "cal": 310,
+    "p": 11,
+    "cb": 59,
+    "f": 4,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Pretzel Bagel",
+    "c": "Bagels",
+    "cal": 260,
+    "p": 10,
+    "cb": 54,
+    "f": 0.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Six-Cheese Bagel",
+    "c": "Bagels",
+    "cal": 360,
+    "p": 16,
+    "cb": 51,
+    "f": 10,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Spinach Florentine Bagel",
+    "c": "Bagels",
+    "cal": 370,
+    "p": 14,
+    "cb": 52,
+    "f": 11,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Bagel Roll",
+    "c": "Bagels",
+    "cal": 270,
+    "p": 9,
+    "cb": 50,
+    "f": 3.5,
+    "b": "1 Roll",
+    "v": 1
+   },
+   {
+    "n": "Ham & Swiss Sandwich (7.2 oz)",
+    "c": "Egg Sandwiches",
+    "cal": 450,
+    "p": 26,
+    "cb": 59,
+    "f": 12,
+    "b": "7.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham & Swiss Sandwich (9.2 oz)",
+    "c": "Egg Sandwiches",
+    "cal": 530,
+    "p": 33,
+    "cb": 59,
+    "f": 17,
+    "b": "9.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham & Swiss Sandwich (7.6 oz)",
+    "c": "Egg Sandwiches",
+    "cal": 400,
+    "p": 26,
+    "cb": 58,
+    "f": 7,
+    "b": "7.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham & Swiss on Plain Bagel",
+    "c": "Sandwiches",
+    "cal": 540,
+    "p": 27,
+    "cb": 63,
+    "f": 20,
+    "b": "10.4 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham, Breakfast",
+    "c": "Sandwich Fillings",
+    "cal": 45,
+    "p": 6,
+    "cb": 2,
+    "f": 1,
+    "b": "1.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham, Lunch",
+    "c": "Sandwich Fillings",
+    "cal": 90,
+    "p": 12,
+    "cb": 4,
+    "f": 2.5,
+    "b": "3.0 oz",
+    "v": 1
+   }
+  ],
+  "source": {
+   "url": "https://www.einsteinbros.com/wp-content/uploads/2025/02/EBB-Nutrition-Guide.pdf",
+   "kind": "search",
+   "t": "2026-11-17T15:07:01.226Z",
+   "official": true
+  },
+  "updated": "2026-11-17T15:07:01.226Z",
+  "log": [
+   {
+    "t": "2026-11-17T15:07:01.226Z",
+    "n": 18,
+    "how": "search",
+    "replace": false,
+    "check": {
+     "ok": true,
+     "n": 18,
+     "held": 0,
+     "kept": 0,
+     "t": "2026-11-17T15:07:01.226Z"
+    }
+   }
+  ],
+  "check": {
+   "ok": true,
+   "n": 18,
+   "held": 0,
+   "kept": 0,
+   "t": "2026-11-17T15:07:01.226Z"
+  }
  }
 }

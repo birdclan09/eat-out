@@ -6,7 +6,7 @@ const MODEL = process.env.VERIFY_MODEL || process.env.ANTHROPIC_MODEL || "claude
 const PROMPT = `You are fact-checking an extraction against the attached source. The list below has one item per line as: index|name|calories|protein_g|carbs_g|fat_g (an empty field means it was not extracted).
 For every line, find that item in the source and compare each number with what the source actually prints. Be strict: a number must match the source exactly. Treat "<1" in the source as matching an empty field. Watch for shifted table columns, the wrong size or variant row, and misread digits.
 Return ONLY compact JSON on one line, listing only lines that do NOT match: {"problems":[[index,"field","extracted","source says"]]}
-"field" is one of name, calories, protein, carbs, fat, notfound (use notfound if the item is not in the source at all). Return {"problems":[]} if everything matches. Do not list items that match. No prose.`;
+"field" is one of name, calories, protein, carbs, fat, notfound (use notfound if the item is not in the source at all). Return {"problems":[]} if everything matches. Treat a source value of "<1", "less than 1" or "trace" as matching 0. Do not list items that match. No prose.`;
 
 module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "no-store");

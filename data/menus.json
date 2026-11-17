@@ -5480,8 +5480,168 @@
   "name": "Einstein Bros. Bagels",
   "items": [
    {
-    "n": "Ancient Grain Bagel",
-    "c": "Bagels",
+    "n": "Swalty Everything Egg Sandwich",
+    "c": "Limited Time Offerings",
+    "cal": 550,
+    "p": 26,
+    "cb": 64,
+    "f": 21,
+    "b": "7 oz",
+    "v": 1
+   },
+   {
+    "n": "Spicy Everything Egg Sandwich",
+    "c": "Limited Time Offerings",
+    "cal": 540,
+    "p": 26,
+    "cb": 62,
+    "f": 21,
+    "b": "7 oz",
+    "v": 1
+   },
+   {
+    "n": "Cinnamon Sugar Pull Apart Bagel",
+    "c": "Limited Time Offerings",
+    "cal": 300,
+    "p": 10,
+    "cb": 61,
+    "f": 2,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Pumpkin Crunch Pull Apart Bagel",
+    "c": "Limited Time Offerings",
+    "cal": 340,
+    "p": 11,
+    "cb": 66,
+    "f": 2.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Crème Brulee Cold Brew 16 fl oz",
+    "c": "Limited Time Offerings",
+    "cal": 180,
+    "p": 2,
+    "cb": 42,
+    "f": 0,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Crème Brulee Cold Brew 24 fl oz",
+    "c": "Limited Time Offerings",
+    "cal": 270,
+    "p": 3,
+    "cb": 63,
+    "f": 0,
+    "b": "24 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Crème Brulee Iced Coffee 16 fl oz",
+    "c": "Limited Time Offerings",
+    "cal": 170,
+    "p": 1,
+    "cb": 40,
+    "f": 0,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Crème Brulee Iced Coffee 24 fl oz",
+    "c": "Limited Time Offerings",
+    "cal": 250,
+    "p": 2,
+    "cb": 59,
+    "f": 0,
+    "b": "24 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Crème Brulee Latte 12 fl oz",
+    "c": "Limited Time Offerings",
+    "cal": 240,
+    "p": 10,
+    "cb": 41,
+    "f": 4.5,
+    "b": "12 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Crème Brulee Latte 16 fl oz",
+    "c": "Limited Time Offerings",
+    "cal": 310,
+    "p": 12,
+    "cb": 54,
+    "f": 6,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Crème Brulee Latte 20 fl oz",
+    "c": "Limited Time Offerings",
+    "cal": 410,
+    "p": 15,
+    "cb": 71,
+    "f": 7,
+    "b": "20 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Frozen Crème Brulee 16 fl oz",
+    "c": "Limited Time Offerings",
+    "cal": 460,
+    "p": 7,
+    "cb": 89,
+    "f": 7,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Frozen Crème Brulee 24 fl oz",
+    "c": "Limited Time Offerings",
+    "cal": 680,
+    "p": 12,
+    "cb": 133,
+    "f": 10,
+    "b": "24 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Pumpkin Bagel",
+    "c": "Limited Time Offerings",
+    "cal": 300,
+    "p": 11,
+    "cb": 59,
+    "f": 1.5,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Pumpkin Shmear",
+    "c": "Limited Time Offerings",
+    "cal": 120,
+    "p": 1,
+    "cb": 9,
+    "f": 9,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Cold Foam Topping",
+    "c": "Limited Time Offerings",
+    "cal": 80,
+    "p": 0,
+    "cb": 5,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Ancient Grain",
+    "c": "Classic Bagels",
     "cal": 290,
     "p": 13,
     "cb": 50,
@@ -5490,38 +5650,188 @@
     "v": 1
    },
    {
-    "n": "Ancient Grain Thin Bagel",
-    "c": "Bagels",
-    "cal": 190,
-    "p": 9,
-    "cb": 35,
-    "f": 2.5,
-    "b": "",
-    "v": 1
-   },
-   {
-    "n": "Apple Cinnamon Bagel",
-    "c": "Bagels",
-    "cal": 420,
-    "p": 9,
-    "cb": 78,
-    "f": 7,
+    "n": "Cinnamon Raisin",
+    "c": "Classic Bagels",
+    "cal": 280,
+    "p": 10,
+    "cb": 59,
+    "f": 1,
     "b": "1 Bagel",
     "v": 1
    },
    {
-    "n": "Cheddar Jalapeno Bagel",
-    "c": "Bagels",
-    "cal": 330,
-    "p": 13,
+    "n": "Cranberry",
+    "c": "Classic Bagels",
+    "cal": 310,
+    "p": 9,
+    "cb": 59,
+    "f": 3.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Everything",
+    "c": "Classic Bagels",
+    "cal": 280,
+    "p": 11,
+    "cb": 57,
+    "f": 1,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Garlic",
+    "c": "Classic Bagels",
+    "cal": 280,
+    "p": 11,
+    "cb": 57,
+    "f": 1.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Honey Whole Wheat",
+    "c": "Classic Bagels",
+    "cal": 280,
+    "p": 12,
     "cb": 51,
-    "f": 8,
+    "f": 3,
     "b": "1 Bagel",
     "v": 1
    },
    {
-    "n": "Chocolate Chip Bagel",
-    "c": "Bagels",
+    "n": "Onion",
+    "c": "Classic Bagels",
+    "cal": 280,
+    "p": 10,
+    "cb": 58,
+    "f": 0.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Plain",
+    "c": "Classic Bagels",
+    "cal": 270,
+    "p": 10,
+    "cb": 56,
+    "f": 0.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Poppy Seed",
+    "c": "Classic Bagels",
+    "cal": 280,
+    "p": 11,
+    "cb": 56,
+    "f": 2,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Pumpernickel",
+    "c": "Classic Bagels",
+    "cal": 270,
+    "p": 10,
+    "cb": 55,
+    "f": 1,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Sesame Seed",
+    "c": "Classic Bagels",
+    "cal": 290,
+    "p": 11,
+    "cb": 56,
+    "f": 2,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Cinnamon Raisin *",
+    "c": "Classic Bagels",
+    "cal": 290,
+    "p": 10,
+    "cb": 61,
+    "f": 1,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Cranberry *",
+    "c": "Classic Bagels",
+    "cal": 310,
+    "p": 10,
+    "cb": 60,
+    "f": 4,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Everything *",
+    "c": "Classic Bagels",
+    "cal": 280,
+    "p": 10,
+    "cb": 58,
+    "f": 1.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Honey Whole Wheat *",
+    "c": "Classic Bagels",
+    "cal": 290,
+    "p": 12,
+    "cb": 52,
+    "f": 3.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Plain *",
+    "c": "Classic Bagels",
+    "cal": 280,
+    "p": 10,
+    "cb": 58,
+    "f": 1,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Sesame Seed *",
+    "c": "Classic Bagels",
+    "cal": 280,
+    "p": 11,
+    "cb": 56,
+    "f": 2,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Asiago Cheese",
+    "c": "Signature Bagels",
+    "cal": 300,
+    "p": 13,
+    "cb": 54,
+    "f": 3.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Blueberry",
+    "c": "Signature Bagels",
+    "cal": 280,
+    "p": 9,
+    "cb": 60,
+    "f": 1,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Chocolate Chip",
+    "c": "Signature Bagels",
     "cal": 280,
     "p": 10,
     "cb": 56,
@@ -5530,8 +5840,8 @@
     "v": 1
    },
    {
-    "n": "Cinnamon Sugar Bagel",
-    "c": "Bagels",
+    "n": "Cinnamon Sugar",
+    "c": "Signature Bagels",
     "cal": 300,
     "p": 10,
     "cb": 61,
@@ -5540,28 +5850,8 @@
     "v": 1
    },
    {
-    "n": "Country Sausage Gourmet Bagel",
-    "c": "Bagels",
-    "cal": 440,
-    "p": 16,
-    "cb": 53,
-    "f": 18,
-    "b": "1 Bagel",
-    "v": 1
-   },
-   {
-    "n": "Power Protein Bagel",
-    "c": "Bagels",
-    "cal": 310,
-    "p": 11,
-    "cb": 59,
-    "f": 4,
-    "b": "1 Bagel",
-    "v": 1
-   },
-   {
-    "n": "Pretzel Bagel",
-    "c": "Bagels",
+    "n": "Pretzel",
+    "c": "Signature Bagels",
     "cal": 260,
     "p": 10,
     "cb": 54,
@@ -5570,8 +5860,138 @@
     "v": 1
    },
    {
-    "n": "Six-Cheese Bagel",
-    "c": "Bagels",
+    "n": "Asiago Cheese *",
+    "c": "Signature Bagels",
+    "cal": 310,
+    "p": 13,
+    "cb": 57,
+    "f": 2.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Blueberry *",
+    "c": "Signature Bagels",
+    "cal": 280,
+    "p": 10,
+    "cb": 59,
+    "f": 1,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Chocolate Chip *",
+    "c": "Signature Bagels",
+    "cal": 290,
+    "p": 10,
+    "cb": 58,
+    "f": 2.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "French Toast *",
+    "c": "Signature Bagels",
+    "cal": 320,
+    "p": 10,
+    "cb": 60,
+    "f": 4.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Ancient Grain Thin",
+    "c": "Thintastic Bagels",
+    "cal": 190,
+    "p": 9,
+    "cb": 35,
+    "f": 2.5,
+    "b": "1 Thin",
+    "v": 1
+   },
+   {
+    "n": "Everything Thin",
+    "c": "Thintastic Bagels",
+    "cal": 200,
+    "p": 8,
+    "cb": 41,
+    "f": 1,
+    "b": "1 Thin",
+    "v": 1
+   },
+   {
+    "n": "Honey Whole Wheat Thin",
+    "c": "Thintastic Bagels",
+    "cal": 200,
+    "p": 9,
+    "cb": 37,
+    "f": 2.5,
+    "b": "1 Thin",
+    "v": 1
+   },
+   {
+    "n": "Plain Thin",
+    "c": "Thintastic Bagels",
+    "cal": 200,
+    "p": 7,
+    "cb": 41,
+    "f": 0,
+    "b": "1 Thin",
+    "v": 1
+   },
+   {
+    "n": "Apple Cinnamon",
+    "c": "Gourmet Bagels",
+    "cal": 420,
+    "p": 9,
+    "cb": 78,
+    "f": 7,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Cheddar Jalapeno",
+    "c": "Gourmet Bagels",
+    "cal": 330,
+    "p": 13,
+    "cb": 51,
+    "f": 8,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Cheesy Hash Brown Bagel",
+    "c": "Gourmet Bagels",
+    "cal": 390,
+    "p": 13,
+    "cb": 59,
+    "f": 11,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Green Chile",
+    "c": "Gourmet Bagels",
+    "cal": 390,
+    "p": 18,
+    "cb": 55,
+    "f": 11,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Maple French Toast Gourmet Bagel",
+    "c": "Gourmet Bagels",
+    "cal": 360,
+    "p": 10,
+    "cb": 71,
+    "f": 4.5,
+    "b": "1 Bagel",
+    "v": 1
+   },
+   {
+    "n": "Six-Cheese",
+    "c": "Gourmet Bagels",
     "cal": 360,
     "p": 16,
     "cb": 51,
@@ -5580,8 +6000,8 @@
     "v": 1
    },
    {
-    "n": "Spinach Florentine Bagel",
-    "c": "Bagels",
+    "n": "Spinach Florentine",
+    "c": "Gourmet Bagels",
     "cal": 370,
     "p": 14,
     "cb": 52,
@@ -5591,7 +6011,7 @@
    },
    {
     "n": "Bagel Roll",
-    "c": "Bagels",
+    "c": "Specialty Breads",
     "cal": 270,
     "p": 9,
     "cb": 50,
@@ -5600,48 +6020,288 @@
     "v": 1
    },
    {
-    "n": "Ham & Swiss Sandwich (7.2 oz)",
-    "c": "Egg Sandwiches",
-    "cal": 450,
-    "p": 26,
-    "cb": 59,
-    "f": 12,
-    "b": "7.2 oz",
+    "n": "Ciabatta Roll*",
+    "c": "Specialty Breads",
+    "cal": 230,
+    "p": 8,
+    "cb": 44,
+    "f": 2.5,
+    "b": "1 Ciabatta",
     "v": 1
    },
    {
-    "n": "Ham & Swiss Sandwich (9.2 oz)",
-    "c": "Egg Sandwiches",
-    "cal": 530,
-    "p": 33,
-    "cb": 59,
-    "f": 17,
-    "b": "9.2 oz",
-    "v": 1
-   },
-   {
-    "n": "Ham & Swiss Sandwich (7.6 oz)",
-    "c": "Egg Sandwiches",
-    "cal": 400,
-    "p": 26,
-    "cb": 58,
+    "n": "Flour Tortilla",
+    "c": "Specialty Breads",
+    "cal": 310,
+    "p": 8,
+    "cb": 52,
     "f": 7,
-    "b": "7.6 oz",
+    "b": "1 Tortilla",
     "v": 1
    },
    {
-    "n": "Ham & Swiss on Plain Bagel",
-    "c": "Sandwiches",
-    "cal": 540,
-    "p": 27,
-    "cb": 63,
-    "f": 20,
-    "b": "10.4 oz",
+    "n": "Garden Veggie Reduced Fat",
+    "c": "Whipped Cream Cheese Shmear",
+    "cal": 100,
+    "p": 2,
+    "cb": 5,
+    "f": 9,
+    "b": "1.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Garlic and Herb",
+    "c": "Whipped Cream Cheese Shmear",
+    "cal": 110,
+    "p": 2,
+    "cb": 5,
+    "f": 9,
+    "b": "1.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey Almond Reduced Fat",
+    "c": "Whipped Cream Cheese Shmear",
+    "cal": 120,
+    "p": 2,
+    "cb": 10,
+    "f": 9,
+    "b": "1.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Jalapeno Salsa Reduced Fat",
+    "c": "Whipped Cream Cheese Shmear",
+    "cal": 100,
+    "p": 2,
+    "cb": 5,
+    "f": 9,
+    "b": "1.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Onion and Chive",
+    "c": "Whipped Cream Cheese Shmear",
+    "cal": 110,
+    "p": 2,
+    "cb": 4,
+    "f": 10,
+    "b": "1.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Plain Whipped Cream Cheese Shmear",
+    "c": "Whipped Cream Cheese Shmear",
+    "cal": 120,
+    "p": 2,
+    "cb": 2,
+    "f": 12,
+    "b": "1.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Strawberry Reduced Fat",
+    "c": "Whipped Cream Cheese Shmear",
+    "cal": 120,
+    "p": 1,
+    "cb": 9,
+    "f": 9,
+    "b": "1.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Country Pepper Shmear",
+    "c": "Whipped Cream Cheese Shmear",
+    "cal": 60,
+    "p": 1,
+    "cb": 3,
+    "f": 5,
+    "b": "0.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Add Syrup",
+    "c": "Spreads",
+    "cal": 50,
+    "p": 0,
+    "cb": 13,
+    "f": 0,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Butter Blend",
+    "c": "Spreads",
+    "cal": 110,
+    "p": 0,
+    "cb": 0,
+    "f": 12,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Honey",
+    "c": "Spreads",
+    "cal": 90,
+    "p": 0,
+    "cb": 23,
+    "f": 0,
+    "b": "1.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Natural Peanut Butter",
+    "c": "Spreads",
+    "cal": 240,
+    "p": 9,
+    "cb": 10,
+    "f": 21,
+    "b": "1.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Natural Strawberry Jam",
+    "c": "Spreads",
+    "cal": 60,
+    "p": 0,
+    "cb": 16,
+    "f": 0,
+    "b": "1.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Peanut Butter and Jam *",
+    "c": "Spreads",
+    "cal": 300,
+    "p": 9,
+    "cb": 26,
+    "f": 21,
+    "b": "2.5 oz",
+    "v": 1
+   },
+   {
+    "n": "1 Cage Free Egg",
+    "c": "Eggs",
+    "cal": 80,
+    "p": 6,
+    "cb": 1,
+    "f": 6,
+    "b": "1 Egg",
+    "v": 1
+   },
+   {
+    "n": "2 Cage Free Eggs",
+    "c": "Eggs",
+    "cal": 160,
+    "p": 13,
+    "cb": 2,
+    "f": 11,
+    "b": "2 Egg",
+    "v": 1
+   },
+   {
+    "n": "1 Egg White",
+    "c": "Eggs",
+    "cal": 35,
+    "p": 6,
+    "cb": 1,
+    "f": 1,
+    "b": "1 Egg",
+    "v": 1
+   },
+   {
+    "n": "2 Egg White",
+    "c": "Eggs",
+    "cal": 70,
+    "p": 12,
+    "cb": 1,
+    "f": 1.5,
+    "b": "2 Egg",
+    "v": 1
+   },
+   {
+    "n": "Fried Egg Patty*",
+    "c": "Eggs",
+    "cal": 90,
+    "p": 5,
+    "cb": 1,
+    "f": 8,
+    "b": "1 Egg",
+    "v": 1
+   },
+   {
+    "n": "American 1 Slice",
+    "c": "Cheese",
+    "cal": 50,
+    "p": 2,
+    "cb": 1,
+    "f": 4.5,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Cheddar 1 Slice",
+    "c": "Cheese",
+    "cal": 60,
+    "p": 3,
+    "cb": 0,
+    "f": 4.5,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Swiss 1 Slice",
+    "c": "Cheese",
+    "cal": 60,
+    "p": 4,
+    "cb": 0,
+    "f": 4.5,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Bacon",
+    "c": "Meat",
+    "cal": 70,
+    "p": 5,
+    "cb": 1,
+    "f": 5,
+    "b": "4 Pieces",
+    "v": 1
+   },
+   {
+    "n": "Brisket",
+    "c": "Meat",
+    "cal": 110,
+    "p": 8,
+    "cb": 1,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Chicken Breast*",
+    "c": "Meat",
+    "cal": 90,
+    "p": 20,
+    "cb": 0,
+    "f": 1,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Chorizo Sausage Patty",
+    "c": "Meat",
+    "cal": 160,
+    "p": 5,
+    "cb": 1,
+    "f": 16,
+    "b": "1 Patty",
     "v": 1
    },
    {
     "n": "Ham, Breakfast",
-    "c": "Sandwich Fillings",
+    "c": "Meat",
     "cal": 45,
     "p": 6,
     "cb": 2,
@@ -5651,23 +6311,1246 @@
    },
    {
     "n": "Ham, Lunch",
-    "c": "Sandwich Fillings",
+    "c": "Meat",
     "cal": 90,
     "p": 12,
     "cb": 4,
     "f": 2.5,
     "b": "3.0 oz",
     "v": 1
+   },
+   {
+    "n": "Lox, Cold Smoked Salmon",
+    "c": "Meat",
+    "cal": 100,
+    "p": 12,
+    "cb": 0,
+    "f": 6,
+    "b": "2.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Pepperoni Slices",
+    "c": "Meat",
+    "cal": 90,
+    "p": 3,
+    "cb": 1,
+    "f": 9,
+    "b": "10 Pieces",
+    "v": 1
+   },
+   {
+    "n": "Pork Sausage Patty",
+    "c": "Meat",
+    "cal": 180,
+    "p": 6,
+    "cb": 0,
+    "f": 17,
+    "b": "1 Patty",
+    "v": 1
+   },
+   {
+    "n": "Turkey, Lunch",
+    "c": "Meat",
+    "cal": 90,
+    "p": 15,
+    "cb": 9,
+    "f": 2.5,
+    "b": "3.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Turkey Sausage Patty",
+    "c": "Meat",
+    "cal": 90,
+    "p": 7,
+    "cb": 0,
+    "f": 7,
+    "b": "1 Patty",
+    "v": 1
+   },
+   {
+    "n": "Chipotle Salsa",
+    "c": "Sauces",
+    "cal": 5,
+    "p": 0,
+    "cb": 1,
+    "f": 0,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Chipotle Mayo",
+    "c": "Sauces",
+    "cal": 90,
+    "p": 0,
+    "cb": 1,
+    "f": 10,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Double Egg Mayo",
+    "c": "Sauces",
+    "cal": 100,
+    "p": 0,
+    "cb": 0,
+    "f": 12,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Roasted Tomato Spread",
+    "c": "Sauces",
+    "cal": 80,
+    "p": 0,
+    "cb": 1,
+    "f": 8,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Spicy Brown Mustard",
+    "c": "Sauces",
+    "cal": 15,
+    "p": 0,
+    "cb": 0,
+    "f": 0,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Avocado",
+    "c": "Produce",
+    "cal": 50,
+    "p": 1,
+    "cb": 3,
+    "f": 4,
+    "b": "1.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Cucumber",
+    "c": "Produce",
+    "cal": 5,
+    "p": 0,
+    "cb": 1,
+    "f": 0,
+    "b": "3 Slices",
+    "v": 1
+   },
+   {
+    "n": "Red Onion",
+    "c": "Produce",
+    "cal": 5,
+    "p": 0,
+    "cb": 1,
+    "f": 0,
+    "b": "3 Slices",
+    "v": 1
+   },
+   {
+    "n": "Spinach",
+    "c": "Produce",
+    "cal": 5,
+    "p": 0,
+    "cb": 1,
+    "f": 0,
+    "b": "0.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Tomato",
+    "c": "Produce",
+    "cal": 10,
+    "p": 0,
+    "cb": 2,
+    "f": 0,
+    "b": "2 Slices",
+    "v": 1
+   },
+   {
+    "n": "Bacon & Cheddar ^ (Classic 1 Egg)",
+    "c": "Classic 1 Egg Sandwiches",
+    "cal": 450,
+    "p": 25,
+    "cb": 58,
+    "f": 16,
+    "b": "6.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Cheddar Cheese ^ (Classic 1 Egg)",
+    "c": "Classic 1 Egg Sandwiches",
+    "cal": 400,
+    "p": 20,
+    "cb": 57,
+    "f": 11,
+    "b": "5.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham & Swiss ^ (Classic 1 Egg)",
+    "c": "Classic 1 Egg Sandwiches",
+    "cal": 450,
+    "p": 26,
+    "cb": 59,
+    "f": 12,
+    "b": "7.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Pork Sausage & Cheddar ^ (Classic 1 Egg)",
+    "c": "Classic 1 Egg Sandwiches",
+    "cal": 580,
+    "p": 26,
+    "cb": 57,
+    "f": 28,
+    "b": "7.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Turkey Sausage & Cheddar ^ (Classic 1 Egg)",
+    "c": "Classic 1 Egg Sandwiches",
+    "cal": 490,
+    "p": 27,
+    "cb": 57,
+    "f": 18,
+    "b": "7.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Bacon & Cheddar ^ (Classic 2 Egg)",
+    "c": "Classic 2 Egg Sandwiches",
+    "cal": 550,
+    "p": 31,
+    "cb": 58,
+    "f": 21,
+    "b": "8.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Cheddar Cheese ^ (Classic 2 Egg)",
+    "c": "Classic 2 Egg Sandwiches",
+    "cal": 480,
+    "p": 26,
+    "cb": 57,
+    "f": 16,
+    "b": "7.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham & Swiss ^ (Classic 2 Egg)",
+    "c": "Classic 2 Egg Sandwiches",
+    "cal": 530,
+    "p": 33,
+    "cb": 59,
+    "f": 17,
+    "b": "9.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Pork Sausage & Cheddar ^ (Classic 2 Egg)",
+    "c": "Classic 2 Egg Sandwiches",
+    "cal": 660,
+    "p": 32,
+    "cb": 57,
+    "f": 33,
+    "b": "9.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Turkey Sausage & Cheddar ^ (Classic 2 Egg)",
+    "c": "Classic 2 Egg Sandwiches",
+    "cal": 570,
+    "p": 33,
+    "cb": 57,
+    "f": 23,
+    "b": "9.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Bacon & Cheddar ^ (Classic Egg White)",
+    "c": "Classic Egg White Sandwiches",
+    "cal": 430,
+    "p": 25,
+    "cb": 57,
+    "f": 11,
+    "b": "6.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Cheddar Cheese ^ (Classic Egg White)",
+    "c": "Classic Egg White Sandwiches",
+    "cal": 360,
+    "p": 20,
+    "cb": 56,
+    "f": 6,
+    "b": "6.1 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham & Swiss ^ (Classic Egg White)",
+    "c": "Classic Egg White Sandwiches",
+    "cal": 400,
+    "p": 26,
+    "cb": 58,
+    "f": 7,
+    "b": "7.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Turkey Sausage & Cheddar ^ (Classic Egg White)",
+    "c": "Classic Egg White Sandwiches",
+    "cal": 450,
+    "p": 27,
+    "cb": 56,
+    "f": 13,
+    "b": "7.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Chorizo Sunrise on Green Chile (1 Egg)",
+    "c": "Chef's Creations 1 Egg Sandwiches",
+    "cal": 790,
+    "p": 34,
+    "cb": 64,
+    "f": 46,
+    "b": "10.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Farmhouse On Cheesy Hash Brown (1 Egg)",
+    "c": "Chef's Creations 1 Egg Sandwiches",
+    "cal": 690,
+    "p": 35,
+    "cb": 65,
+    "f": 32,
+    "b": "9.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Garden Avocado on Everything (1 Egg)",
+    "c": "Chef's Creations 1 Egg Sandwiches",
+    "cal": 500,
+    "p": 18,
+    "cb": 64,
+    "f": 19,
+    "b": "8.8 oz",
+    "v": 1
+   },
+   {
+    "n": "Maplehouse Egg Sandwich 1 Egg",
+    "c": "Chef's Creations 1 Egg Sandwiches",
+    "cal": 860,
+    "p": 31,
+    "cb": 92,
+    "f": 41,
+    "b": "9.3 oz",
+    "v": 1
+   },
+   {
+    "n": "Santa Fe Sandwich on Asiago (1 Egg)",
+    "c": "Chef's Creations 1 Egg Sandwiches",
+    "cal": 580,
+    "p": 31,
+    "cb": 59,
+    "f": 25,
+    "b": "8.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Texas Brisket on Cheddar Jalapeno (1 Egg)",
+    "c": "Chef's Creations 1 Egg Sandwiches",
+    "cal": 760,
+    "p": 30,
+    "cb": 56,
+    "f": 48,
+    "b": "9.6 oz",
+    "v": 1
+   },
+   {
+    "n": "All-Nighter on Cheesy Hash Brown (2 Eggs)",
+    "c": "Chef's Creations 2 Egg Sandwiches",
+    "cal": 900,
+    "p": 35,
+    "cb": 65,
+    "f": 56,
+    "b": "10.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Chorizo Sunrise on Green Chile (2 Eggs)",
+    "c": "Chef's Creations 2 Egg Sandwiches",
+    "cal": 870,
+    "p": 40,
+    "cb": 64,
+    "f": 51,
+    "b": "12.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Farmhouse On Cheesy Hash Brown (2 Eggs)",
+    "c": "Chef's Creations 2 Egg Sandwiches",
+    "cal": 770,
+    "p": 41,
+    "cb": 66,
+    "f": 38,
+    "b": "11.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Garden Avocado on Everything (2 Eggs)",
+    "c": "Chef's Creations 2 Egg Sandwiches",
+    "cal": 580,
+    "p": 24,
+    "cb": 65,
+    "f": 25,
+    "b": "10.8 oz",
+    "v": 1
+   },
+   {
+    "n": "Maplehouse Egg Sandwich 2 Eggs",
+    "c": "Chef's Creations 2 Egg Sandwiches",
+    "cal": 940,
+    "p": 38,
+    "cb": 93,
+    "f": 47,
+    "b": "11.3 oz",
+    "v": 1
+   },
+   {
+    "n": "Santa Fe Sandwich on Asiago (2 Eggs)",
+    "c": "Chef's Creations 2 Egg Sandwiches",
+    "cal": 660,
+    "p": 37,
+    "cb": 60,
+    "f": 31,
+    "b": "10.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Texas Brisket on Cheddar Jalapeno (2 Eggs)",
+    "c": "Chef's Creations 2 Egg Sandwiches",
+    "cal": 840,
+    "p": 36,
+    "cb": 56,
+    "f": 53,
+    "b": "11.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Bacon Avocado Tomato Thin on Plain (Egg White)",
+    "c": "Chef's Creations 1 Egg White Sandwiches",
+    "cal": 440,
+    "p": 19,
+    "cb": 47,
+    "f": 19,
+    "b": "8.1 oz",
+    "v": 1
+   },
+   {
+    "n": "Chorizo Sunrise on Green Chile (Egg White)",
+    "c": "Chef's Creations 1 Egg White Sandwiches",
+    "cal": 750,
+    "p": 34,
+    "cb": 63,
+    "f": 41,
+    "b": "11.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Farmhouse On Cheesy Hash Brown (Egg White)",
+    "c": "Chef's Creations 1 Egg White Sandwiches",
+    "cal": 650,
+    "p": 34,
+    "cb": 65,
+    "f": 27,
+    "b": "9.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Garden Avocado on Everything (Egg White)",
+    "c": "Chef's Creations 1 Egg White Sandwiches",
+    "cal": 450,
+    "p": 18,
+    "cb": 63,
+    "f": 14,
+    "b": "9.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Santa Fe Sandwich on Asiago (Egg White)",
+    "c": "Chef's Creations 1 Egg White Sandwiches",
+    "cal": 540,
+    "p": 31,
+    "cb": 59,
+    "f": 20,
+    "b": "9.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Texas Brisket on Cheddar Jalapeno (Egg White)",
+    "c": "Chef's Creations 1 Egg White Sandwiches",
+    "cal": 720,
+    "p": 30,
+    "cb": 55,
+    "f": 43,
+    "b": "10.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Big Breakfast Burrito*",
+    "c": "Burritos",
+    "cal": 1050,
+    "p": 50,
+    "cb": 76,
+    "f": 60,
+    "b": "14.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Chorizo Breakfast Burrito",
+    "c": "Burritos",
+    "cal": 1120,
+    "p": 49,
+    "cb": 77,
+    "f": 68,
+    "b": "14.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Applewood Bacon & Cheddar ^ *",
+    "c": "License Classic Egg Sandwiches",
+    "cal": 500,
+    "p": 23,
+    "cb": 61,
+    "f": 18,
+    "b": "6.1 oz",
+    "v": 1
+   },
+   {
+    "n": "Cheddar Cheese ^ *",
+    "c": "License Classic Egg Sandwiches",
+    "cal": 430,
+    "p": 18,
+    "cb": 60,
+    "f": 13,
+    "b": "5.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham & Swiss ^ *",
+    "c": "License Classic Egg Sandwiches",
+    "cal": 470,
+    "p": 25,
+    "cb": 61,
+    "f": 14,
+    "b": "7.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Turkey Sausage & Cheddar ^ *",
+    "c": "License Classic Egg Sandwiches",
+    "cal": 520,
+    "p": 25,
+    "cb": 60,
+    "f": 20,
+    "b": "7.2 oz",
+    "v": 1
+   },
+   {
+    "n": "All-Nighter on Cheesy Hash Brown*",
+    "c": "License Signature Egg Sandwiches",
+    "cal": 930,
+    "p": 33,
+    "cb": 66,
+    "f": 60,
+    "b": "9.8 oz",
+    "v": 1
+   },
+   {
+    "n": "Bacon Avocado Tomato Thin on Plain*",
+    "c": "License Signature Egg Sandwiches",
+    "cal": 430,
+    "p": 19,
+    "cb": 48,
+    "f": 18,
+    "b": "8.1 oz",
+    "v": 1
+   },
+   {
+    "n": "Farmhouse On Cheesy Hash Brown*",
+    "c": "License Signature Egg Sandwiches",
+    "cal": 710,
+    "p": 33,
+    "cb": 65,
+    "f": 35,
+    "b": "9.1 oz",
+    "v": 1
+   },
+   {
+    "n": "Garden Avocado on Everything (License)",
+    "c": "License Signature Egg Sandwiches",
+    "cal": 510,
+    "p": 16,
+    "cb": 65,
+    "f": 21,
+    "b": "8.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Santa Fe on Asiago Thin*",
+    "c": "License Signature Egg Sandwiches",
+    "cal": 440,
+    "p": 26,
+    "cb": 43,
+    "f": 18,
+    "b": "7.8 oz",
+    "v": 1
+   },
+   {
+    "n": "Big Bro's Burrito *",
+    "c": "License Burrito",
+    "cal": 1250,
+    "p": 48,
+    "cb": 94,
+    "f": 76,
+    "b": "15.3 oz",
+    "v": 1
+   },
+   {
+    "n": "Chorizo Breakfast Burrito (License)",
+    "c": "License Burrito",
+    "cal": 1120,
+    "p": 49,
+    "cb": 77,
+    "f": 68,
+    "b": "14.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Avocado Veg Out on Sesame",
+    "c": "Company Signature Lunch Sandwiches",
+    "cal": 410,
+    "p": 14,
+    "cb": 66,
+    "f": 11,
+    "b": "9.1 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham & Swiss on Plain Bagel",
+    "c": "Company Signature Lunch Sandwiches",
+    "cal": 540,
+    "p": 27,
+    "cb": 63,
+    "f": 20,
+    "b": "10.4 oz",
+    "v": 1
+   },
+   {
+    "n": "Nova Lox on Plain Bagel",
+    "c": "Company Signature Lunch Sandwiches",
+    "cal": 500,
+    "p": 24,
+    "cb": 60,
+    "f": 18,
+    "b": "8.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Tasty Turkey on Asiago Bagel",
+    "c": "Company Signature Lunch Sandwiches",
+    "cal": 520,
+    "p": 32,
+    "cb": 71,
+    "f": 16,
+    "b": "11.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Turkey & Cheddar on Plain Bagel",
+    "c": "Company Signature Lunch Sandwiches",
+    "cal": 540,
+    "p": 29,
+    "cb": 68,
+    "f": 20,
+    "b": "10.4 oz",
+    "v": 1
+   },
+   {
+    "n": "Turkey, Bacon & Avocado on Plain Bagel",
+    "c": "Company Signature Lunch Sandwiches",
+    "cal": 640,
+    "p": 31,
+    "cb": 73,
+    "f": 28,
+    "b": "11.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Pizza Bagel, Cheese on Plain",
+    "c": "Company Hot and Toasty Lunch Sandwiches",
+    "cal": 460,
+    "p": 25,
+    "cb": 61,
+    "f": 13,
+    "b": "6.4 oz",
+    "v": 1
+   },
+   {
+    "n": "Pizza Bagel, Pepperoni on Plain",
+    "c": "Company Hot and Toasty Lunch Sandwiches",
+    "cal": 560,
+    "p": 28,
+    "cb": 61,
+    "f": 22,
+    "b": "7.1 oz",
+    "v": 1
+   },
+   {
+    "n": "Avocado Veg Out on Sesame*",
+    "c": "License Signature Lunch Sandwiches",
+    "cal": 400,
+    "p": 14,
+    "cb": 66,
+    "f": 11,
+    "b": "9.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Ham & Swiss on Plain Bagel*",
+    "c": "License Signature Lunch Sandwiches",
+    "cal": 550,
+    "p": 26,
+    "cb": 65,
+    "f": 20,
+    "b": "10.5 oz",
+    "v": 1
+   },
+   {
+    "n": "California Turkey Wrap*",
+    "c": "License Signature Lunch Sandwiches",
+    "cal": 670,
+    "p": 31,
+    "cb": 72,
+    "f": 32,
+    "b": "12.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Chicken Salad on Plain Bagel *",
+    "c": "License Signature Lunch Sandwiches",
+    "cal": 490,
+    "p": 29,
+    "cb": 61,
+    "f": 16,
+    "b": "9.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Nova Lox on Plain Bagel*",
+    "c": "License Signature Lunch Sandwiches",
+    "cal": 510,
+    "p": 24,
+    "cb": 63,
+    "f": 19,
+    "b": "8.8 oz",
+    "v": 1
+   },
+   {
+    "n": "Tasty Turkey on Asiago Bagel*",
+    "c": "License Signature Lunch Sandwiches",
+    "cal": 530,
+    "p": 31,
+    "cb": 75,
+    "f": 15,
+    "b": "11.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Turkey & Cheddar on Plain Bagel*",
+    "c": "License Signature Lunch Sandwiches",
+    "cal": 560,
+    "p": 29,
+    "cb": 70,
+    "f": 20,
+    "b": "10.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Turkey, Bacon & Avocado on Ciabatta*",
+    "c": "License Signature Lunch Sandwiches",
+    "cal": 600,
+    "p": 29,
+    "cb": 61,
+    "f": 30,
+    "b": "10.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Albuquerque Turkey on Six Cheese*",
+    "c": "License Hot Sandwiches",
+    "cal": 710,
+    "p": 44,
+    "cb": 68,
+    "f": 33,
+    "b": "12.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Cheesy Veggie Melt on Ciabatta*",
+    "c": "License Hot Sandwiches",
+    "cal": 620,
+    "p": 23,
+    "cb": 50,
+    "f": 37,
+    "b": "8.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Chicken and Pepperoni on Ciabatta*",
+    "c": "License Hot Sandwiches",
+    "cal": 650,
+    "p": 43,
+    "cb": 47,
+    "f": 33,
+    "b": "8.8 oz",
+    "v": 1
+   },
+   {
+    "n": "Pizza Bagel Cheese on Plain*",
+    "c": "License Hot Sandwiches",
+    "cal": 480,
+    "p": 25,
+    "cb": 63,
+    "f": 14,
+    "b": "6.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Pizza Bagel Pepperoni on Plain*",
+    "c": "License Hot Sandwiches",
+    "cal": 570,
+    "p": 28,
+    "cb": 64,
+    "f": 22,
+    "b": "7.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Spicy Chicken on Ciabatta*",
+    "c": "License Hot Sandwiches",
+    "cal": 610,
+    "p": 41,
+    "cb": 53,
+    "f": 26,
+    "b": "9.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Sea Salt Potato Chips",
+    "c": "Sides",
+    "cal": 150,
+    "p": 2,
+    "cb": 17,
+    "f": 9,
+    "b": "1.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Twice Baked Hash Brown",
+    "c": "Sides",
+    "cal": 170,
+    "p": 7,
+    "cb": 11,
+    "f": 11,
+    "b": "3.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Avocado Toast",
+    "c": "Avocado Toast",
+    "cal": 380,
+    "p": 11,
+    "cb": 63,
+    "f": 9,
+    "b": "5.6 oz",
+    "v": 1
+   },
+   {
+    "n": "Avocado Toast *",
+    "c": "Avocado Toast",
+    "cal": 380,
+    "p": 11,
+    "cb": 64,
+    "f": 9,
+    "b": "5.7 oz",
+    "v": 1
+   },
+   {
+    "n": "Cinnamon Bliss Roll",
+    "c": "Sweets",
+    "cal": 610,
+    "p": 11,
+    "cb": 98,
+    "f": 39,
+    "b": "6.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Cookie, Heavenly Chocolate Chip",
+    "c": "Sweets",
+    "cal": 470,
+    "p": 5,
+    "cb": 62,
+    "f": 23,
+    "b": "3.5 oz",
+    "v": 1
+   },
+   {
+    "n": "Fruity Cereal Pop",
+    "c": "Sweets",
+    "cal": 150,
+    "p": 1,
+    "cb": 29,
+    "f": 3,
+    "b": "1.4 oz",
+    "v": 1
+   },
+   {
+    "n": "Muffin, Blueberry",
+    "c": "Sweets",
+    "cal": 440,
+    "p": 5,
+    "cb": 48,
+    "f": 25,
+    "b": "4.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Muffin, Chocolate Chip",
+    "c": "Sweets",
+    "cal": 530,
+    "p": 6,
+    "cb": 56,
+    "f": 30,
+    "b": "4.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Muffin, Cinnamon Chip",
+    "c": "Sweets",
+    "cal": 510,
+    "p": 6,
+    "cb": 64,
+    "f": 27,
+    "b": "4.2 oz",
+    "v": 1
+   },
+   {
+    "n": "Pastry, Apple Pie",
+    "c": "Sweets",
+    "cal": 250,
+    "p": 3,
+    "cb": 38,
+    "f": 10,
+    "b": "3.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Pastry, Strawberry and Cream Strudel",
+    "c": "Sweets",
+    "cal": 340,
+    "p": 4,
+    "cb": 42,
+    "f": 17,
+    "b": "3.8 oz",
+    "v": 1
+   },
+   {
+    "n": "Doggie Bagel (Not for Human Consumption)",
+    "c": "Doggie Bagels",
+    "cal": 70,
+    "p": 2,
+    "cb": 14,
+    "f": 0.5,
+    "b": "1.0 oz",
+    "v": 1
+   },
+   {
+    "n": "Americano, Hot 12 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 5,
+    "p": 2,
+    "cb": 0,
+    "f": 0,
+    "b": "12 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Americano, Hot 16 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 5,
+    "p": 2,
+    "cb": 0,
+    "f": 0,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Americano, Hot 20 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 10,
+    "p": 3,
+    "cb": 0,
+    "f": 0,
+    "b": "20 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Cappuccino, Hot 12 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 110,
+    "p": 9,
+    "cb": 10,
+    "f": 4,
+    "b": "12 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Cappuccino, Hot 16 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 140,
+    "p": 11,
+    "cb": 13,
+    "f": 5,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Cappuccino, Hot 20 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 170,
+    "p": 14,
+    "cb": 15,
+    "f": 6,
+    "b": "20 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Chai Tea Latte, Hot 12 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 170,
+    "p": 7,
+    "cb": 26,
+    "f": 4,
+    "b": "12 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Chai Tea Latte, Hot 16 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 230,
+    "p": 9,
+    "cb": 35,
+    "f": 5,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Chai Tea Latte, Hot 20 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 280,
+    "p": 11,
+    "cb": 43,
+    "f": 6,
+    "b": "20 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Chai Tea Latte, Iced 16 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 140,
+    "p": 5,
+    "cb": 23,
+    "f": 3,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Chai Tea Latte, Iced 24 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 250,
+    "p": 9,
+    "cb": 41,
+    "f": 5,
+    "b": "24 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Latte, Hot 12 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 110,
+    "p": 9,
+    "cb": 10,
+    "f": 4,
+    "b": "12 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Latte, Hot 16 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 140,
+    "p": 11,
+    "cb": 13,
+    "f": 5,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Latte, Hot 20 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 170,
+    "p": 14,
+    "cb": 15,
+    "f": 6,
+    "b": "20 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Latte, Iced 16 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 80,
+    "p": 7,
+    "cb": 7,
+    "f": 3,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Latte, Iced 24 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 140,
+    "p": 12,
+    "cb": 13,
+    "f": 5,
+    "b": "24 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mocha, Hot 12 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 270,
+    "p": 10,
+    "cb": 46,
+    "f": 6,
+    "b": "12 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mocha, Hot 16 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 350,
+    "p": 13,
+    "cb": 61,
+    "f": 8,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mocha, Hot 20 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 420,
+    "p": 16,
+    "cb": 75,
+    "f": 9,
+    "b": "20 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mocha, Iced 16 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 240,
+    "p": 8,
+    "cb": 44,
+    "f": 5,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mocha, Iced 24 fl oz",
+    "c": "Classic Coffee Drinks",
+    "cal": 390,
+    "p": 14,
+    "cb": 72,
+    "f": 8,
+    "b": "24 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Caramel Macchiato, Hot 12 fl oz",
+    "c": "Signature Coffee Drinks",
+    "cal": 290,
+    "p": 11,
+    "cb": 49,
+    "f": 5,
+    "b": "12 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Caramel Macchiato, Hot 16 fl oz",
+    "c": "Signature Coffee Drinks",
+    "cal": 370,
+    "p": 14,
+    "cb": 64,
+    "f": 7,
+    "b": "16 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Caramel Macchiato, Hot 20 fl oz",
+    "c": "Signature Coffee Drinks",
+    "cal": 450,
+    "p": 17,
+    "cb": 79,
+    "f": 8,
+    "b": "20 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Caramel Macchiato, Iced 16 fl oz",
+    "c": "Signature Coffee Drinks",
+    "cal": 260,
+    "p": 10,
+    "cb": 46,
+    "f": 4,
+    "b": "16 fl oz",
+    "v": 1
    }
   ],
   "source": {
-   "url": "https://www.einsteinbros.com/wp-content/uploads/2025/02/EBB-Nutrition-Guide.pdf",
-   "kind": "search",
-   "t": "2026-11-17T15:07:01.226Z",
+   "url": "https://www.einsteinbros.com/wp-content/uploads/2026/08/EBB-Nutrition-Guide-Master-MN-2026-Holiday.pdf",
+   "kind": "pdf",
+   "t": "2026-11-17T15:49:23.028Z",
    "official": true
   },
-  "updated": "2026-11-17T15:07:01.226Z",
+  "updated": "2026-11-17T15:49:23.028Z",
   "log": [
+   {
+    "t": "2026-11-17T15:49:23.028Z",
+    "n": 205,
+    "how": "pdf",
+    "replace": true,
+    "check": {
+     "ok": true,
+     "n": 205,
+     "held": 0,
+     "kept": 0,
+     "t": "2026-11-17T15:49:23.028Z"
+    }
+   },
    {
     "t": "2026-11-17T15:07:01.226Z",
     "n": 18,
@@ -5684,10 +7567,10 @@
   ],
   "check": {
    "ok": true,
-   "n": 18,
+   "n": 205,
    "held": 0,
    "kept": 0,
-   "t": "2026-11-17T15:07:01.226Z"
+   "t": "2026-11-17T15:49:23.028Z"
   }
  }
 }

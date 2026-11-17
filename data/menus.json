@@ -3408,7 +3408,7 @@
   ]
  },
  "cornerbakery": {
-  "name": "Corner bakery",
+  "name": "Corner Bakery",
   "items": [
    {
     "n": "Anaheim Scrambler",
@@ -5447,8 +5447,13 @@
    "t": "2026-11-16T20:40:43.796Z",
    "official": true
   },
-  "updated": "2026-11-16T20:40:43.796Z",
+  "updated": "2026-11-17T05:52:42.978Z",
   "log": [
+   {
+    "t": "2026-11-17T05:52:42.978Z",
+    "n": 0,
+    "how": "edit"
+   },
    {
     "t": "2026-11-16T20:40:43.796Z",
     "n": 203,

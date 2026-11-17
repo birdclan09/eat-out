@@ -529,8 +529,8 @@ const supBar=()=>{const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
 const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Search online for nutrition info</b><span>Official numbers, reviewed by you before saving</span></button><div style="text-align:center"><a href="#" id="s-open2" style="color:var(--accent)">Add items another way</a></div>`;
 function shClose(){const s=$("#sheet");if(s)s.remove();document.body.style.overflow="";SH.busy=false}
 function shOpen(tab,auto){shClose();SH.name=curName();SH.tab=tab||"search";SH.note="";const s=document.createElement("div");s.id="sheet";document.body.appendChild(s);document.body.style.overflow="hidden";shDraw();if(auto)shRun({mode:"search",near:near()},"Searching the web.")}
-const PGL={on:0,ang:0,p:0,last:0,step:0,t0:0};
-const PG_FLOOR=[0,0.04,0.28,0.72,1];
+const PGL={on:0,ang:0,p:0,last:0,step:0,ts:0};
+const PG_FLOOR=[0,0.03,0.15,0.52,1],PG_TAU=[1,12,40,50,1];
 // Progress bar drawn as an eight-slice pizza: every slice starts faded and lights up in turn, clockwise from the top, as the work advances.
 // One global clock (PGL) drives it, so redrawing the sheet never restarts anything.
 function pgFrame(){const m=Math.min(PGL.p,1)*8,C=50,R=36,pt=(r,a)=>[C+r*Math.cos(a),C+r*Math.sin(a)];let out="";
@@ -539,9 +539,10 @@ function pgFrame(){const m=Math.min(PGL.p,1)*8,C=50,R=36,pt=(r,a)=>[C+r*Math.cos
   out+=`<g opacity="${op}"><path d="M${C} ${C}L${x0.toFixed(2)} ${y0.toFixed(2)}A${R} ${R} 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)}Z" fill="#f0cf6a"/><path d="M${c0.toFixed(2)} ${d0.toFixed(2)}A${R+4.2} ${R+4.2} 0 0 1 ${c1.toFixed(2)} ${d1.toFixed(2)}" fill="none" stroke="#c98a3d" stroke-width="5.5" stroke-linecap="round"/><circle cx="${p1x.toFixed(2)}" cy="${p1y.toFixed(2)}" r="3.4" fill="#c4483a"/><circle cx="${p2x.toFixed(2)}" cy="${p2y.toFixed(2)}" r="3.4" fill="#c4483a"/></g>`}
  return out}
 function pgTick(t){const el=document.getElementById("spg");if(!SH.busy||SH.note||!el){PGL.on=0;return}
- const dt=Math.min(.1,(t-PGL.last)/1000||0);PGL.last=t;if(!PGL.t0)PGL.t0=t;
- const f=PG_FLOOR[Math.min(4,SH.step)]||0,c=SH.step>=4?1:PG_FLOOR[Math.min(4,SH.step+1)]-.04,tm=.92*(1-Math.exp(-(t-PGL.t0)/35000)),tgt=Math.max(f,Math.min(c,tm));
- {let d=(tgt-PGL.p)*(1-Math.exp(-dt*1.4));d=Math.max(-.0,Math.min(d,.08*dt));PGL.p+=d}el.innerHTML=pgFrame();requestAnimationFrame(pgTick)}
+ const dt=Math.min(.1,(t-PGL.last)/1000||0);PGL.last=t;if(SH.step!==PGL.step){PGL.step=SH.step;PGL.ts=t}
+ // Real runs take a few minutes: reading ~1 min, checking ~1 min. Inside each step, creep toward (but never reach) the next step's mark.
+ const k=Math.min(4,SH.step),f=PG_FLOOR[k]||0,c=k>=4?1:PG_FLOOR[k+1]-.04,tgt=k>=4?1:f+(c-f)*(1-Math.exp(-(t-PGL.ts)/1000/PG_TAU[k]));
+ {let d=(tgt-PGL.p)*(1-Math.exp(-dt*1.4));d=Math.max(0,Math.min(d,.05*dt));PGL.p+=d}el.innerHTML=pgFrame();requestAnimationFrame(pgTick)}
 function pgStart(){if(PGL.on)return;PGL.on=1;PGL.last=performance.now();requestAnimationFrame(pgTick)}
 const STEPS=["Find","Read","Check","Ready"];
 function progHtml(){const c=SH.step||1;return`<div class="pg"><svg id="spg" viewBox="0 0 100 100" width="170" height="170" style="display:block;margin:6px 0" aria-hidden="true"></svg><div class="stp" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="${c}">${STEPS.map((t,n)=>`<div class="s${n+1<c?" d":n+1===c?" c":""}"><i></i>${t}</div>`).join("")}</div><div style="font-size:16px;font-weight:600">${esc(SH.msg||"Working")}…</div><div class="mu" style="margin-top:8px">Long menus can take a few minutes. Keep this screen open. <span id="sh-el"></span></div></div>`}
@@ -556,10 +557,10 @@ async function apiS(path,body,onEv,retry){const r=await fetch(path,{method:"POST
  if(fin.code>=400)throw new Error((fin.final&&fin.final.error)||("Request failed ("+fin.code+")"));return fin.final}
 const pause=ms=>new Promise(r=>setTimeout(r,ms));
 // Offline stand-in for /api/import so the animation can be previewed without spending any API calls.
-async function demoRun(path,body,onEv){const plan=[[0,1,"Looking for the official website"],[5000,1,"Checking the official site for its nutrition guide"],[9000,2,"Reading the nutrition guide on example.com"],[34000,3,"Checking 300 items against the source"],[46000,4,"Done"]];
+async function demoRun(path,body,onEv){const plan=[[0,1,"Looking for the official website"],[8000,1,"Checking the official site for its nutrition guide"],[15000,2,"Reading the nutrition guide on example.com"],[80000,3,"Checking 300 items against the source"],[135000,4,"Done"]];
  let t=0;for(const [at,step,msg] of plan){await pause(Math.max(0,at-t));t=at;if(step===4)break;onEv({step,msg})}
  return{items:[],notes:["This was only a preview. Nothing was searched or saved."],source:null}}
-async function shRun(body,label){SH.busy=true;SH.note="";const sr=body.mode==="search"||body.mode==="demo";SH.step=sr?1:2;SH.msg=sr?"Looking for the official website":body.mode==="file"?"Reading your file":"Reading the page";SH.t0=Date.now();PGL.p=0;PGL.t0=0;st.rev=null;shDraw();clearInterval(SH.tm);SH.tm=setInterval(()=>{const e=$("#sh-el");if(e){const t=Math.round((Date.now()-SH.t0)/1000);e.textContent="· "+Math.floor(t/60)+":"+String(t%60).padStart(2,"0")}},1000);
+async function shRun(body,label){SH.busy=true;SH.note="";const sr=body.mode==="search"||body.mode==="demo";SH.step=sr?1:2;SH.msg=sr?"Looking for the official website":body.mode==="file"?"Reading your file":"Reading the page";SH.t0=Date.now();PGL.p=0;PGL.step=0;st.rev=null;shDraw();clearInterval(SH.tm);SH.tm=setInterval(()=>{const e=$("#sh-el");if(e){const t=Math.round((Date.now()-SH.t0)/1000);e.textContent="· "+Math.floor(t/60)+":"+String(t%60).padStart(2,"0")}},1000);
  try{const j=await (body.mode==="demo"?demoRun:apiS)("/api/import",{name:SH.name,...body},o=>{SH.step=Math.max(SH.step,o.step);SH.msg=o.msg||SH.msg;shDraw()});let its=j.items||[],nt=[].concat(j.notes||[]);
   if(!body.replace){const ex=ITEMS.filter(o=>norm(o.r)===norm(SH.name)),w=s=>norm(String(s).split(/[ (,]/)[0]),dup=[];
    its=its.filter(i=>{const d=ex.find(o=>o.cal===i.cal&&o.p===i.p&&w(o.n)===w(i.n));if(d)dup.push(i.n);return!d});

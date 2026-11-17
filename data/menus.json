@@ -9586,5 +9586,1039 @@
    "kept": 0,
    "t": "2026-11-17T16:04:30.039Z"
   }
+ },
+ "chipotle": {
+  "name": "Chipotle",
+  "items": [
+   {
+    "n": "Flour Tortilla (burrito)",
+    "c": "Tortillas",
+    "cal": 320,
+    "p": 8,
+    "cb": 50,
+    "f": 9,
+    "b": "1 ea",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla (taco)",
+    "c": "Tortillas",
+    "cal": 80,
+    "p": 2,
+    "cb": 13,
+    "f": 2.5,
+    "b": "1 ea",
+    "v": 1
+   },
+   {
+    "n": "Crispy Corn Tortilla",
+    "c": "Tortillas",
+    "cal": 70,
+    "p": 1,
+    "cb": 10,
+    "f": 3,
+    "b": "1 ea",
+    "v": 1
+   },
+   {
+    "n": "Cilantro-Lime Brown Rice",
+    "c": "Rice",
+    "cal": 210,
+    "p": 4,
+    "cb": 36,
+    "f": 6,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Cilantro-Lime White Rice",
+    "c": "Rice",
+    "cal": 210,
+    "p": 4,
+    "cb": 40,
+    "f": 4,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans",
+    "c": "Beans",
+    "cal": 130,
+    "p": 8,
+    "cb": 22,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans",
+    "c": "Beans",
+    "cal": 130,
+    "p": 8,
+    "cb": 21,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Fajita Vegetables",
+    "c": "Veggies",
+    "cal": 20,
+    "p": 1,
+    "cb": 5,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Carnitas",
+    "c": "Protein",
+    "cal": 210,
+    "p": 23,
+    "cb": 0,
+    "f": 12,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Sofritas",
+    "c": "Protein",
+    "cal": 150,
+    "p": 8,
+    "cb": 9,
+    "f": 10,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Fresh Tomato Salsa",
+    "c": "Salsa",
+    "cal": 25,
+    "p": 0,
+    "cb": 4,
+    "f": 0,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Roasted Chili-Corn Salsa",
+    "c": "Salsa",
+    "cal": 80,
+    "p": 3,
+    "cb": 16,
+    "f": 1.5,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Tomatillo-Green Chili Salsa",
+    "c": "Salsa",
+    "cal": 15,
+    "p": 0,
+    "cb": 4,
+    "f": 0,
+    "b": "2 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tomatillo-Red Chili Salsa",
+    "c": "Salsa",
+    "cal": 30,
+    "p": 0,
+    "cb": 4,
+    "f": 0,
+    "b": "2 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Cheese",
+    "c": "Toppings",
+    "cal": 110,
+    "p": 6,
+    "cb": 1,
+    "f": 8,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Sour Cream",
+    "c": "Toppings",
+    "cal": 110,
+    "p": 2,
+    "cb": 2,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Guacamole (topping/side)",
+    "c": "Toppings",
+    "cal": 230,
+    "p": 2,
+    "cb": 8,
+    "f": 22,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Guacamole (large)",
+    "c": "Sides",
+    "cal": 460,
+    "p": 4,
+    "cb": 16,
+    "f": 44,
+    "b": "8 oz",
+    "v": 1
+   },
+   {
+    "n": "Queso Blanco (entree)",
+    "c": "Toppings",
+    "cal": 120,
+    "p": 5,
+    "cb": 4,
+    "f": 9,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Queso Blanco (side)",
+    "c": "Sides",
+    "cal": 240,
+    "p": 10,
+    "cb": 7,
+    "f": 18,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Queso Blanco (large)",
+    "c": "Sides",
+    "cal": 480,
+    "p": 20,
+    "cb": 14,
+    "f": 37,
+    "b": "8 oz",
+    "v": 1
+   },
+   {
+    "n": "Supergreens Salad Mix",
+    "c": "Salad",
+    "cal": 15,
+    "p": 1,
+    "cb": 3,
+    "f": 0,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Romaine Lettuce (tacos)",
+    "c": "Toppings",
+    "cal": 5,
+    "p": 0,
+    "cb": 1,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Chips (regular)",
+    "c": "Sides",
+    "cal": 540,
+    "p": 7,
+    "cb": 73,
+    "f": 25,
+    "b": "4 oz",
+    "v": 1
+   },
+   {
+    "n": "Chips (large)",
+    "c": "Sides",
+    "cal": 810,
+    "p": 11,
+    "cb": 110,
+    "f": 38,
+    "b": "6 oz",
+    "v": 1
+   },
+   {
+    "n": "Chipotle-Honey Vinaigrette",
+    "c": "Dressing",
+    "cal": 220,
+    "p": 1,
+    "cb": 18,
+    "f": 16,
+    "b": "2 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Barq's Root Beer 22 fl oz",
+    "c": "Drinks",
+    "cal": 280,
+    "p": 0,
+    "cb": 85,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Barq's Root Beer 32 fl oz",
+    "c": "Drinks",
+    "cal": 430,
+    "p": 0,
+    "cb": 120,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Coca-Cola Classic 22 fl oz",
+    "c": "Drinks",
+    "cal": 260,
+    "p": 0,
+    "cb": 70,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Coca-Cola Classic 32 fl oz",
+    "c": "Drinks",
+    "cal": 380,
+    "p": 0,
+    "cb": 105,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Coca Cola Life 22 fl oz",
+    "c": "Drinks",
+    "cal": 170,
+    "p": 0,
+    "cb": 44,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Coca Cola Life 32 fl oz",
+    "c": "Drinks",
+    "cal": 250,
+    "p": 0,
+    "cb": 64,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Pibb Xtra 22 fl oz",
+    "c": "Drinks",
+    "cal": 260,
+    "p": 0,
+    "cb": 70,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Pibb Xtra 32 fl oz",
+    "c": "Drinks",
+    "cal": 380,
+    "p": 0,
+    "cb": 105,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Sprite 22 fl oz",
+    "c": "Drinks",
+    "cal": 260,
+    "p": 0,
+    "cb": 70,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Sprite 32 fl oz",
+    "c": "Drinks",
+    "cal": 380,
+    "p": 0,
+    "cb": 105,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Fanta Orange 22 fl oz",
+    "c": "Drinks",
+    "cal": 290,
+    "p": 0,
+    "cb": 80,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Fanta Orange 32 fl oz",
+    "c": "Drinks",
+    "cal": 430,
+    "p": 0,
+    "cb": 120,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Minute Maid Lemonade 22 fl oz",
+    "c": "Drinks",
+    "cal": 280,
+    "p": 0,
+    "cb": 75,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Minute Maid Lemonade 32 fl oz",
+    "c": "Drinks",
+    "cal": 400,
+    "p": 0,
+    "cb": 110,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Powerade Mountain Berry Blast 22 fl oz",
+    "c": "Drinks",
+    "cal": 280,
+    "p": 0,
+    "cb": 75,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Powerade Mountain Berry Blast 32 fl oz",
+    "c": "Drinks",
+    "cal": 400,
+    "p": 0,
+    "cb": 110,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Lemonade - Blue Sky 22 fl oz",
+    "c": "Drinks",
+    "cal": 300,
+    "p": 0,
+    "cb": 78,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Lemonade - Blue Sky 32 fl oz",
+    "c": "Drinks",
+    "cal": 440,
+    "p": 0,
+    "cb": 113,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Orange - Blue Sky 22 fl oz",
+    "c": "Drinks",
+    "cal": 300,
+    "p": 0,
+    "cb": 75,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mango Orange - Blue Sky 32 fl oz",
+    "c": "Drinks",
+    "cal": 430,
+    "p": 0,
+    "cb": 109,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Maine Root Root Beer 22 fl oz",
+    "c": "Drinks",
+    "cal": 170,
+    "p": 0,
+    "cb": 62,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Maine Root Root Beer 32 fl oz",
+    "c": "Drinks",
+    "cal": 240,
+    "p": 0,
+    "cb": 90,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Chipotle Iced Tea 32 fl oz",
+    "c": "Drinks",
+    "cal": 15,
+    "p": 0,
+    "cb": 4,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Chipotle Sweet Iced Tea 22 fl oz",
+    "c": "Drinks",
+    "cal": 150,
+    "p": 0,
+    "cb": 45,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Chipotle Sweet Iced Tea 32 fl oz",
+    "c": "Drinks",
+    "cal": 220,
+    "p": 0,
+    "cb": 65,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tractor Berry Agua Fresca 22 fl oz",
+    "c": "Drinks",
+    "cal": 200,
+    "p": 0,
+    "cb": 50,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tractor Berry Agua Fresca 32 fl oz",
+    "c": "Drinks",
+    "cal": 290,
+    "p": 0,
+    "cb": 72,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tractor Watermelon Limeade 22 fl oz",
+    "c": "Drinks",
+    "cal": 230,
+    "p": 0,
+    "cb": 56,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tractor Watermelon Limeade 32 fl oz",
+    "c": "Drinks",
+    "cal": 330,
+    "p": 0,
+    "cb": 82,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tractor Lemonade 22 fl oz",
+    "c": "Drinks",
+    "cal": 170,
+    "p": 0,
+    "cb": 43,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tractor Lemonade 32 fl oz",
+    "c": "Drinks",
+    "cal": 250,
+    "p": 0,
+    "cb": 62,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tractor Mandarin Agua Fresca 22 fl oz",
+    "c": "Drinks",
+    "cal": 190,
+    "p": 0,
+    "cb": 47,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tractor Mandarin Agua Fresca 32 fl oz",
+    "c": "Drinks",
+    "cal": 280,
+    "p": 0,
+    "cb": 69,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Pepsi 22 fl oz",
+    "c": "Drinks",
+    "cal": 280,
+    "p": 0,
+    "cb": 77,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Pepsi 32 fl oz",
+    "c": "Drinks",
+    "cal": 400,
+    "p": 0,
+    "cb": 112,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mountain Dew 22 fl oz",
+    "c": "Drinks",
+    "cal": 300,
+    "p": 0,
+    "cb": 80,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mountain Dew 32 fl oz",
+    "c": "Drinks",
+    "cal": 440,
+    "p": 0,
+    "cb": 116,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tropicana Lemonade 22 fl oz",
+    "c": "Drinks",
+    "cal": 280,
+    "p": 0,
+    "cb": 74,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tropicana Lemonade 32 fl oz",
+    "c": "Drinks",
+    "cal": 400,
+    "p": 0,
+    "cb": 108,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Sierra Mist 22 fl oz",
+    "c": "Drinks",
+    "cal": 280,
+    "p": 0,
+    "cb": 74,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Sierra Mist 32 fl oz",
+    "c": "Drinks",
+    "cal": 400,
+    "p": 0,
+    "cb": 108,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mug Root Beer 22 fl oz",
+    "c": "Drinks",
+    "cal": 280,
+    "p": 0,
+    "cb": 72,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Mug Root Beer 32 fl oz",
+    "c": "Drinks",
+    "cal": 400,
+    "p": 0,
+    "cb": 104,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Lipton Raspberry Brisk Iced Tea 22 fl oz",
+    "c": "Drinks",
+    "cal": 220,
+    "p": 0,
+    "cb": 58,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Lipton Raspberry Brisk Iced Tea 32 fl oz",
+    "c": "Drinks",
+    "cal": 320,
+    "p": 0,
+    "cb": 84,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Dr. Pepper 22 fl oz",
+    "c": "Drinks",
+    "cal": 280,
+    "p": 0,
+    "cb": 73,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Dr. Pepper 32 fl oz",
+    "c": "Drinks",
+    "cal": 400,
+    "p": 0,
+    "cb": 106,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Crush Orange 22 fl oz",
+    "c": "Drinks",
+    "cal": 300,
+    "p": 0,
+    "cb": 79,
+    "f": 0,
+    "b": "22 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Crush Orange 32 fl oz",
+    "c": "Drinks",
+    "cal": 430,
+    "p": 0,
+    "cb": 115,
+    "f": 0,
+    "b": "32 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla (taco) (Kids)",
+    "c": "Kids Menu",
+    "cal": 170,
+    "p": 5,
+    "cb": 27,
+    "f": 5,
+    "b": "2 ea",
+    "v": 1
+   },
+   {
+    "n": "Flour Tortilla (quesadilla) (Kids)",
+    "c": "Kids Menu",
+    "cal": 80,
+    "p": 2,
+    "cb": 13,
+    "f": 2.5,
+    "b": "1 ea",
+    "v": 1
+   },
+   {
+    "n": "Crispy Corn Tortilla (Kids)",
+    "c": "Kids Menu",
+    "cal": 130,
+    "p": 2,
+    "cb": 19,
+    "f": 6,
+    "b": "2 ea",
+    "v": 1
+   },
+   {
+    "n": "Cilantro-Lime Brown Rice (Kids)",
+    "c": "Kids Menu",
+    "cal": 110,
+    "p": 2,
+    "cb": 18,
+    "f": 3,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Cilantro-Lime White Rice (Kids)",
+    "c": "Kids Menu",
+    "cal": 100,
+    "p": 2,
+    "cb": 20,
+    "f": 2,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Black Beans (Kids)",
+    "c": "Kids Menu",
+    "cal": 100,
+    "p": 6,
+    "cb": 16,
+    "f": 1,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Pinto Beans (Kids)",
+    "c": "Kids Menu",
+    "cal": 100,
+    "p": 6,
+    "cb": 15,
+    "f": 1,
+    "b": "3 oz",
+    "v": 1
+   },
+   {
+    "n": "Fajita Vegetables (Kids)",
+    "c": "Kids Menu",
+    "cal": 20,
+    "p": 1,
+    "cb": 5,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Carnitas (Kids)",
+    "c": "Kids Menu",
+    "cal": 110,
+    "p": 12,
+    "cb": 0,
+    "f": 6,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Sofritas (Kids)",
+    "c": "Kids Menu",
+    "cal": 70,
+    "p": 4,
+    "cb": 5,
+    "f": 5,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Fresh Tomato Salsa (Kids)",
+    "c": "Kids Menu",
+    "cal": 15,
+    "p": 0,
+    "cb": 1,
+    "f": 0,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Roasted Chili-Corn Salsa (Kids)",
+    "c": "Kids Menu",
+    "cal": 40,
+    "p": 1,
+    "cb": 9,
+    "f": 1,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Tomatillo-Green Chili Salsa (Kids)",
+    "c": "Kids Menu",
+    "cal": 15,
+    "p": 0,
+    "cb": 4,
+    "f": 0,
+    "b": "2 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Tomatillo-Red Chili Salsa (Kids)",
+    "c": "Kids Menu",
+    "cal": 30,
+    "p": 0,
+    "cb": 4,
+    "f": 0,
+    "b": "2 fl oz",
+    "v": 1
+   },
+   {
+    "n": "Cheese (Kids)",
+    "c": "Kids Menu",
+    "cal": 110,
+    "p": 6,
+    "cb": 1,
+    "f": 8,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Sour Cream (Kids)",
+    "c": "Kids Menu",
+    "cal": 60,
+    "p": 1,
+    "cb": 1,
+    "f": 5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Guacamole (Kids)",
+    "c": "Kids Menu",
+    "cal": 110,
+    "p": 1,
+    "cb": 3,
+    "f": 11,
+    "b": "2 oz",
+    "v": 1
+   },
+   {
+    "n": "Queso Blanco (Kids)",
+    "c": "Kids Menu",
+    "cal": 60,
+    "p": 2,
+    "cb": 2,
+    "f": 4.5,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Romaine Lettuce (Kids)",
+    "c": "Kids Menu",
+    "cal": 5,
+    "p": 0,
+    "cb": 1,
+    "f": 0,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Mandarins (Kids)",
+    "c": "Kids Menu",
+    "cal": 35,
+    "p": 1,
+    "cb": 9,
+    "f": 0,
+    "b": "1 ea",
+    "v": 1
+   },
+   {
+    "n": "Blueberries (Kids)",
+    "c": "Kids Menu",
+    "cal": 20,
+    "p": 1,
+    "cb": 5,
+    "f": 0,
+    "b": "1 ea",
+    "v": 1
+   },
+   {
+    "n": "Chips (Kids)",
+    "c": "Kids Menu",
+    "cal": 140,
+    "p": 2,
+    "cb": 18,
+    "f": 6,
+    "b": "1 oz",
+    "v": 1
+   },
+   {
+    "n": "Organic Milk (Kids)",
+    "c": "Kids Menu",
+    "cal": 110,
+    "p": 8,
+    "cb": 12,
+    "f": 2.5,
+    "b": "8 oz",
+    "v": 1
+   },
+   {
+    "n": "Organic Chocolate Milk (Kids)",
+    "c": "Kids Menu",
+    "cal": 160,
+    "p": 9,
+    "cb": 24,
+    "f": 3,
+    "b": "8 oz",
+    "v": 1
+   },
+   {
+    "n": "Organic Apple Juice (Kids)",
+    "c": "Kids Menu",
+    "cal": 100,
+    "p": 0,
+    "cb": 25,
+    "f": 0,
+    "b": "6.75 oz",
+    "v": 1
+   }
+  ],
+  "source": {
+   "url": "https://www.chipotle.com/content/dam/chipotle/menu/nutrition/US-Nutrition-Facts-Paper-Menu-3-2025.pdf",
+   "kind": "pdf",
+   "t": "2026-11-17T16:19:21.226Z",
+   "official": true
+  },
+  "updated": "2026-11-17T16:19:21.226Z",
+  "log": [
+   {
+    "t": "2026-11-17T16:19:21.226Z",
+    "n": 100,
+    "how": "pdf",
+    "replace": false,
+    "check": {
+     "ok": true,
+     "n": 106,
+     "held": 0,
+     "kept": 0,
+     "t": "2026-11-17T16:19:21.226Z"
+    }
+   }
+  ],
+  "check": {
+   "ok": true,
+   "n": 106,
+   "held": 0,
+   "kept": 0,
+   "t": "2026-11-17T16:19:21.226Z"
+  }
  }
 }

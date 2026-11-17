@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
   const pack = (list, source) => {
     list.sort((a, b) => a.mi - b.mi);
     if (!list.length) return { found: false, count: 0, source };
-    return { found: true, place: list[0], others: list.slice(1, 4).map(p => ({ name: p.name, addr: p.addr, mi: p.mi })), count: list.length, source };
+    return { found: true, place: list[0], others: list.slice(1, 4).map(p => ({ name: p.name, addr: p.addr, mi: p.mi, la: p.la, lo: p.lo })), count: list.length, source };
   };
   const timed = async (u, opt, ms) => {
     const c = new AbortController(), tm = setTimeout(() => c.abort(), ms);
@@ -68,10 +68,66 @@ module.exports = async (req, res) => {
     return pack(list, "openstreetmap");
   };
 
+
+  // Hours fallbacks, tried in order when OpenStreetMap has none: Google Places (GOOGLE_PLACES_KEY), the place's own website (schema.org data), then a direct OpenStreetMap tag check.
+  const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  const fromLd = html => {
+    const out = [];
+    const walk = o => {
+      if (!o || typeof o !== "object") return;
+      if (Array.isArray(o)) return o.forEach(walk);
+      if (o.openingHoursSpecification) {
+        for (const s of [].concat(o.openingHoursSpecification)) {
+          const ds = [].concat(s.dayOfWeek || []).map(d => String(d).replace(/^.*\//, "")).filter(Boolean);
+          if (ds.length && s.opens && s.closes) out.push(ds.join(", ") + ": " + String(s.opens).slice(0, 5) + "-" + String(s.closes).slice(0, 5));
+        }
+      }
+      if (!out.length && o.openingHours) for (const h of [].concat(o.openingHours)) if (typeof h === "string") out.push(h);
+      for (const k of Object.keys(o)) if (typeof o[k] === "object") walk(o[k]);
+    };
+    for (const m of html.matchAll(/<script[^>]+application\/ld\+json[^>]*>([\s\S]*?)<\/script>/gi)) { try { walk(JSON.parse(m[1])); } catch (e) { /* skip bad block */ } }
+    return out.join("; ");
+  };
+  const hoursGoogle = async p => {
+    const gk = process.env.GOOGLE_PLACES_KEY;
+    if (!gk) return null;
+    const r = await timed("https://places.googleapis.com/v1/places:searchText", { method: "POST", headers: { "Content-Type": "application/json", "X-Goog-Api-Key": gk, "X-Goog-FieldMask": "places.displayName,places.location,places.regularOpeningHours.weekdayDescriptions,places.nationalPhoneNumber,places.websiteUri" }, body: JSON.stringify({ textQuery: p.name + " " + (p.addr || ""), locationBias: { circle: { center: { latitude: p.la, longitude: p.lo }, radius: 400 } }, maxResultCount: 3 }) }, 6000);
+    const j = await r.json().catch(() => null);
+    if (!r.ok || !j) return null;
+    const words = sq(name).split(/\s+/).filter(Boolean);
+    for (const g of j.places || []) {
+      const l = g.location || {}, d = Math.sqrt(((l.longitude - p.lo) * t * Math.cos(p.la * t)) ** 2 + ((l.latitude - p.la) * t) ** 2) * 3958.8;
+      if (!(d < 0.25) || !words.every(w => sq(g.displayName && g.displayName.text).includes(w))) continue;
+      const wd = g.regularOpeningHours && g.regularOpeningHours.weekdayDescriptions;
+      return { hours: wd ? wd.join("; ") : "", phone: g.nationalPhoneNumber || "", website: g.websiteUri || "" };
+    }
+    return null;
+  };
+  const hoursSite = async p => {
+    if (!/^https?:\/\//i.test(p.website || "")) return null;
+    const r = await timed(p.website, { headers: { "User-Agent": "Mozilla/5.0 (compatible; eat-out-app/1.0)", Accept: "text/html" }, redirect: "follow" }, 5000);
+    if (!r.ok) return null;
+    const h = fromLd((await r.text()).slice(0, 600000));
+    return h ? { hours: h } : null;
+  };
+  const hoursOsm = async p => {
+    const q = `[out:json][timeout:8];nwr["opening_hours"](around:80,${p.la},${p.lo});out tags center 20;`;
+    const j = await Promise.any(HOSTS.map(async u => { const r = await timed(u, { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded", "User-Agent": "eat-out-app/1.0 (personal nutrition finder)" }, body: "data=" + encodeURIComponent(q) }, 9000); if (!r.ok) throw new Error(r.status); return r.json(); }));
+    const words = sq(name).split(/\s+/).filter(Boolean), e = (j.elements || []).find(x => x.tags && x.tags.name && words.every(w => sq(x.tags.name).includes(w)));
+    return e ? { hours: e.tags.opening_hours, phone: e.tags.phone || e.tags["contact:phone"] || "", website: e.tags.website || e.tags["contact:website"] || "" } : null;
+  };
+  const fillHours = async p => {
+    if (!p || p.hours) return;
+    for (const f of [hoursGoogle, hoursSite, hoursOsm]) {
+      try { const h = await f(p); if (h && h.hours) { p.hours = h.hours; p.phone = p.phone || h.phone || ""; p.website = p.website || h.website || ""; p.hoursFrom = f === hoursGoogle ? "google" : f === hoursSite ? "website" : "osm"; return; } } catch (e) { /* try the next source */ }
+    }
+  };
+
   const errs = [];
   let out = null;
   try { out = await viaGeoapify(); } catch (e) { errs.push(String(e.message || e)); }
   if (!out) { try { out = await viaOverpass(); } catch (e) { errs.push(...(e.errors ? e.errors.map(x => x.message) : [e.message])); } }
   if (!out) { res.setHeader("Cache-Control", "no-store"); return res.status(502).json({ error: "Place lookup unreachable", detail: errs.join("; ").slice(0, 200) }); }
+  if (out.found) await fillHours(out.place);
   res.status(200).json(out);
 };

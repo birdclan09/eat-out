@@ -39,6 +39,42 @@ module.exports = async (req, res) => {
         const ck = b.check && typeof b.check === "object" ? { ok: !!b.check.ok, n: ci(b.check.n), held: ci(b.check.held), kept: ci(b.check.kept), t: now } : null;
         const log = [{ t: now, n: items.length, how: src ? src.kind : "manual", replace: !!b.replace, ...(ck ? { check: ck } : {}) }].concat(cur.log || []).slice(0, 10);
         menus[id] = { name: cur.name || name, items: keep.concat(items).slice(0, 600), source: src || cur.source || null, updated: now, log, ...((ck || cur.check) ? { check: ck || cur.check } : {}) };
+      } else if (b.action === "edit") {
+        // Edit a saved menu: rename it, change its source link, edit items by index (edits:[{x,...fields}]) and/or remove items by index (remove:[x]).
+        // Edited items lose any "imported/verified" flag (v:0) and are marked ed:1, so the app never calls an edited number verified.
+        const cur = menus[id];
+        if (!cur) return res.status(404).json({ error: "No saved menu with that name." });
+        const now = new Date().toISOString(), out = { ...cur, items: cur.items.map(i => ({ ...i })) };
+        let newId = id;
+        const nn = b.newName != null ? String(b.newName).trim().slice(0, 100) : "";
+        if (nn && nn !== cur.name) {
+          newId = norm(nn);
+          if (!newId) return res.status(400).json({ error: "Name can't be empty." });
+          if (newId !== id && menus[newId]) return res.status(409).json({ error: "A saved menu named that already exists." });
+          out.name = nn;
+        }
+        if (b.source !== undefined) {
+          const u = b.source && b.source.url ? String(b.source.url).trim().slice(0, 500) : "";
+          if (u && !/^https?:\/\//i.test(u)) return res.status(400).json({ error: "Source link must start with http:// or https://" });
+          out.source = u ? { ...(cur.source || {}), url: u, kind: (cur.source && cur.source.kind) || "link", t: (cur.source && cur.source.t) || now, official: !!b.source.official } : null;
+        }
+        let changed = 0;
+        for (const e of Array.isArray(b.edits) ? b.edits : []) {
+          const x = parseInt(e.x, 10), old = out.items[x];
+          if (!old) continue;
+          const c = clean([e])[0];
+          if (!c) return res.status(400).json({ error: "Each item needs a name, calories and protein." });
+          out.items[x] = { ...c, v: 0, ed: 1 };
+          changed++;
+        }
+        const rm = new Set((Array.isArray(b.remove) ? b.remove : []).map(v => parseInt(v, 10)));
+        if (rm.size) { out.items = out.items.filter((_, x) => !rm.has(x)); changed += rm.size; }
+        out.updated = now;
+        out.log = [{ t: now, n: changed, how: "edit" }].concat(cur.log || []).slice(0, 10);
+        if (newId !== id) delete menus[id];
+        if (out.items.length) menus[newId] = out; else delete menus[newId];
+        try { await writeMenus(menus, sha, `Menu data: edit ${name}${newId !== id ? " -> " + out.name : ""}`); return res.status(200).json({ ok: true, menu: menus[newId] || null, id: newId }); }
+        catch (e) { if (e.status === 409 && attempt === 0) continue; throw e; }
       } else return res.status(400).json({ error: "Unknown action." });
       try { await writeMenus(menus, sha, `Menu data: ${b.action} ${name}`); return res.status(200).json({ ok: true, menu: menus[id] || null }); }
       catch (e) { if (e.status === 409 && attempt === 0) continue; throw e; }

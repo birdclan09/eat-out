@@ -32,7 +32,7 @@ function parseOut(text, truncated) {
   return { items, notes: m ? m[1] : "", source: sr ? sr[1] : undefined, partial: truncated || !closed };
 }
 
-async function ask(content, tools) {
+async function run(content, tools) {
   const messages = [{ role: "user", content }];
   const trace = { queries: [], hosts: [], urls: [], errors: [] };
   let j, text = "";
@@ -56,6 +56,10 @@ async function ask(content, tools) {
     messages.push({ role: "assistant", content: j.content });
   }
   trace.hosts = [...new Set(trace.hosts)].slice(0, 6);
+  return { j, text, trace };
+}
+async function ask(content, tools) {
+  const { j, text, trace } = await run(content, tools);
   try { const o = parseOut(text, j.stop_reason === "max_tokens"); o.trace = trace; return o; }
   catch (e) {
     const peek = text.replace(/\s+/g, " ").slice(0, 160) || "(empty reply)";
@@ -63,6 +67,27 @@ async function ask(content, tools) {
     err.trace = trace; err.reply = text;
     throw err;
   }
+}
+
+const { candidates } = require("./_find");
+const BLOCK = d => d.kind === "pdf" ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: d.data } } : d.kind === "image" ? { type: "image", source: { type: "base64", media_type: d.mime, data: d.data } } : { type: "text", text: "SOURCE PAGE TEXT:\n" + d.text };
+// Step 1: a small web search only to locate the restaurant's official site / guide. Step 2: read its newest nutrition guide in full.
+async function findOfficial(name, near) {
+  const t0 = Date.now();
+  const r = await run([{ type: "text", text: `Find the official website of the restaurant "${name}"${near ? " near " + String(near).slice(0, 60) : ""} and its own published nutrition (or nutrition and allergen) guide, usually a PDF on the restaurant's own domain. Reply with ONLY URLs, one per line: any official nutrition guide PDF or nutrition page first, then the official homepage. No other text.` }], [{ type: "web_search_20250305", name: "web_search", max_uses: 3 }]);
+  const said = (r.text.match(/https?:\/\/[^\s)"'<>\]]+/g) || []).map(u => u.replace(/[.,;]+$/, ""));
+  const cands = await candidates(name, [...said, ...(r.trace.urls || [])], loadUrl);
+  let best = null;
+  // Read the two newest guides and keep the one with more items: the newest file can be a seasonal or regional edition.
+  for (const u of cands.slice(0, 2)) {
+    if (best && Date.now() - t0 > 110000) break;
+    try {
+      const d = await loadUrl(u);
+      const o = await ask([BLOCK(d), { type: "text", text: `Restaurant: ${name}\n\n${PROMPT}` }]);
+      if ((o.items || []).length > (best ? best.out.items.length : 0)) best = { out: o, url: u, kind: d.kind };
+    } catch (e) { /* this candidate had no usable numbers; try the next */ }
+  }
+  return best ? Object.assign(best, { trace: r.trace }) : null;
 }
 
 const AGG = /(yelp|facebook|instagram|tripadvisor|mynetdiary|bigoven|doordash|ubereats|grubhub|toasttab|toast\.app|opentable|tock|mapquest|aaa\.com|reddit|pinterest|tiktok|youtube|findmeglutenfree|restaurantguru|restaurantji|singleplatform|menuxp|nutritionix|fatsecret|calorieking|myfitnesspal|wikipedia|google|slugmag|utahstories|gastronomic|everyday\.vegas)/i;
@@ -111,7 +136,10 @@ module.exports = async (req, res) => {
       source = { url: String(b.url), kind: d.kind === "text" ? "page" : d.kind };
       content = [d.kind === "pdf" ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: d.data } } : d.kind === "image" ? { type: "image", source: { type: "base64", media_type: d.mime, data: d.data } } : { type: "text", text: "SOURCE PAGE TEXT:\n" + d.text }, { type: "text", text: `Restaurant: ${name}\n\n${PROMPT}` }];
     }
-    let out = await ask(content, tools).catch(e => (b.mode === "search" && e.trace ? { items: [], notes: [], trace: e.trace } : Promise.reject(e)));
+    let out, official = null;
+    if (b.mode === "search") { try { official = await findOfficial(name, b.near); } catch (e) { official = null; } }
+    if (official) out = official.out;
+    else out = await ask(content, tools).catch(e => (b.mode === "search" && e.trace ? { items: [], notes: [], trace: e.trace } : Promise.reject(e)));
     let opened = null;
     if (b.mode === "search" && !(out.items || []).length) {
       // The search tool only returns excerpts. Open the restaurant's own site (and its nutrition/menu links) and read them in full.
@@ -124,8 +152,9 @@ module.exports = async (req, res) => {
     const items = (out.items || []).map(row).map(i => ({ n: String(i.name || "").trim(), c: String(i.category || "").trim(), b: String(i.serving || "").trim(), cal: num(i.calories), p: num(i.protein), cb: num(i.carbs), f: num(i.fat) })).filter(i => i.n && i.cal > 0 && i.p != null);
     if (b.mode === "search" && out.source) source = { url: String(out.source), kind: "search" };
     if (opened) { source = { url: opened, kind: "page" }; notes.unshift("Search found no numbers in its excerpts, so I opened the restaurant's own site and read this page in full."); }
+    if (official) { source = { url: official.url, kind: official.kind === "pdf" ? "pdf" : "page" }; let h = ""; try { h = new URL(official.url).hostname.replace(/^www\./, ""); } catch (e) {} notes.unshift("Found the restaurant's own nutrition guide" + (h ? " on " + h : "") + " and read it in full."); }
     const tr = out.trace;
-    if (b.mode === "search" && tr && !opened) notes.push(!tr.queries.length ? "The search tool did not run a single search." : "Searched " + tr.queries.length + " time" + (tr.queries.length > 1 ? "s" : "") + (tr.hosts.length ? ", saw: " + tr.hosts.join(", ") : ", no pages came back") + "." + (tr.errors.length ? " Search error: " + [...new Set(tr.errors)].join(", ") + "." : ""));
+    if (b.mode === "search" && tr && !opened && !official) notes.push(!tr.queries.length ? "The search tool did not run a single search." : "Searched " + tr.queries.length + " time" + (tr.queries.length > 1 ? "s" : "") + (tr.hosts.length ? ", saw: " + tr.hosts.join(", ") : ", no pages came back") + "." + (tr.errors.length ? " Search error: " + [...new Set(tr.errors)].join(", ") + "." : ""));
     if (!items.length) return res.status(200).json({ items: [], notes: notes.length ? notes : ["No items with calories and protein were found."], source });
     return res.status(200).json({ items, notes, source });
   } catch (e) {

@@ -542,7 +542,7 @@ function pgTick(t){const el=document.getElementById("spg");if(!SH.busy||SH.note|
  const dt=Math.min(.1,(t-PGL.last)/1000||0);PGL.last=t;if(SH.step!==PGL.step){PGL.step=SH.step;PGL.ts=t}
  // Real runs take a few minutes: reading ~1 min, checking ~1 min. Inside each step, creep toward (but never reach) the next step's mark.
  const k=Math.min(4,SH.step),f=PG_FLOOR[k]||0,c=k>=4?1:PG_FLOOR[k+1]-.04,tgt=k>=4?1:f+(c-f)*(1-Math.exp(-(t-PGL.ts)/1000/PG_TAU[k]));
- {let d=(tgt-PGL.p)*(1-Math.exp(-dt*1.4));d=Math.max(0,Math.min(d,.05*dt));PGL.p+=d}el.innerHTML=pgFrame();requestAnimationFrame(pgTick)}
+ {let d;if(k>=4)d=Math.min(1-PGL.p,.4*dt);else{d=(tgt-PGL.p)*(1-Math.exp(-dt*1.4));d=Math.max(0,Math.min(d,.05*dt))}PGL.p+=d;if(k>=4&&1-PGL.p<.001)PGL.p=1}el.innerHTML=pgFrame();requestAnimationFrame(pgTick)}
 function pgStart(){if(PGL.on)return;PGL.on=1;PGL.last=performance.now();requestAnimationFrame(pgTick)}
 const STEPS=["Find","Read","Check","Ready"];
 function progHtml(){const c=SH.step||1;return`<div class="pg"><svg id="spg" viewBox="0 0 100 100" width="170" height="170" style="display:block;margin:6px 0" aria-hidden="true"></svg><div class="stp" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="${c}">${STEPS.map((t,n)=>`<div class="s${n+1<c?" d":n+1===c?" c":""}"><i></i>${t}</div>`).join("")}</div><div style="font-size:16px;font-weight:600">${esc(SH.msg||"Working")}…</div><div class="mu" style="margin-top:8px">Long menus can take a few minutes. Keep this screen open. <span id="sh-el"></span></div></div>`}
@@ -572,7 +572,7 @@ async function shRun(body,label){SH.busy=true;SH.note="";const sr=body.mode==="s
     held=[...bad.keys()].sort((a,b)=>a-b).map(x=>({item:its[x],why:bad.get(x).map(q=>q.field==="notfound"?"not found in the source":q.field+": read "+q.got+", source says "+q.src).join("; ")}));
     its=its.filter((_,x)=>!bad.has(x));ver={ok:true,n:v.checked,held:held.length}}catch(e){ver={ok:false,why:e.message}}}
   else ver={ok:false,why:"no source to compare with"};
-  st.rev={name:SH.name,items:its,notes:nt,source:j.source,replace:!!body.replace,held,ver};SH.note="";SH.step=4;SH.msg="Done";shDraw();for(let k=0;k<60&&PGL.p<.99;k++)await new Promise(r=>setTimeout(r,100));await new Promise(r=>setTimeout(r,500))}catch(e){SH.note=e.message}
+  st.rev={name:SH.name,items:its,notes:nt,source:j.source,replace:!!body.replace,held,ver};SH.note="";SH.step=4;SH.msg="Done";shDraw();for(let k=0;k<120&&PGL.p<1;k++)await new Promise(r=>setTimeout(r,100));await new Promise(r=>setTimeout(r,700))}catch(e){SH.note=e.message}
 SH.busy=false;clearInterval(SH.tm);shDraw()}
 function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&st.rev.name===name?st.rev:null,H=SH.hand||{};
  const TABS=[["search","Search"],["link","Link"],["file","PDF/photo"],["hand","By hand"]],note=SH.note?`<div class="mu" style="margin-top:12px">${esc(SH.note)}</div>`:"";

@@ -41,6 +41,15 @@ module.exports = async (req, res) => {
     return cands.filter(Boolean).sort((a, b) => a.split(",")[0].length - b.split(",")[0].length).pop() || "";
   };
 
+  // Salt Lake County street grid: "5639 7800 South" is "5639 West 7800 South". The data source leaves out the East/West (or North/South) word, but the grid fixes it: the house number counts out from Main Street (east/west) or South Temple (north/south), so the side follows from the location. Only applied inside Salt Lake County, only when the word is missing.
+  const gridFix = (addr, la, lo) => {
+    if (!(la > 40.41 && la < 40.92 && lo > -112.26 && lo < -111.73)) return addr;
+    return String(addr).replace(/^(\d+) (\d+) (North|South|East|West)\b/i, (m, hn, st, dir) => {
+      const d = dir.toLowerCase(), pre = (d === "north" || d === "south") ? (lo < -111.891 ? "West" : "East") : (la < 40.7677 ? "South" : "North");
+      return hn + " " + pre + " " + st + " " + dir.charAt(0).toUpperCase() + dir.slice(1).toLowerCase();
+    });
+  };
+
   // 1) Geoapify (key from env): finds the places by name quickly; Place Details then adds hours, phone and website when OpenStreetMap has them.
   const viaGeoapify = async () => {
     if (!key) return null;
@@ -51,7 +60,7 @@ module.exports = async (req, res) => {
     for (const f of j.features || []) {
       const p = f.properties || {};
       if (!p.name || p.lat == null || p.lon == null || !words.every(w => sq(p.name).includes(w))) continue;
-      list.push({ name: p.name, addr: bestAddr(p), mi: miTo(p.lat, p.lon), la: p.lat, lo: p.lon, hours: "", phone: "", website: "", cuisine: "", id: p.place_id });
+      list.push({ name: p.name, addr: gridFix(bestAddr(p), p.lat, p.lon), mi: miTo(p.lat, p.lon), la: p.lat, lo: p.lon, hours: "", phone: "", website: "", cuisine: "", id: p.place_id });
     }
     if (!list.length) return null;
     list.sort((a, b) => a.mi - b.mi);
@@ -85,7 +94,7 @@ module.exports = async (req, res) => {
       const y = e.lat ?? (e.center && e.center.lat), x = e.lon ?? (e.center && e.center.lon), g = e.tags || {};
       if (y == null || x == null || !g.name) continue;
       const street = [g["addr:housenumber"], g["addr:street"]].filter(Boolean).join(" "), st = [g["addr:state"], g["addr:postcode"]].filter(Boolean).join(" ");
-      list.push({ name: g.name, addr: g["addr:full"] || [street, g["addr:city"], st].filter(Boolean).join(", "), mi: miTo(y, x), la: y, lo: x, hours: g.opening_hours || "", phone: g.phone || g["contact:phone"] || "", website: g.website || g["contact:website"] || "", cuisine: g.cuisine || "" });
+      list.push({ name: g.name, addr: gridFix(g["addr:full"] || [street, g["addr:city"], st].filter(Boolean).join(", "), y, x), mi: miTo(y, x), la: y, lo: x, hours: g.opening_hours || "", phone: g.phone || g["contact:phone"] || "", website: g.website || g["contact:website"] || "", cuisine: g.cuisine || "" });
     }
     return pack(list, "openstreetmap");
   };

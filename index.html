@@ -729,7 +729,7 @@ const showPlace=(j,q,box0,tag)=>{const box=box0||$("#pc");if(!box)return;const p
   `<div class="foot" style="margin:10px 0 0">Address, hours and phone come from OpenStreetMap, Google and the restaurant\'s site when available, so they can be missing or out of date.</div></div>`;
  {const pmn=box.querySelector("#pmenu");if(pmn)pmn.onclick=()=>openRest({name:p.name})}box.querySelector("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");
  box.querySelectorAll(".orow").forEach(b=>b.onclick=async()=>{const o=j.others[+b.dataset.o];if(!o||b.dataset.busy)return;b.dataset.busy=1;const om=b.querySelector(".om");om.textContent="Loading…";
-  try{const r=await fetch(`/api/place?name=${encodeURIComponent(p.name)}&lat=${o.la}&lon=${o.lo}&r=400`),k=await r.json();if(!r.ok||!k.found)throw new Error("none");const q2=k.place;q2.name=q2.name||o.name;q2.mi=hvMi(HOME.la,HOME.lo,q2.la,q2.lo);
+  try{const r=await fetch(`/api/place?v=3&name=${encodeURIComponent(p.name)}&lat=${o.la}&lon=${o.lo}&r=400`),k=await r.json();if(!r.ok||!k.found)throw new Error("none");const q2=k.place;q2.name=q2.name||o.name;q2.mi=hvMi(HOME.la,HOME.lo,q2.la,q2.lo);
    const keep=j.others.filter((_,y)=>y!==+b.dataset.o).concat([{name:p.name,addr:p.addr,mi:p.mi,la:p.la,lo:p.lo}]).sort((u,v)=>u.mi-v.mi);
    showPlace({found:true,place:q2,others:keep,count:j.count,source:k.source},q,box0,tag);const bx=box0||$("#pc");if(bx)bx.scrollIntoView({behavior:"smooth",block:"nearest"})}
   catch(e){delete b.dataset.busy;om.textContent="Couldn't load · retry ›"}});
@@ -740,7 +740,7 @@ const showPlace=(j,q,box0,tag)=>{const box=box0||$("#pc");if(!box)return;const p
   if(p.mi>0.05)m.fitBounds([[p.la,p.lo],[HOME.la,HOME.lo]],{padding:[30,30],maxZoom:15})}else if(pm)pm.style.display="none"};
 const loadPlace=async nm=>{const key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);let j=PLC.get(key);if(j)return j;if(PLP.has(key))return PLP.get(key);
  const pr=(async()=>{
-  try{const ac=new AbortController(),tt=setTimeout(()=>ac.abort(),20000);let r;try{r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`,{signal:ac.signal})}catch(e){throw new Error(e.name==="AbortError"?"It took too long to respond.":e.message)}finally{clearTimeout(tt)}j=await r.json();if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));j._t=Date.now();PLC.set(key,j);plcSave();return j}
+  try{const ac=new AbortController(),tt=setTimeout(()=>ac.abort(),20000);let r;try{r=await fetch(`/api/place?v=3&name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`,{signal:ac.signal})}catch(e){throw new Error(e.name==="AbortError"?"It took too long to respond.":e.message)}finally{clearTimeout(tt)}j=await r.json();if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));j._t=Date.now();PLC.set(key,j);plcSave();return j}
    catch(e){const sn=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,""),want=sn(nm),m=((st.near&&st.near.items)||[]).filter(x=>hitP(sn(x.name),want)).sort((a,b)=>a.mi-b.mi)[0];
     if(m)return{found:true,fallback:1,count:1,others:[],place:{name:m.name,addr:m.addr||"",mi:m.mi,la:m.la,lo:m.lo,hours:"",phone:"",website:"",cuisine:m.cuisine||""}};throw e}})();
  PLP.set(key,pr);try{return await pr}finally{PLP.delete(key)}};
@@ -892,7 +892,7 @@ function wire(){
     const nm=(top&&top.name)||(st.iqRaw||q),key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);
     let j=PLC.get(key);
     if(!j){box.innerHTML=hd("Nearest location")+ldH(nm);
-     try{const r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(my!==pseq)return;if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));j._t=Date.now();PLC.set(key,j);plcSave()}
+     try{const r=await fetch(`/api/place?v=3&name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(my!==pseq)return;if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));j._t=Date.now();PLC.set(key,j);plcSave()}
      catch(e){if(my!==pseq)return;
       const sn=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,""),want=sn(nm),m=((st.near&&st.near.items)||[]).filter(x=>hit(sn(x.name),want)).sort((a,b)=>a.mi-b.mi)[0];
       if(m){showPlace({found:true,fallback:1,count:1,others:[],place:{name:m.name,addr:m.addr||"",mi:m.mi,la:m.la,lo:m.lo,hours:"",phone:"",website:"",cuisine:m.cuisine||""}},q);return}

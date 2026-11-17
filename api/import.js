@@ -72,16 +72,20 @@ async function ask(content, tools) {
 const { candidates } = require("./_find");
 const BLOCK = d => d.kind === "pdf" ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: d.data } } : d.kind === "image" ? { type: "image", source: { type: "base64", media_type: d.mime, data: d.data } } : { type: "text", text: "SOURCE PAGE TEXT:\n" + d.text };
 // Step 1: a small web search only to locate the restaurant's official site / guide. Step 2: read its newest nutrition guide in full.
-async function findOfficial(name, near) {
+async function findOfficial(name, near, emit) {
   const t0 = Date.now();
+  emit({ step: 1, msg: "Looking for the official website" });
   const r = await run([{ type: "text", text: `Find the official website of the restaurant "${name}"${near ? " near " + String(near).slice(0, 60) : ""} and its own published nutrition (or nutrition and allergen) guide, usually a PDF on the restaurant's own domain. Reply with ONLY URLs, one per line: any official nutrition guide PDF or nutrition page first, then the official homepage. No other text.` }], [{ type: "web_search_20250305", name: "web_search", max_uses: 3 }]);
   const said = (r.text.match(/https?:\/\/[^\s)"'<>\]]+/g) || []).map(u => u.replace(/[.,;]+$/, ""));
+  emit({ step: 1, msg: "Checking the official site for its nutrition guide" });
   const cands = await candidates(name, [...said, ...(r.trace.urls || [])], loadUrl);
   let best = null;
   // Read the two newest guides and keep the one with more items: the newest file can be a seasonal or regional edition.
   for (const u of cands.slice(0, 2)) {
     if (best && Date.now() - t0 > 110000) break;
     try {
+      let hh = ""; try { hh = new URL(u).hostname.replace(/^www\./, ""); } catch (e) {}
+      emit({ step: 2, msg: best ? "Comparing with another edition" : "Reading the nutrition guide on " + hh });
       const d = await loadUrl(u);
       const o = await ask([BLOCK(d), { type: "text", text: `Restaurant: ${name}\n\n${PROMPT}` }]);
       if ((o.items || []).length > (best ? best.out.items.length : 0)) best = { out: o, url: u, kind: d.kind };
@@ -119,16 +123,22 @@ module.exports = async (req, res) => {
   if (req.method !== "POST") return res.status(405).json({ error: "Use POST." });
   if (!process.env.ANTHROPIC_API_KEY) return res.status(501).json({ error: "ANTHROPIC_API_KEY is not set on the server." });
   if (!require("./_auth").ok(req)) return res.status(401).json({ error: "Wrong or missing edit key." });
+  // Progress: with header x-stream:1 the reply is newline-delimited JSON: {step,msg} events, {hb:1} keep-alives, then {final,code}.
+  const stream = req.headers["x-stream"] === "1";
+  let started = false, beat = null;
+  const emit = o => { if (!stream) return; if (!started) { res.statusCode = 200; res.setHeader("Content-Type", "application/x-ndjson"); res.setHeader("X-Accel-Buffering", "no"); started = true; } try { res.write(JSON.stringify(o) + "\n"); } catch (e) {} };
+  const send = (code, obj) => { clearInterval(beat); if (!stream) return res.status(code).json(obj); emit({ final: obj, code }); res.end(); };
+  if (stream) { emit({ step: 1, msg: "Starting" }); beat = setInterval(() => emit({ hb: 1 }), 8000); }
   try {
     const b = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
     const name = String(b.name || "").slice(0, 100);
     let content, tools, source = null;
     if (b.mode === "search") {
-      if (!name) return res.status(400).json({ error: "Missing restaurant name." });
+      if (!name) return send(400, { error: "Missing restaurant name." });
       tools = [{ type: "web_search_20250305", name: "web_search", max_uses: 5 }];
       content = [{ type: "text", text: `Find published nutrition information (calories, protein, carbs, fat) for the menu of the restaurant "${name}"${b.near ? " near " + String(b.near).slice(0, 60) : ""}. First choice: the restaurant's own website or official nutrition PDF. If it has no nutrition numbers, you may use a third-party page that republishes the restaurant's published nutrition numbers (for example a nutrition database or a delivery/menu listing that shows calories and protein). Never use pages that say their numbers are estimates or AI-generated, and skip reviews and forums. Use ONE best page for all items, and copy numbers exactly as printed there. Add "source":"<the exact URL you used>" to the JSON. If no page has real nutrition numbers, return {"items":[],"notes":["No page with published nutrition numbers was found."]} and do not guess.\n\n${PROMPT}` }];
     } else if (b.mode === "file") {
-      if (!b.data || !/^(application\/pdf|image\/(png|jpeg|gif|webp))$/.test(b.mime)) return res.status(400).json({ error: "Upload a PDF, PNG or JPEG." });
+      if (!b.data || !/^(application\/pdf|image\/(png|jpeg|gif|webp))$/.test(b.mime)) return send(400, { error: "Upload a PDF, PNG or JPEG." });
       content = [b.mime === "application/pdf" ? { type: "document", source: { type: "base64", media_type: b.mime, data: b.data } } : { type: "image", source: { type: "base64", media_type: b.mime, data: b.data } }, { type: "text", text: `Restaurant: ${name}\n\n${PROMPT}` }];
       source = { kind: "file" };
     } else {
@@ -137,12 +147,15 @@ module.exports = async (req, res) => {
       content = [d.kind === "pdf" ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: d.data } } : d.kind === "image" ? { type: "image", source: { type: "base64", media_type: d.mime, data: d.data } } : { type: "text", text: "SOURCE PAGE TEXT:\n" + d.text }, { type: "text", text: `Restaurant: ${name}\n\n${PROMPT}` }];
     }
     let out, official = null;
-    if (b.mode === "search") { try { official = await findOfficial(name, b.near); } catch (e) { official = null; } }
+    if (b.mode === "search") { try { official = await findOfficial(name, b.near, emit); } catch (e) { official = null; } }
+    if (b.mode !== "search") emit({ step: 2, msg: b.mode === "file" ? "Reading your file" : "Reading the page" });
     if (official) out = official.out;
+    else if (b.mode === "search") { emit({ step: 1, msg: "Searching the web for nutrition numbers" }); out = await ask(content, tools).catch(e => (e.trace ? { items: [], notes: [], trace: e.trace } : Promise.reject(e))); }
     else out = await ask(content, tools).catch(e => (b.mode === "search" && e.trace ? { items: [], notes: [], trace: e.trace } : Promise.reject(e)));
     let opened = null;
     if (b.mode === "search" && !(out.items || []).length) {
       // The search tool only returns excerpts. Open the restaurant's own site (and its nutrition/menu links) and read them in full.
+      emit({ step: 2, msg: "Opening the restaurant's own site" });
       const r = await openOwnSite(name, (out.trace && out.trace.urls) || []);
       if (r) { out = Object.assign(r.out, { trace: out.trace }); opened = r.url; }
     }
@@ -155,11 +168,11 @@ module.exports = async (req, res) => {
     if (official) { source = { url: official.url, kind: official.kind === "pdf" ? "pdf" : "page" }; let h = ""; try { h = new URL(official.url).hostname.replace(/^www\./, ""); } catch (e) {} notes.unshift("Found the restaurant's own nutrition guide" + (h ? " on " + h : "") + " and read it in full."); }
     const tr = out.trace;
     if (b.mode === "search" && tr && !opened && !official) notes.push(!tr.queries.length ? "The search tool did not run a single search." : "Searched " + tr.queries.length + " time" + (tr.queries.length > 1 ? "s" : "") + (tr.hosts.length ? ", saw: " + tr.hosts.join(", ") : ", no pages came back") + "." + (tr.errors.length ? " Search error: " + [...new Set(tr.errors)].join(", ") + "." : ""));
-    if (!items.length) return res.status(200).json({ items: [], notes: notes.length ? notes : ["No items with calories and protein were found."], source });
-    return res.status(200).json({ items, notes, source });
+    if (!items.length) return send(200, { items: [], notes: notes.length ? notes : ["No items with calories and protein were found."], source });
+    return send(200, { items, notes, source });
   } catch (e) {
     const t = e.trace;
     const extra = t ? " [searched " + t.queries.length + "x" + (t.errors.length ? "; error " + t.errors.join(",") : "") + "]" : "";
-    return res.status(502).json({ error: (String(e.message || e) + extra).slice(0, 260) });
+    return send(502, { error: (String(e.message || e) + extra).slice(0, 260) });
   }
 };

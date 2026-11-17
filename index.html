@@ -11,6 +11,10 @@ body{background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,system-ui
 #app{max-width:640px;margin:0 auto;min-height:100%;padding:calc(14px + env(safe-area-inset-top)) 14px calc(84px + env(safe-area-inset-bottom))}
 h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-bottom:16px}
 .back{background:none;border:0;color:var(--accent);font-size:16px;padding:6px 0;margin-bottom:4px}
+.pg{display:flex;flex-direction:column;align-items:center;padding:30px 8px 12px;text-align:center}.plate{width:120px;height:120px;color:var(--accent)}.plate .orb{transform-origin:50px 50px;animation:eoSpin 3.2s linear infinite}@keyframes eoSpin{to{transform:rotate(360deg)}}
+.stp{display:flex;width:100%;max-width:340px;margin:26px 0 12px}.stp .s{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;color:var(--mute)}.stp .s i{width:14px;height:14px;border-radius:50%;border:2px solid var(--line);background:var(--bg);z-index:1;box-sizing:border-box}
+.stp .s+.s::before{content:"";position:absolute;top:6px;right:50%;width:100%;height:2px;background:var(--line)}.stp .s.d i{background:var(--accent);border-color:var(--accent)}.stp .s.d::before,.stp .s.c::before{background:var(--accent)}.stp .s.c i{border-color:var(--accent);animation:eoPulse 1.2s ease-in-out infinite}.stp .s.c,.stp .s.d{color:var(--ink)}
+@keyframes eoPulse{50%{box-shadow:0 0 0 6px rgba(31,111,74,.28)}}@media(prefers-reduced-motion:reduce){.plate .orb{animation-duration:9s}.stp .s.c i{animation:none}}
 .sr{display:flex;gap:8px;align-items:stretch}.sr .search{flex:1;min-width:0}.sgo{flex:none;padding:0 16px;border-radius:12px;border:0;background:var(--accent);color:#fff;font-size:16px;font-weight:600}.search{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:17px}
 .big{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;color:var(--ink)}
 .big b{display:block;font-size:18px;margin-bottom:2px}.big span{color:var(--mute);font-size:14px}
@@ -525,20 +529,32 @@ const supBar=()=>{const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
 const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Search online for nutrition info</b><span>Official numbers, reviewed by you before saving</span></button><div style="text-align:center"><a href="#" id="s-open2" style="color:var(--accent)">Add items another way</a></div>`;
 function shClose(){const s=$("#sheet");if(s)s.remove();document.body.style.overflow="";SH.busy=false}
 function shOpen(tab,auto){shClose();SH.name=curName();SH.tab=tab||"search";SH.note="";const s=document.createElement("div");s.id="sheet";document.body.appendChild(s);document.body.style.overflow="hidden";shDraw();if(auto)shRun({mode:"search",near:near()},"Searching the web.")}
-async function shRun(body,label){SH.busy=true;SH.note=label+" Long menus can take a few minutes. Keep this screen open.";st.rev=null;shDraw();
- try{const j=await api("/api/import",{name:SH.name,...body});let its=j.items||[],nt=[].concat(j.notes||[]);
+const PLATE='<svg class="plate" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="50" cy="50" r="21"/><circle cx="50" cy="50" r="13" stroke-width="2.5" opacity=".5"/><g class="orb"><path d="M43 5v11a7 7 0 0 0 14 0V5M50 5v18M50 23v6"/><path d="M50 71v24M50 71c8 3 9 12 7 20h-7"/></g></svg>';
+const STEPS=["Find","Read","Check","Ready"];
+function progHtml(){const c=SH.step||1;return`<div class="pg">${PLATE}<div class="stp" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="${c}">${STEPS.map((t,n)=>`<div class="s${n+1<c?" d":n+1===c?" c":""}"><i></i>${t}</div>`).join("")}</div><div style="font-size:16px;font-weight:600">${esc(SH.msg||"Working")}…</div><div class="mu" style="margin-top:8px">Long menus can take a few minutes. Keep this screen open. <span id="sh-el"></span></div></div>`}
+async function apiS(path,body,onEv,retry){const r=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json","x-edit-key":EK.get(),"x-stream":"1"},body:JSON.stringify(body)});
+ if(!/ndjson/.test(r.headers.get("content-type")||"")){const j=await r.json().catch(()=>({}));
+  if(r.status===401&&!retry){const k=prompt("Enter your edit key (the EDIT_KEY you set in Vercel):");if(k){EK.set(k.trim());return apiS(path,body,onEv,1)}}
+  if(!r.ok)throw new Error(j.error||("Request failed ("+r.status+")"));return j}
+ const rd=r.body.getReader(),dec=new TextDecoder();let buf="",fin=null;
+ for(;;){const x=await rd.read();if(x.done)break;buf+=dec.decode(x.value,{stream:true});let k;
+  while((k=buf.indexOf("\n"))>=0){const ln=buf.slice(0,k);buf=buf.slice(k+1);if(!ln.trim())continue;let o;try{o=JSON.parse(ln)}catch(e){continue}if(o.final)fin=o;else if(o.step)onEv(o)}}
+ if(!fin)throw new Error("The connection ended before the result arrived. Try again.");
+ if(fin.code>=400)throw new Error((fin.final&&fin.final.error)||("Request failed ("+fin.code+")"));return fin.final}
+async function shRun(body,label){SH.busy=true;SH.note="";SH.step=body.mode==="search"?1:2;SH.msg=body.mode==="search"?"Looking for the official website":body.mode==="file"?"Reading your file":"Reading the page";SH.t0=Date.now();st.rev=null;shDraw();clearInterval(SH.tm);SH.tm=setInterval(()=>{const e=$("#sh-el");if(e){const t=Math.round((Date.now()-SH.t0)/1000);e.textContent="· "+Math.floor(t/60)+":"+String(t%60).padStart(2,"0")}},1000);
+ try{const j=await apiS("/api/import",{name:SH.name,...body},o=>{SH.step=Math.max(SH.step,o.step);SH.msg=o.msg||SH.msg;shDraw()});let its=j.items||[],nt=[].concat(j.notes||[]);
   if(!body.replace){const ex=ITEMS.filter(o=>norm(o.r)===norm(SH.name)),w=s=>norm(String(s).split(/[ (,]/)[0]),dup=[];
    its=its.filter(i=>{const d=ex.find(o=>o.cal===i.cal&&o.p===i.p&&w(o.n)===w(i.n));if(d)dup.push(i.n);return!d});
    if(dup.length)nt.unshift(dup.length+" item"+(dup.length>1?"s":"")+" skipped because the same food is already in the app ("+dup.slice(0,3).join(", ")+(dup.length>3?", …":"")+").")}
   let held=[],ver;const vb=body.mode==="file"?{mode:"file",mime:body.mime,data:body.data}:body.mode==="url"?{mode:"url",url:body.url}:j.source&&j.source.url?{mode:"url",url:j.source.url}:null;
-  if(vb&&its.length){SH.note="Checking "+its.length+" items against the source. Long menus can take a few minutes. Keep this screen open.";shDraw();
+  if(vb&&its.length){SH.step=3;SH.msg="Checking "+its.length+" items against the source";shDraw();
    try{const v=await api("/api/verify",{...vb,items:its.map(i=>[i.n,i.cal,i.p,i.cb,i.f])}),bad=new Map();
     (v.problems||[]).forEach(q=>{if(!bad.has(q.i))bad.set(q.i,[]);bad.get(q.i).push(q)});
     held=[...bad.keys()].sort((a,b)=>a-b).map(x=>({item:its[x],why:bad.get(x).map(q=>q.field==="notfound"?"not found in the source":q.field+": read "+q.got+", source says "+q.src).join("; ")}));
     its=its.filter((_,x)=>!bad.has(x));ver={ok:true,n:v.checked,held:held.length}}catch(e){ver={ok:false,why:e.message}}}
   else ver={ok:false,why:"no source to compare with"};
   st.rev={name:SH.name,items:its,notes:nt,source:j.source,replace:!!body.replace,held,ver};SH.note=""}catch(e){SH.note=e.message}
- SH.busy=false;shDraw()}
+SH.busy=false;clearInterval(SH.tm);shDraw()}
 function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&st.rev.name===name?st.rev:null,H=SH.hand||{};
  const TABS=[["search","Search"],["link","Link"],["file","PDF/photo"],["hand","By hand"]],note=SH.note?`<div class="mu" style="margin-top:12px">${esc(SH.note)}</div>`:"";
  const TB={search:`<div class="mu" style="margin:4px 0">Looks for ${esc(name)}'s own published nutrition numbers. You review them before anything is saved.</div><button class="pri" id="t-search">Search now</button>`,
@@ -546,7 +562,7 @@ function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&
   file:`<div class="mu" style="margin:4px 0">A nutrition PDF (up to 3 MB) or a photo of the menu.</div><button class="pri" id="t-file">Choose file</button><input type="file" id="s-f" accept="application/pdf,image/*" hidden>`,
   hand:`<input class="search" id="m-n" placeholder="Item name" value="${esc(H.n||"")}"><div class="bar"><input id="m-c" inputmode="decimal" placeholder="Cal" value="${esc(H.c||"")}"><input id="m-p" inputmode="decimal" placeholder="Protein" value="${esc(H.p||"")}"><input id="m-cb" inputmode="decimal" placeholder="Carbs" value="${esc(H.cb||"")}"><input id="m-f" inputmode="decimal" placeholder="Fat" value="${esc(H.f||"")}"></div><div class="mu" style="margin-top:6px">Grams for protein, carbs and fat.</div><button class="pri" id="t-hand">Add item</button>`};
  let body;
- if(SH.busy)body=`<div class="empty">${esc(SH.note)}</div>`;
+ if(SH.busy)body=SH.note?`<div class="empty">${esc(SH.note)}</div>`:progHtml();
  else if(r&&(r.items.length||(r.held||[]).length)){const have=(supOf(name)||{items:[]}).items.length,two=have&&!r.replace;
   const NT=[].concat(r.notes||[]),cats={};
   const grp=NT.map(n=>{const nl=n.toLowerCase(),m=[];r.items.forEach((i,x)=>{const b=String(i.n).split("(")[0].trim().toLowerCase();if(b.length>=4&&nl.includes(b))m.push(x)});return{n,m:m.length&&m.length<=8?m:[]}});

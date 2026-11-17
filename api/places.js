@@ -1,3 +1,4 @@
+const gridFix = require("./_grid");
 // Nearby restaurants via Geoapify Places (OpenStreetMap data). Key stays in env var GEOAPIFY_KEY.
 module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "s-maxage=3600");
@@ -16,7 +17,7 @@ module.exports = async (req, res) => {
       if (!p.name) continue;
       const mi = (p.distance != null ? p.distance : Math.sqrt(((p.lon - lo) * t * Math.cos(la * t)) ** 2 + ((p.lat - la) * t) ** 2) * 6371000) / 1609.34;
       const k = p.name.toLowerCase().replace(/[^a-z0-9]/g, "");
-      if (!seen.has(k) || seen.get(k).mi > mi) seen.set(k, { name: p.name, mi, addr: p.address_line2 ? p.address_line2.split(",")[0] : "", cuisine: "", la: p.lat, lo: p.lon });
+      if (!seen.has(k) || seen.get(k).mi > mi) seen.set(k, { name: p.name, mi, addr: gridFix(p.address_line2 ? p.address_line2.split(",")[0] : "", p.lat, p.lon), cuisine: "", la: p.lat, lo: p.lon });
     }
     res.status(200).json({ items: [...seen.values()].sort((a, b) => a.mi - b.mi), source: "geoapify" });
   } catch (e) {

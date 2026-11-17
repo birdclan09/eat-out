@@ -42,7 +42,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .supbox{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:10px 14px;margin:10px 0}.supbox summary{font-weight:600;cursor:pointer}
 .bar input{flex:1;min-width:0;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:15px}
 .rv{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-top:1px solid var(--line);font-size:14px}.rv button{border:0;background:none;color:var(--mute);font-size:16px;padding:6px 10px}
-.supbar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 10px;min-height:34px}.supbar .mu{min-width:0}.addb{flex:none;padding:8px 14px;border-radius:18px;border:1px solid var(--accent);background:none;color:var(--accent);font-size:14px;font-weight:600;margin-left:auto}
+.supbar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px;margin:8px 0 10px;min-height:34px}.supbar .mu{min-width:0}.addb{flex:none;padding:8px 14px;border-radius:18px;border:1px solid var(--accent);background:none;color:var(--accent);font-size:14px;font-weight:600;margin-left:auto}
 .pri{display:block;width:100%;padding:14px;border-radius:14px;border:0;background:var(--accent);color:var(--bg);font-size:16px;font-weight:600;margin-top:12px}
 #sheet{position:fixed;inset:0;z-index:3000;background:var(--bg);overflow:auto}#sheet .sh{max-width:640px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 14px 40px}
 .shh{display:flex;align-items:baseline;gap:8px;margin-bottom:16px}.shh b{font-size:22px}.shh .mu{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.shh button{margin-left:auto;border:0;background:none;color:var(--mute);font-size:24px;padding:2px 8px}
@@ -521,7 +521,7 @@ const supBar=()=>{const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
   head=su?(ck?(kp?"<b>Compared with the source</b> · "+kp+" item"+(kp>1?"s":"")+" kept despite a mismatch · ":off?"<b>✓ Verified from the restaurant's website</b> · ":"<b>Third-party source</b>, compared with it · ")+lk:(off?"From the restaurant's website: ":"<b>Third-party source</b>: ")+lk+" (not compared)"):ck?"<b>✓ Compared with the uploaded file</b>":"",
   src=su||ck?head+" · Updated "+fmtD(upd)+(su?` · <a href="#" id="s-ref" style="color:var(--accent)">Refresh</a>`:""):cnt?cnt+" added by you"+(upd?" · Updated "+fmtD(upd):""):"";
  const ned=m?m.items.filter(i=>i.ed).length:0;
- return `<div class="supbar"><div class="mu">${src}${ned?(src?" · ":"")+ned+" item"+(ned>1?"s":"")+" edited by you":""}</div><div style="display:flex;gap:6px;flex:none">${m?'<button class="addb" id="s-edit">Edit</button>':""}<button class="addb" id="s-open">+ Add items</button></div></div>`};
+ return `<div class="supbar"><div class="mu">${src}${ned?(src?" · ":"")+ned+" item"+(ned>1?"s":"")+" edited by you":""}</div><div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end">${m?'<button class="addb" id="s-edit">Edit</button>':""}${m?'<button class="addb" id="s-find">Search online</button>':""}<button class="addb" id="s-open">+ Add items</button></div></div>`};
 const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Search online for nutrition info</b><span>Official numbers, reviewed by you before saving</span></button><div style="text-align:center"><a href="#" id="s-open2" style="color:var(--accent)">Add items another way</a></div>`;
 function shClose(){const s=$("#sheet");if(s)s.remove();document.body.style.overflow="";SH.busy=false}
 function shOpen(tab,auto){shClose();SH.name=curName();SH.tab=tab||"search";SH.note="";const s=document.createElement("div");s.id="sheet";document.body.appendChild(s);document.body.style.overflow="hidden";shDraw();if(auto)shRun({mode:"search",near:near()},"Searching the web.")}
@@ -622,7 +622,7 @@ function edDraw(){const s=$("#sheet");if(!s)return;const name=curName(),m=supOf(
   ED.busy=true;ED.note="Saving…";edDraw();
   try{const j=await api("/api/menus",{action:"edit",name:m.name||name,edits:[{x,...it,c:old.c||"",b:old.b||""}]});SUP[norm(m.name||name)]=j.menu;supCache();
    favRemap(m.name||name,m.name||name,old,{...it});applySup();ED.open=-1;ED.note="Item saved.";ED.busy=false;edDraw();toast("Saved")}catch(e){fail(e)}}}
-function supWire(){const o=$("#s-open");if(o)o.onclick=()=>shOpen();const ed=$("#s-edit");if(ed)ed.onclick=()=>edOpen();const o2=$("#s-open2");if(o2)o2.onclick=e=>{e.preventDefault();shOpen("link")};
+function supWire(){const o=$("#s-open");if(o)o.onclick=()=>shOpen();const ed=$("#s-edit");if(ed)ed.onclick=()=>edOpen();const fd=$("#s-find");if(fd)fd.onclick=()=>shOpen("search",true);const o2=$("#s-open2");if(o2)o2.onclick=e=>{e.preventDefault();shOpen("link")};
  document.querySelectorAll(".s-search").forEach(b=>b.onclick=()=>shOpen("search",true));
  const ref=$("#s-ref");if(ref)ref.onclick=e=>{e.preventDefault();shOpen("link");shRun({mode:"url",url:supOf(curName()).source.url,replace:1},"Re-reading the source.")}}
 applySup();
@@ -770,10 +770,10 @@ function wire(){
      (p.phone?`<div style="margin-top:8px"><b>Phone</b><div class="mu"><a href="tel:${esc(p.phone.replace(/[^+0-9]/g,""))}" style="color:var(--accent)">${esc(p.phone)}</a></div></div>`:"")+
      (p.website&&/^https?:\/\//i.test(p.website)?`<div style="margin-top:8px"><b>Website</b><div class="mu"><a href="${esc(p.website)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(host(p.website))}</a></div></div>`:"")+
      `<div id="pmap" style="height:220px;border-radius:14px;overflow:hidden;margin-top:12px"></div>`+
-     `<div style="display:flex;gap:8px;margin-top:10px"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pdir">Directions</button></div>`+
+     `<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:10px"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pdir">Directions</button><button class="addb" id="pfind">Search online for menu</button></div>`+
      (j.count>1?`<div class="mu" style="margin-top:10px">${j.count-1} other location${j.count>2?"s":""} nearby: ${j.others.map(o=>esc((o.addr||o.name).split(",")[0])+" ("+(Math.round(o.mi*10)/10)+" mi)").join(" · ")}${j.count>4?" …":""}</div>`:"")+
      `<div class="foot" style="margin:10px 0 0">Address, hours and phone come from OpenStreetMap data, so they can be missing or out of date.</div></div>`;
-    $("#pmenu").onclick=()=>openRest({name:p.name});$("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");
+    $("#pmenu").onclick=()=>openRest({name:p.name});$("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");$("#pfind").onclick=()=>{openRest({name:p.name});shOpen("search",true)};
     try{if(st.pmap){st.pmap.remove();st.pmap=null}}catch(e){st.pmap=null}
     if(window.L&&$("#pmap")){const m=st.pmap=L.map("pmap",{zoomControl:false}).setView([p.la,p.lo],15);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
      L.marker([p.la,p.lo],{icon:L.divIcon({className:"",html:'<div class="pin ok sel"></div>',iconSize:[26,26],iconAnchor:[13,13]}),interactive:false}).addTo(m);

@@ -11,7 +11,7 @@ body{background:var(--bg);color:var(--ink);font:16px/1.4 -apple-system,system-ui
 #app{max-width:640px;margin:0 auto;min-height:100%;padding:calc(14px + env(safe-area-inset-top)) 14px calc(84px + env(safe-area-inset-bottom))}
 h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-bottom:16px}
 .back{background:none;border:0;color:var(--accent);font-size:16px;padding:6px 0;margin-bottom:4px}
-.search{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:17px}
+.sr{display:flex;gap:8px;align-items:stretch}.sr .search{flex:1;min-width:0}.sgo{flex:none;padding:0 16px;border-radius:12px;border:0;background:var(--accent);color:#fff;font-size:16px;font-weight:600}.search{width:100%;padding:13px 14px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font-size:17px}
 .big{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:12px;color:var(--ink)}
 .big b{display:block;font-size:18px;margin-bottom:2px}.big span{color:var(--mute);font-size:14px}
 .row{display:block;width:100%;text-align:left;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-top:10px;color:var(--ink)}
@@ -636,9 +636,9 @@ function render(){
   else if(st.view){const r=R[st.view],cats=["All",...new Set(ITEMS.filter(i=>i.k===st.view).map(i=>i.c))];
    let L=ITEMS.filter(i=>i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    h=`<button class="back" onclick="st.view=null;st.iq='';st.cat='All';render()">‹ Restaurants</button>${heartH(r.n,st.view)}<div class="sub">${esc(r.a)} · ${dist(r).toFixed(1)} mi ${HOME.label}</div>${r.note?`<div class="mu" style="margin-bottom:10px">${esc(r.note)}</div>`:""}
-   ${supBar()}<input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}"><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select></div><button class="frow" id="msort" style="margin:10px 0 6px"></button><div id="items"></div>`;
+   ${supBar()}<div class="sr"><input class="search" id="iq" placeholder="Search this menu" value="${esc(st.iq)}" enterkeyhint="search" autocorrect="off"><button class="sgo" id="iq-go">Search</button></div><div class="bar"><select id="cat">${cats.map(c=>`<option${c===st.cat?" selected":""}>${esc(c)}</option>`).join("")}</select></div><button class="frow" id="msort" style="margin:10px 0 6px"></button><div id="items"></div>`;
   }else{
-   h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, favorites first, then nearest</div><input class="search" id="cq" placeholder="Enter city name" enterkeyhint="search" autocapitalize="words" autocorrect="off"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="rl"></div><div id="cbar"></div>`;
+   h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, favorites first, then nearest</div><div class="sr"><input class="search" id="cq" placeholder="Enter city name" enterkeyhint="search" autocapitalize="words" autocorrect="off"><button class="sgo" id="cq-go">Search</button></div><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="rl"></div><div id="cbar"></div>`;
   }
  }
  if(st.tab==="me"){const gr=(id,t,s,v,ph)=>`<label class="rv" style="border-top:1px solid var(--line)"><span>${t}<br><span class="mu">${s}</span></span><input class="gin" id="${id}" type="number" inputmode="numeric" min="0" placeholder="${ph}" value="${v||""}"></label>`;
@@ -646,7 +646,7 @@ function render(){
   <div class="supbox" style="margin:0"><b>Account</b><div class="mu" style="margin-top:4px">Your favorites, meal and targets are saved on the server so every device matches. Real sign-in comes later.</div><div id="sy-msg" style="margin-top:10px;font-weight:600">${esc(syLabel())}</div>
   <input class="search" id="sy-key" type="password" autocomplete="off" autocapitalize="off" placeholder="Edit key (once per device)" style="margin-top:10px"><button class="pri" id="sy-go">Connect and sync</button></div>`}
  if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods, restaurants and meals you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button><button data-k="meals">Meals</button><button data-k="added">Added</button></div><button class="frow" id="fsort" style="margin:0 0 10px"></button><div id="fl"></div>`}
- if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off"><div id="rr"></div><div id="pc"></div><div id="fr"></div><div id="wr"></div>`}
+ if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><div class="sr"><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off" enterkeyhint="search"><button class="sgo" id="fq-go">Search</button></div><div id="rr"></div><div id="pc"></div><div id="fr"></div><div id="wr"></div>`}
  app.innerHTML=h;wire();supWire();favWire();window.scrollTo(0,0);
 }
 function wire(){
@@ -699,7 +699,7 @@ function wire(){
    const locate=()=>{draw();const ok=p=>{ME={la:p.coords.latitude,lo:p.coords.longitude};HOME={la:ME.la,lo:ME.lo,label:"from you"};if(my===st.run)load()};
     try{navigator.geolocation.getCurrentPosition(ok,()=>{if(my===st.run)load()},{timeout:7000,maximumAge:60000})}catch(e){load()}};
    if(!st.geoTried){st.geoTried=1;locate()}else if(!st.near||st.near.err)load();else{draw();scan()}
-   $("#cq").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();goCity()}};
+   $("#cq").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();goCity()}};$("#cq-go").onclick=()=>{const q=$("#cq").value.trim();if(q.length<2){$("#cq").blur();return}goCity()};
    $("#rad").onchange=e=>{st.rad=+e.target.value;load()};$("#nb").onclick=()=>load();
    $("#sa").onclick=()=>{if(!map)return;const c=map.getCenter();HOME={la:c.lat,lo:c.lng,label:"map area"};$("#sa").style.display="none";load(false)};
    $("#loc").onclick=locate}
@@ -718,7 +718,7 @@ function wire(){
     draw();$("#wf").innerHTML='Powered by <a href="https://www.fatsecret.com" style="color:inherit">fatsecret</a>. Up to 50 matches per lookup, so the menu may be incomplete. Check for oddities.'}).catch(()=>{if(!$("#items"))return;all=supItems(nm);if(all.length)draw();else{$("#items").innerHTML=emptyHtml("Online menu lookup isn't available right now.");supWire()}})}
  if(st.tab==="rest"&&st.view){const draw=()=>{const FSm=st.fsm=st.fsm||{sh:"all",p:"r",l:""},P=PICKS[FSm.sh];const SCm=MSC();sortBar($("#msort"),SCm,FSm,"fsom",draw);let L=ITEMS.filter(i=>P.f(i)&&i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    const sc=sortCmp(SCm,FSm,()=>null),mf=metricFn(SCm,FSm,P,()=>null);L.sort((a,b)=>sc(a,b)||P.o(a,b));$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false,mf)).join(""):'<div class="empty">Nothing matches.</div>'};
-   draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()}}
+   draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#iq").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();e.target.blur()}};$("#iq-go").onclick=()=>$("#iq").blur();$("#cat").onchange=e=>{st.cat=e.target.value;draw()}}
  if(st.tab==="me"){$("#sy-go").onclick=async()=>{const k=$("#sy-key").value.trim();if(k){EK.set(k);$("#sy-key").value=""}SY.status="idle";syPaint();await syncRun(true);syPaint();toast(SY.status==="ok"?"Synced":SY.status==="locked"?"That key didn't work":"Sync problem")};syncRun().then(syPaint);
   $("#g-save").onclick=()=>{const rd=(id,lo,hi)=>{const s=$(id).value.trim();if(!s)return 0;const v=Math.round(+s);return v>=lo&&v<=hi?v:NaN};
    const n={p:rd("#g-p",1,500),c:rd("#g-c",1,10000),cb:rd("#g-cb",1,1000),f:rd("#g-f",1,500)};
@@ -793,7 +793,7 @@ function wire(){
     if(!j.found){box.innerHTML="";return}
     showPlace(j,q)};
    draw();online(st.iq);placeLook();if(!st.near){nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(!st.near)st.near=j;if(st.tab==="find")draw()}).catch(()=>{})}
-   $("#fq").oninput=e=>{st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();clearTimeout(tm);tm=setTimeout(()=>{online(st.iq);placeLook()},500)}}
+   $("#fq").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();clearTimeout(tm);st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();online(st.iq);placeLook();e.target.blur()}};$("#fq-go").onclick=()=>{clearTimeout(tm);const v=$("#fq").value;st.iqRaw=v.trim();st.iq=st.iqRaw.toLowerCase();draw();online(st.iq);placeLook();$("#fq").blur()};$("#fq").oninput=e=>{st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();clearTimeout(tm);tm=setTimeout(()=>{online(st.iq);placeLook()},500)}}
 }
 document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.view=null;st.web=null;st.cv=false;st.pick=null;st.iq="";st.rq="";st.cat="All";render()});
 mealUI();render();

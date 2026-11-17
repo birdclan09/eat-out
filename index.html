@@ -529,26 +529,26 @@ const supBar=()=>{const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
 const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Search online for nutrition info</b><span>Official numbers, reviewed by you before saving</span></button><div style="text-align:center"><a href="#" id="s-open2" style="color:var(--accent)">Add items another way</a></div>`;
 function shClose(){const s=$("#sheet");if(s)s.remove();document.body.style.overflow="";SH.busy=false}
 function shOpen(tab,auto){shClose();SH.name=curName();SH.tab=tab||"search";SH.note="";const s=document.createElement("div");s.id="sheet";document.body.appendChild(s);document.body.style.overflow="hidden";shDraw();if(auto)shRun({mode:"search",near:near()},"Searching the web.")}
-const PGL={on:0,ang:0,p:0,last:0,step:0,ts:0};
-const PG_BASE=[0,0.02,0.22,0.55,1];
-// Fork twirling a strand of spaghetti. Everything is driven by one clock (PGL), so redraws of the sheet never restart the motion.
-function pgFrame(){const cx=180,N=10,ang=PGL.ang,p=PGL.p,m=Math.min(p,1)*N,full=Math.floor(m),fr=m-full,sx0=Math.cos(ang),sx=(sx0<0?-1:1)*Math.max(.1,Math.abs(sx0));
- const hw=i=>14+9*Math.sin(Math.PI*(i+.5)/N),yy=i=>78+i*(40/N);
- const coils=[];for(let i=0;i<N&&i<m;i++){const t=i<full?1:fr;coils.push({i,w:hw(i)*t,y:yy(i),b:7+2*Math.sin(ang*1.3+i)})}
- const arc=(c,front)=>{const x0=cx-c.w,x1=cx+c.w;return`M${x0.toFixed(1)} ${c.y.toFixed(1)}Q${cx} ${(c.y+(front?c.b:-c.b*.6)).toFixed(1)} ${x1.toFixed(1)} ${(c.y+3).toFixed(1)}`};
- const ln=(d,o)=>`<path d="${d}" fill="none" stroke="#c8a24a" stroke-width="5.4" stroke-linecap="round" stroke-linejoin="round"${o?' opacity="'+o+'"':""}/><path d="${d}" fill="none" stroke="#f0d482" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"${o?' opacity="'+o+'"':""}/>`;
- const xe=cx-22,ye=yy(Math.min(m,N-.01))+3,xl=-40+Math.min(p,1)*(xe+40);let st="";
- if(xe-xl>2){const pts=[];for(let x=xl;x<=xe;x+=4){const u=Math.max(0,Math.min(1,(x-(xe-70))/70)),e=u*u*(3-2*u);pts.push((x).toFixed(1)+" "+(168+(ye-168)*e+3*Math.sin(x/16-ang*2)*(1-u)).toFixed(1))}pts.push(xe.toFixed(1)+" "+ye.toFixed(1));st=ln("M"+pts.join("L"))}
- const sil=(w,c)=>`stroke="${c}" stroke-width="${w}" stroke-linecap="round" fill="none" vector-effect="non-scaling-stroke"`;
- const fork=c=>`<path d="M180 6V54M180 54V66" ${sil(c?7:9,c?"#d6dadf":"#6b7177")}/><path d="M163 66H197" ${sil(c?4:6,c?"#d6dadf":"#6b7177")}/>`+[165,175,185,195].map(x=>`<path d="M${x} 66V122" ${sil(c?2.8:4.6,c?"#d6dadf":"#6b7177")}/>`).join("");
- return st+coils.map(c=>ln(arc(c,0),.65)).join("")+`<g transform="translate(180 0) scale(${sx.toFixed(3)} 1) translate(-180 0)">${fork(0)}${fork(1)}</g>`+coils.map(c=>ln(arc(c,1))).join("")}
+const PGL={on:0,ang:0,p:0,last:0,step:0,t0:0};
+const PG_FLOOR=[0,0.04,0.28,0.72,1];
+// Progress bar drawn as a fork pulling in a strand of spaghetti. The fork's turn is tied to progress (it turns only as the strand is wound),
+// and everything runs off one clock, so redrawing the sheet never restarts the motion.
+function pgFrame(){const cx=180,N=10,p=Math.min(PGL.p,1),ang=p*2*Math.PI*9,m=p*N,full=Math.floor(m),fr=m-full,sx0=Math.cos(ang),sx=(sx0<0?-1:1)*Math.max(.12,Math.abs(sx0));
+ const hw=i=>11+8*Math.sin(Math.PI*(i+.5)/N),yy=i=>86+i*(36/N);
+ const coils=[];for(let i=0;i<N&&i<m;i++){const t=i<full?1:fr;coils.push({w:hw(i)*t,y:yy(i),b:5+1.5*Math.sin(ang*1.3+i)})}
+ const gold=(d)=>`<path d="${d}" fill="none" stroke="#e9c76a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
+ const arc=c=>`M${(cx-c.w).toFixed(1)} ${c.y.toFixed(1)}Q${cx} ${(c.y+c.b).toFixed(1)} ${(cx+c.w).toFixed(1)} ${(c.y+3).toFixed(1)}`;
+ const xe=cx-20,ye=yy(Math.min(m,N-.01))+3,xl=-40+p*(xe+40);let st="";
+ if(xe-xl>2){const pts=[];for(let x=xl;x<=xe;x+=4){const u=Math.max(0,Math.min(1,(x-(xe-70))/70)),e=u*u*(3-2*u);pts.push(x.toFixed(1)+" "+(168+(ye-168)*e+3*Math.sin(x/16-ang*2)*(1-u)).toFixed(1))}pts.push(xe.toFixed(1)+" "+ye.toFixed(1));st=gold("M"+pts.join("L"))}
+ const fork=`<path d="M168 126V96a12 12 0 0 1 24 0V126M180 126V8" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+ return st+`<g transform="translate(180 0) scale(${sx.toFixed(3)} 1) translate(-180 0)">${fork}</g>`+coils.map(c=>gold(arc(c))).join("")}
 function pgTick(t){const el=document.getElementById("spg");if(!SH.busy||SH.note||!el){PGL.on=0;return}
- const dt=Math.min(.1,(t-PGL.last)/1000||0);PGL.last=t;if(SH.step!==PGL.step){PGL.step=SH.step;PGL.ts=t}
- const b=PG_BASE[Math.min(4,SH.step)]||0,n=PG_BASE[Math.min(4,SH.step+1)]||1,tgt=SH.step>=4?1:b+(n-b)*.85*(1-Math.exp(-(t-PGL.ts)/30000));
- PGL.p+=(tgt-PGL.p)*(1-Math.exp(-dt*2.2));PGL.ang+=dt*2*Math.PI/2.4;el.innerHTML=pgFrame();requestAnimationFrame(pgTick)}
+ const dt=Math.min(.1,(t-PGL.last)/1000||0);PGL.last=t;if(!PGL.t0)PGL.t0=t;
+ const f=PG_FLOOR[Math.min(4,SH.step)]||0,c=SH.step>=4?1:PG_FLOOR[Math.min(4,SH.step+1)]-.04,tm=.92*(1-Math.exp(-(t-PGL.t0)/35000)),tgt=Math.max(f,Math.min(c,tm));
+ PGL.p+=(tgt-PGL.p)*(1-Math.exp(-dt*3));el.innerHTML=pgFrame();requestAnimationFrame(pgTick)}
 function pgStart(){if(PGL.on)return;PGL.on=1;PGL.last=performance.now();requestAnimationFrame(pgTick)}
 const STEPS=["Find","Read","Check","Ready"];
-function progHtml(){const c=SH.step||1;return`<div class="pg"><div class="spw"><svg id="spg" viewBox="0 0 360 200" width="100%" style="display:block;max-height:230px;overflow:visible" aria-hidden="true"></svg></div><div class="stp" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="${c}">${STEPS.map((t,n)=>`<div class="s${n+1<c?" d":n+1===c?" c":""}"><i></i>${t}</div>`).join("")}</div><div style="font-size:16px;font-weight:600">${esc(SH.msg||"Working")}…</div><div class="mu" style="margin-top:8px">Long menus can take a few minutes. Keep this screen open. <span id="sh-el"></span></div></div>`}
+function progHtml(){const c=SH.step||1;return`<div class="pg"><div class="spw"><svg id="spg" viewBox="0 0 360 200" width="100%" style="display:block;max-height:230px;overflow:visible;color:var(--accent)" aria-hidden="true"></svg></div><div class="stp" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="${c}">${STEPS.map((t,n)=>`<div class="s${n+1<c?" d":n+1===c?" c":""}"><i></i>${t}</div>`).join("")}</div><div style="font-size:16px;font-weight:600">${esc(SH.msg||"Working")}…</div><div class="mu" style="margin-top:8px">Long menus can take a few minutes. Keep this screen open. <span id="sh-el"></span></div></div>`}
 async function apiS(path,body,onEv,retry){const r=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json","x-edit-key":EK.get(),"x-stream":"1"},body:JSON.stringify(body)});
  if(!/ndjson/.test(r.headers.get("content-type")||"")){const j=await r.json().catch(()=>({}));
   if(r.status===401&&!retry){const k=prompt("Enter your edit key (the EDIT_KEY you set in Vercel):");if(k){EK.set(k.trim());return apiS(path,body,onEv,1)}}
@@ -558,7 +558,7 @@ async function apiS(path,body,onEv,retry){const r=await fetch(path,{method:"POST
   while((k=buf.indexOf("\n"))>=0){const ln=buf.slice(0,k);buf=buf.slice(k+1);if(!ln.trim())continue;let o;try{o=JSON.parse(ln)}catch(e){continue}if(o.final)fin=o;else if(o.step)onEv(o)}}
  if(!fin)throw new Error("The connection ended before the result arrived. Try again.");
  if(fin.code>=400)throw new Error((fin.final&&fin.final.error)||("Request failed ("+fin.code+")"));return fin.final}
-async function shRun(body,label){SH.busy=true;SH.note="";SH.step=body.mode==="search"?1:2;SH.msg=body.mode==="search"?"Looking for the official website":body.mode==="file"?"Reading your file":"Reading the page";SH.t0=Date.now();PGL.p=0;PGL.ang=0;PGL.step=0;st.rev=null;shDraw();clearInterval(SH.tm);SH.tm=setInterval(()=>{const e=$("#sh-el");if(e){const t=Math.round((Date.now()-SH.t0)/1000);e.textContent="· "+Math.floor(t/60)+":"+String(t%60).padStart(2,"0")}},1000);
+async function shRun(body,label){SH.busy=true;SH.note="";SH.step=body.mode==="search"?1:2;SH.msg=body.mode==="search"?"Looking for the official website":body.mode==="file"?"Reading your file":"Reading the page";SH.t0=Date.now();PGL.p=0;PGL.t0=0;st.rev=null;shDraw();clearInterval(SH.tm);SH.tm=setInterval(()=>{const e=$("#sh-el");if(e){const t=Math.round((Date.now()-SH.t0)/1000);e.textContent="· "+Math.floor(t/60)+":"+String(t%60).padStart(2,"0")}},1000);
  try{const j=await apiS("/api/import",{name:SH.name,...body},o=>{SH.step=Math.max(SH.step,o.step);SH.msg=o.msg||SH.msg;shDraw()});let its=j.items||[],nt=[].concat(j.notes||[]);
   if(!body.replace){const ex=ITEMS.filter(o=>norm(o.r)===norm(SH.name)),w=s=>norm(String(s).split(/[ (,]/)[0]),dup=[];
    its=its.filter(i=>{const d=ex.find(o=>o.cal===i.cal&&o.p===i.p&&w(o.n)===w(i.n));if(d)dup.push(i.n);return!d});

@@ -833,7 +833,7 @@ function wire(){
     (st.pmx||[]).forEach(m=>{try{m.remove()}catch(e){}});st.pmx=[];
     $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=async()=>{const x=RL[+r.dataset.r],nx=r.nextElementSibling;if(nx&&nx.classList.contains("rx")){nx.remove();r.classList.remove("open");return}
      r.classList.add("open");const bx=document.createElement("div");bx.className="rx";bx.innerHTML='<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(x.name)+'”…</div>';r.insertAdjacentElement("afterend",bx);
-     const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div><div class="pbt" style="grid-template-columns:1fr 1fr"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pfind">Search online</button></div></div>';bx.querySelector("#pmenu").onclick=()=>openRest(x);bx.querySelector("#pfind").onclick=()=>{openRest(x);shOpen("search",true)}};
+     const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div><div class="pbt" style="grid-template-columns:1fr"><button class="addb" id="pmenu">Open menu</button></div></div>';bx.querySelector("#pmenu").onclick=()=>openRest(x)};
      try{const j=await loadPlace(x.name);if(!bx.isConnected)return;if(!j.found)noInfo("No location details found for this one.");else showPlace(j,"",bx,"x")}catch(e){if(bx.isConnected)noInfo("Couldn't look up the location right now.")}});
     $("#rlook").onclick=()=>{st.tab="rest";st.cv=false;st.view=null;st.web={name:(st.iqRaw||q).trim()};st.iq="";render()};
     const all=ITEMS.concat(...MENU.values()),seenI=new Set(),L=all.filter(i=>{const k=norm(i.r+i.n+i.p+i.cal);if(seenI.has(k))return false;seenI.add(k);return hit((i.n+" "+i.r+" "+i.c).toLowerCase(),q)}).sort(byFav((a,b)=>b.ra-a.ra)).slice(0,40);
@@ -857,17 +857,17 @@ function wire(){
      (p.phone?`<div style="margin-top:8px"><b>Phone</b><div class="mu"><a href="tel:${esc(p.phone.replace(/[^+0-9]/g,""))}" style="color:var(--accent)">${esc(p.phone)}</a></div></div>`:"")+
      (p.website&&/^https?:\/\//i.test(p.website)?`<div style="margin-top:8px"><b>Website</b><div class="mu"><a href="${esc(p.website)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(host(p.website))}</a></div></div>`:"")+
      `<div class="pm" style="height:220px;border-radius:14px;overflow:hidden;margin-top:12px"></div>`+
-     `<div class="pbt"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pdir">Directions</button><button class="addb" id="pfind">Search online</button></div>`+
+     `<div class="pbt" style="grid-template-columns:1fr 1fr"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pdir">Directions</button></div>`+
      (j.count>1?`<div class="mu" style="margin-top:10px">${j.count-1} other location${j.count>2?"s":""} nearby: ${j.others.map(o=>esc((o.addr||o.name).split(",")[0])+" ("+(Math.round(o.mi*10)/10)+" mi)").join(" · ")}${j.count>4?" …":""}</div>`:"")+
      `<div class="foot" style="margin:10px 0 0">Address, hours and phone come from OpenStreetMap data, so they can be missing or out of date.</div></div>`;
-    box.querySelector("#pmenu").onclick=()=>openRest({name:p.name});box.querySelector("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");box.querySelector("#pfind").onclick=()=>{openRest({name:p.name});shOpen("search",true)};
+    box.querySelector("#pmenu").onclick=()=>openRest({name:p.name});box.querySelector("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");
     const pm=box.querySelector(".pm");if(!box0){try{if(st.pmap){st.pmap.remove();st.pmap=null}}catch(e){st.pmap=null}}
     if(window.L&&pm){const m=L.map(pm,{zoomControl:false});if(box0)(st.pmx=st.pmx||[]).push(m);else st.pmap=m;m.setView([p.la,p.lo],15);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
      L.marker([p.la,p.lo],{icon:L.divIcon({className:"",html:'<div class="pin ok sel"></div>',iconSize:[26,26],iconAnchor:[13,13]}),interactive:false}).addTo(m);
      L.marker([HOME.la,HOME.lo],{icon:L.divIcon({className:"",html:'<div class="pin me"></div>',iconSize:[16,16],iconAnchor:[8,8]}),interactive:false}).addTo(m);
      if(p.mi>0.05)m.fitBounds([[p.la,p.lo],[HOME.la,HOME.lo]],{padding:[30,30],maxZoom:15})}else if(pm)pm.style.display="none"};
    const loadPlace=async nm=>{const key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);let j=PLC.get(key);if(j)return j;
-    try{const r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));PLC.set(key,j);return j}
+    try{const ac=new AbortController(),tt=setTimeout(()=>ac.abort(),20000);let r;try{r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`,{signal:ac.signal})}catch(e){throw new Error(e.name==="AbortError"?"It took too long to respond.":e.message)}finally{clearTimeout(tt)}j=await r.json();if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));PLC.set(key,j);return j}
     catch(e){const sn=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,""),want=sn(nm),m=((st.near&&st.near.items)||[]).filter(x=>hit(sn(x.name),want)).sort((a,b)=>a.mi-b.mi)[0];
      if(m)return{found:true,fallback:1,count:1,others:[],place:{name:m.name,addr:m.addr||"",mi:m.mi,la:m.la,lo:m.lo,hours:"",phone:"",website:"",cuisine:m.cuisine||""}};throw e}};
    const placeLook=async()=>{const q=st.iq,box=$("#pc");if(!box)return;const my=++pseq;
@@ -887,9 +887,9 @@ function wire(){
     showPlace(j,q)};
    $("#fr").addEventListener("click",async e=>{if(e.target.closest("[data-fav],[data-add],.rx"))return;const row=e.target.closest("button.row");if(!row)return;const nx=row.nextElementSibling,has=nx&&nx.classList.contains("rx");
     if(!row.classList.contains("open")){if(has)nx.remove();return}if(has)return;const f=FREG[row.querySelector("[data-fav]")?.dataset.fav];if(!f||!f.r)return;
-    const bx=document.createElement("div");bx.className="rx";bx.innerHTML='<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(f.r)+'”…</div>';row.insertAdjacentElement("afterend",bx);
+    const bx=document.createElement("div");bx.className="rx";bx.innerHTML='<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(f.r)+'”…</div>';row.insertAdjacentElement("afterend",bx);setTimeout(()=>bx.scrollIntoView({block:"nearest",behavior:"smooth"}),50);
     const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div></div>'};
-    try{const j=await loadPlace(f.r);if(!bx.isConnected)return;if(!j.found)noInfo("No location details found for "+esc(f.r)+".");else showPlace(j,"",bx,"f")}catch(er){if(bx.isConnected)noInfo("Couldn't look up the location for "+esc(f.r)+". "+esc(String(er.message||er).slice(0,120)))}});
+    try{const j=await loadPlace(f.r);if(!bx.isConnected)return;if(!j.found)noInfo("No location details found for "+esc(f.r)+".");else {showPlace(j,"",bx,"f");setTimeout(()=>bx.scrollIntoView({block:"nearest",behavior:"smooth"}),80)}}catch(er){if(bx.isConnected)noInfo("Couldn't look up the location for "+esc(f.r)+". "+esc(String(er.message||er).slice(0,120)))}});
    draw();online(st.iq);placeLook();if(!st.near){nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(!st.near)st.near=j;if(st.tab==="find")draw()}).catch(()=>{})}
    $("#fq").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();clearTimeout(tm);st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();online(st.iq);placeLook();e.target.blur()}};$("#fq-go").onclick=()=>{clearTimeout(tm);const v=$("#fq").value;st.iqRaw=v.trim();st.iq=st.iqRaw.toLowerCase();draw();online(st.iq);placeLook();$("#fq").blur()};$("#fq").oninput=e=>{st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();clearTimeout(tm);tm=setTimeout(()=>{online(st.iq);placeLook()},500)}}
 }

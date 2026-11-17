@@ -533,22 +533,22 @@ const PGL={on:0,ang:0,p:0,last:0,step:0,t0:0};
 const PG_FLOOR=[0,0.04,0.28,0.72,1];
 // Progress bar drawn as a fork pulling in a strand of spaghetti. The fork's turn is tied to progress (it turns only as the strand is wound),
 // and everything runs off one clock, so redrawing the sheet never restarts the motion.
-function pgFrame(){const cx=180,N=10,p=Math.min(PGL.p,1),ang=p*2*Math.PI*9,m=p*N,full=Math.floor(m),fr=m-full,sx0=Math.cos(ang),sx=(sx0<0?-1:1)*Math.max(.12,Math.abs(sx0));
- const hw=i=>11+8*Math.sin(Math.PI*(i+.5)/N),yy=i=>86+i*(36/N);
+function pgFrame(){const cx=180,N=10,p=Math.min(PGL.p,1),ang=p*2*Math.PI*4,m=p*N,full=Math.floor(m),fr=m-full,sx0=Math.cos(ang),sx=(sx0<0?-1:1)*Math.max(.12,Math.abs(sx0));
+ const hw=i=>11+8*Math.sin(Math.PI*(i+.5)/N),yy=i=>120+i*(30/N);
  const coils=[];for(let i=0;i<N&&i<m;i++){const t=i<full?1:fr;coils.push({w:hw(i)*t,y:yy(i),b:5+1.5*Math.sin(ang*1.3+i)})}
  const gold=(d)=>`<path d="${d}" fill="none" stroke="#e9c76a" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
  const arc=c=>`M${(cx-c.w).toFixed(1)} ${c.y.toFixed(1)}Q${cx} ${(c.y+c.b).toFixed(1)} ${(cx+c.w).toFixed(1)} ${(c.y+3).toFixed(1)}`;
- const xe=cx-20,ye=yy(Math.min(m,N-.01))+3,xl=-40+p*(xe+40);let st="";
- if(xe-xl>2){const pts=[];for(let x=xl;x<=xe;x+=4){const u=Math.max(0,Math.min(1,(x-(xe-70))/70)),e=u*u*(3-2*u);pts.push(x.toFixed(1)+" "+(168+(ye-168)*e+3*Math.sin(x/16-ang*2)*(1-u)).toFixed(1))}pts.push(xe.toFixed(1)+" "+ye.toFixed(1));st=gold("M"+pts.join("L"))}
- const fork=`<path d="M168 126V96a12 12 0 0 1 24 0V126M180 126V8" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>`;
+ const xe=cx-20,ye=yy(Math.min(m,N-.01))+3,xl=-40+p*(xe+40),TB=178;let st="";
+ if(xe-xl>2){const pts=[];for(let x=xl;x<=xe;x+=4){const u=Math.max(0,Math.min(1,(x-(xe-70))/70)),e=u*u*(3-2*u);pts.push(x.toFixed(1)+" "+(TB+(ye-TB)*e+3*Math.sin(x/16-ang*2)*(1-u)).toFixed(1))}pts.push(xe.toFixed(1)+" "+ye.toFixed(1));st=gold("M"+pts.join("L"))}
+ const fork=`<path d="M177 24H183V94C183 106 196 106 196 124V130H164V124C164 106 177 106 177 94Z" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>`+[166.5,175.5,184.5,193.5].map(x=>`<path d="M${x} 126V151" stroke="currentColor" stroke-width="5" stroke-linecap="round"/>`).join("");
  return st+`<g transform="translate(180 0) scale(${sx.toFixed(3)} 1) translate(-180 0)">${fork}</g>`+coils.map(c=>gold(arc(c))).join("")}
 function pgTick(t){const el=document.getElementById("spg");if(!SH.busy||SH.note||!el){PGL.on=0;return}
  const dt=Math.min(.1,(t-PGL.last)/1000||0);PGL.last=t;if(!PGL.t0)PGL.t0=t;
  const f=PG_FLOOR[Math.min(4,SH.step)]||0,c=SH.step>=4?1:PG_FLOOR[Math.min(4,SH.step+1)]-.04,tm=.92*(1-Math.exp(-(t-PGL.t0)/35000)),tgt=Math.max(f,Math.min(c,tm));
- PGL.p+=(tgt-PGL.p)*(1-Math.exp(-dt*3));el.innerHTML=pgFrame();requestAnimationFrame(pgTick)}
+ {let d=(tgt-PGL.p)*(1-Math.exp(-dt*1.4));d=Math.max(-.0,Math.min(d,.08*dt));PGL.p+=d}el.innerHTML=pgFrame();requestAnimationFrame(pgTick)}
 function pgStart(){if(PGL.on)return;PGL.on=1;PGL.last=performance.now();requestAnimationFrame(pgTick)}
 const STEPS=["Find","Read","Check","Ready"];
-function progHtml(){const c=SH.step||1;return`<div class="pg"><div class="spw"><svg id="spg" viewBox="0 0 360 200" width="100%" style="display:block;max-height:230px;overflow:visible;color:var(--accent)" aria-hidden="true"></svg></div><div class="stp" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="${c}">${STEPS.map((t,n)=>`<div class="s${n+1<c?" d":n+1===c?" c":""}"><i></i>${t}</div>`).join("")}</div><div style="font-size:16px;font-weight:600">${esc(SH.msg||"Working")}…</div><div class="mu" style="margin-top:8px">Long menus can take a few minutes. Keep this screen open. <span id="sh-el"></span></div></div>`}
+function progHtml(){const c=SH.step||1;return`<div class="pg"><div class="spw"><svg id="spg" viewBox="0 14 360 176" width="100%" style="display:block;max-height:230px;overflow:visible;color:var(--accent)" aria-hidden="true"></svg></div><div class="stp" role="progressbar" aria-valuemin="1" aria-valuemax="4" aria-valuenow="${c}">${STEPS.map((t,n)=>`<div class="s${n+1<c?" d":n+1===c?" c":""}"><i></i>${t}</div>`).join("")}</div><div style="font-size:16px;font-weight:600">${esc(SH.msg||"Working")}…</div><div class="mu" style="margin-top:8px">Long menus can take a few minutes. Keep this screen open. <span id="sh-el"></span></div></div>`}
 async function apiS(path,body,onEv,retry){const r=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json","x-edit-key":EK.get(),"x-stream":"1"},body:JSON.stringify(body)});
  if(!/ndjson/.test(r.headers.get("content-type")||"")){const j=await r.json().catch(()=>({}));
   if(r.status===401&&!retry){const k=prompt("Enter your edit key (the EDIT_KEY you set in Vercel):");if(k){EK.set(k.trim());return apiS(path,body,onEv,1)}}
@@ -570,7 +570,7 @@ async function shRun(body,label){SH.busy=true;SH.note="";SH.step=body.mode==="se
     held=[...bad.keys()].sort((a,b)=>a-b).map(x=>({item:its[x],why:bad.get(x).map(q=>q.field==="notfound"?"not found in the source":q.field+": read "+q.got+", source says "+q.src).join("; ")}));
     its=its.filter((_,x)=>!bad.has(x));ver={ok:true,n:v.checked,held:held.length}}catch(e){ver={ok:false,why:e.message}}}
   else ver={ok:false,why:"no source to compare with"};
-  st.rev={name:SH.name,items:its,notes:nt,source:j.source,replace:!!body.replace,held,ver};SH.note="";SH.step=4;SH.msg="Done";shDraw();await new Promise(r=>setTimeout(r,1500))}catch(e){SH.note=e.message}
+  st.rev={name:SH.name,items:its,notes:nt,source:j.source,replace:!!body.replace,held,ver};SH.note="";SH.step=4;SH.msg="Done";shDraw();for(let k=0;k<60&&PGL.p<.99;k++)await new Promise(r=>setTimeout(r,100));await new Promise(r=>setTimeout(r,500))}catch(e){SH.note=e.message}
 SH.busy=false;clearInterval(SH.tm);shDraw()}
 function shDraw(){const s=$("#sheet");if(!s)return;const name=SH.name,r=st.rev&&st.rev.name===name?st.rev:null,H=SH.hand||{};
  const TABS=[["search","Search"],["link","Link"],["file","PDF/photo"],["hand","By hand"]],note=SH.note?`<div class="mu" style="margin-top:12px">${esc(SH.note)}</div>`:"";

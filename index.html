@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <title>Eat Out – High-Protein Finder</title>
 <style>
 :root{--bg:#f6f5f1;--card:#fff;--ink:#1d1d1b;--mute:#6b6a64;--line:#e4e2da;--accent:#1f6f4a;--accent2:#e8f3ec}
@@ -59,12 +59,15 @@ body.hasmeal #mbar{display:block}#cbar #cgo{flex:1;width:auto}#cbar #cclr{flex:n
 .mtot{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 6px;margin:14px 0 10px}.mtot b{display:block;font-size:20px}.mtot span{font-size:12px;color:var(--mute)}
 .mq{display:flex;align-items:center;gap:2px;flex:none}.mq button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--bg);color:var(--ink);font-size:18px;line-height:1}.mq span{min-width:22px;text-align:center;font-weight:600}
 .mbarw{height:8px;border-radius:4px;background:var(--line);overflow:hidden;margin:6px 0}.mbarw i{display:block;height:100%;background:var(--accent)}
+input,select,textarea{font-size:16px!important}html,body{touch-action:manipulation;overflow-x:hidden}
+.gin{width:112px;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);text-align:right}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 </head><body><div id="app"></div>
 <nav class="tabs" id="tabs">
 <button data-t="rest"><svg viewBox="0 0 24 24"><path d="M12 21s7-6.2 7-11.5A7 7 0 005 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>Restaurants</button>
 <button data-t="fav"><svg viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.6-7 10-7 10z"/></svg>Favorites</button>
 <button data-t="find"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Search</button>
+<button data-t="me"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg>Profile</button>
 </nav><div id="mbar"></div>
 <script>
 const RAW=`F|Breakfast Burrito|Breakfast|50|729|63|30
@@ -376,7 +379,9 @@ function metricFn(SC,FS,P,dfn){let key=null;for(const z of SC){const v=FS[z[0]];
   if(key==="dist"){const d=dfn?dfn(i):null;return d==null?["—","distance"]:[(Math.round(d*10)/10)+" mi","away"]}
   if(key==="date")return[i.t?new Date(i.t).toLocaleDateString(undefined,{month:"short",day:"numeric"}):"—","saved"];return[i.p+" g","protein"]}}
 /* ---- Meal builder (kept on this device in localStorage) ---- */
-const GOAL={p:(()=>{try{const v=+localStorage.getItem("eo_gp");return v>0?v:180}catch(e){return 180}})()};
+const GKEY={p:"eo_gp",c:"eo_gc",cb:"eo_gcb",f:"eo_gf"},gget=(k,d)=>{try{const v=+localStorage.getItem(GKEY[k]);return v>0?v:d}catch(e){return d}};
+const GOAL={p:gget("p",180),c:gget("c",0),cb:gget("cb",0),f:gget("f",0)}; // p defaults to 180 g; calories, carbs and fat are 0 = not set
+function goalSave(){for(const k in GKEY){try{if(GOAL[k]>0)localStorage.setItem(GKEY[k],String(GOAL[k]));else localStorage.removeItem(GKEY[k])}catch(e){}}}
 let MEAL=(()=>{try{const j=JSON.parse(localStorage.getItem("eo_meal")||"null");return j&&Array.isArray(j.items)?j:{r:"",items:[]}}catch(e){return{r:"",items:[]}}})();
 const mealSave=()=>{try{localStorage.setItem("eo_meal",JSON.stringify(MEAL))}catch(e){}};
 const HCK=new Set(ITEMS.map(fkey)),isHC=i=>HCK.has(fkey(i));
@@ -401,14 +406,14 @@ function mealOpen(){shClose();if(!MEAL.items.length)return;const sh=document.cre
   sh.innerHTML=`<div class="sh"><div class="shh"><b>Meal</b><span class="mu">${esc(MEAL.r)}</span><button id="ml-x" aria-label="Close">✕</button></div>
   ${MEAL.items.map((x,n)=>`<div class="srow" style="align-items:center;padding:8px 8px 8px 14px"><div style="min-width:0;flex:1"><div class="nm" style="font-size:15px">${esc(x.n)}</div><div class="mu">${fmt(x.cal*x.q)} cal · ${fmt(x.p*x.q)} g protein${x.q>1?" · "+x.q+" × "+fmt(x.cal)+" cal":""}${isHC(x)?"":" · not hand-checked"}</div><span class="del" data-rm="${n}" style="margin-top:4px">Remove</span></div><div class="mq"><button data-q="-1" data-n="${n}" aria-label="Fewer">−</button><span>${x.q}</span><button data-q="1" data-n="${n}" aria-label="More">+</button></div></div>`).join("")}
   <div class="mtot"><div><b>${fmt(t.cal)}</b><span>Calories</span></div><div><b>${fmt(t.p)} g</b><span>Protein</span></div><div><b>${fmt(t.cb)}${t.cbU?"+":""} g</b><span>Carbs</span></div><div><b>${fmt(t.f)}${t.fU?"+":""} g</b><span>Fat</span></div></div>
-  <div class="supbox" style="margin:0 0 10px"><div style="display:flex;justify-content:space-between;gap:10px"><span><b>${pct}%</b> of your protein goal</span><span class="mu">${fmt(t.p)} / ${GOAL.p} g</span></div><div class="mbarw"><i style="width:${Math.min(100,pct)}%"></i></div><div class="bar" style="margin-top:6px;align-items:center"><span class="mu" style="flex:1">Daily protein goal (g)</span><input id="ml-g" type="number" inputmode="numeric" min="1" max="500" value="${GOAL.p}" style="flex:none;width:90px"></div></div>
+  <div class="supbox" style="margin:0 0 10px"><div style="display:flex;justify-content:space-between;gap:10px"><span><b>${pct}%</b> of your protein goal</span><span class="mu">${fmt(t.p)} / ${GOAL.p} g</span></div><div class="mbarw"><i style="width:${Math.min(100,pct)}%"></i></div>${[["c","Calories","cal",""],["cb","Carbs","cb"," g"],["f","Fat","f"," g"]].filter(g=>GOAL[g[0]]>0).map(g=>`<div class="mu" style="margin-top:4px">${g[1]}: ${fmt(t[g[2]])} / ${GOAL[g[0]]}${g[3]}</div>`).join("")}<div class="bar" style="margin-top:6px;align-items:center"><span class="mu" style="flex:1">Daily protein goal (g)</span><input id="ml-g" type="number" inputmode="numeric" min="1" max="500" value="${GOAL.p}" style="flex:none;width:90px"></div></div>
   ${nh?`<div class="mu" style="margin:0 0 10px;color:#b45309">${nh} item${nh>1?"s":""} in this meal ${nh>1?"aren't":"isn't"} hand-checked (online database or added by you), so these totals may be off.</div>`:""}
   ${miss?`<div class="mu" style="margin:0 0 10px">Carbs or fat are missing for some items, so those totals are partial (shown with +).</div>`:""}
   <input class="search" id="ml-nm" placeholder="${esc(MEAL.r)} meal" style="font-size:16px"><button class="pri" id="ml-save">Save to Favorites</button><button class="pri" id="ml-clr" style="background:none;color:var(--accent);border:1px solid var(--line)">Clear meal</button></div>`;
   sh.querySelector("#ml-x").onclick=()=>{shClose();mealUI()};
   sh.querySelectorAll("[data-q]").forEach(b=>b.onclick=()=>{const x=MEAL.items[+b.dataset.n];x.q+=+b.dataset.q;if(x.q<1)MEAL.items.splice(+b.dataset.n,1);if(x.q>20)x.q=20;mealSave();mealUI();paint()});
   sh.querySelectorAll("[data-rm]").forEach(b=>b.onclick=()=>{MEAL.items.splice(+b.dataset.rm,1);mealSave();mealUI();paint()});
-  sh.querySelector("#ml-g").onchange=e=>{const v=Math.round(+e.target.value);if(v>=1&&v<=500){GOAL.p=v;try{localStorage.setItem("eo_gp",String(v))}catch(x){}}setTimeout(()=>{if($("#sheet")===sh)paint()},0)};
+  sh.querySelector("#ml-g").onchange=e=>{const v=Math.round(+e.target.value);if(v>=1&&v<=500){GOAL.p=v;goalSave()}setTimeout(()=>{if($("#sheet")===sh)paint()},0)};
   sh.querySelector("#ml-clr").onclick=()=>{MEAL={r:"",items:[]};mealSave();mealUI();shClose()};
   sh.querySelector("#ml-save").onclick=()=>{const id="m"+Date.now(),nm=sh.querySelector("#ml-nm").value.trim()||MEAL.r+" meal";FAV.m[id]={id,name:nm,r:MEAL.r,items:MEAL.items.map(x=>({...x})),t:Date.now()};favSave();toast("Meal saved to Favorites")}};
  paint()}
@@ -588,6 +593,9 @@ function render(){
    h=`<h1>Restaurants</h1><div class="sub">Restaurants near you, favorites first, then nearest</div><input class="search" id="cq" placeholder="Enter city name" enterkeyhint="search" autocapitalize="words" autocorrect="off"><div class="bar"><button id="loc">My location</button><button id="nb">Refresh</button><select id="rad"><option value="1609"${st.rad==1609?" selected":""}>1 mile</option><option value="4828"${st.rad==4828?" selected":""}>3 miles</option><option value="8047"${st.rad==8047?" selected":""}>5 miles</option></select></div><div style="position:relative;margin-top:10px"><div id="map" style="height:300px;border-radius:14px;overflow:hidden"></div><button id="sa">Search this area</button></div><div id="rl"></div><div id="cbar"></div>`;
   }
  }
+ if(st.tab==="me"){const gr=(id,t,s,v,ph)=>`<label class="rv" style="border-top:1px solid var(--line)"><span>${t}<br><span class="mu">${s}</span></span><input class="gin" id="${id}" type="number" inputmode="numeric" min="0" placeholder="${ph}" value="${v||""}"></label>`;
+  h=`<h1>Profile</h1><div class="sub">Your daily macro targets</div><div class="supbox" style="margin:0 0 12px">${gr("g-p","Protein","grams per day",GOAL.p,"180")}${gr("g-c","Calories","per day",GOAL.c,"Not set")}${gr("g-cb","Carbs","grams per day",GOAL.cb,"Not set")}${gr("g-f","Fat","grams per day",GOAL.f,"Not set")}<button class="pri" id="g-save">Save targets</button><div class="mu" style="margin-top:8px">Protein is used for the meal goal bar and the “% of your protein goal” on each food. Calories, carbs and fat show in your meal when set. Leave a box empty to turn it off (protein goes back to 180 g).</div></div>
+  <div class="supbox" style="margin:0"><b>Account</b><div class="mu" style="margin-top:4px">Sign-in and account settings will live here later. For now your targets are saved on this device.</div></div>`}
  if(st.tab==="fav"){h=`<h1>Favorites</h1><div class="sub">Foods, restaurants and meals you've saved</div><div class="seg" id="fseg"><button data-k="foods">Foods</button><button data-k="rest">Restaurants</button><button data-k="meals">Meals</button><button data-k="added">Added</button></div><button class="frow" id="fsort" style="margin:0 0 10px"></button><div id="fl"></div>`}
  if(st.tab==="find"){h=`<h1>Search</h1><div class="sub">Search for a food or a restaurant</div><input class="search" id="fq" placeholder="Chicken bowl, Five Guys, burrito…" value="${esc(st.iq)}" autocapitalize="off" autocorrect="off"><div id="rr"></div><div id="pc"></div><div id="fr"></div><div id="wr"></div>`}
  app.innerHTML=h;wire();supWire();favWire();window.scrollTo(0,0);
@@ -662,6 +670,10 @@ function wire(){
  if(st.tab==="rest"&&st.view){const draw=()=>{const FSm=st.fsm=st.fsm||{sh:"all",p:"r",l:""},P=PICKS[FSm.sh];const SCm=MSC();sortBar($("#msort"),SCm,FSm,"fsom",draw);let L=ITEMS.filter(i=>P.f(i)&&i.k===st.view&&(st.cat==="All"||i.c===st.cat)&&(!st.iq||i.n.toLowerCase().includes(st.iq)));
    const sc=sortCmp(SCm,FSm,()=>null),mf=metricFn(SCm,FSm,P,()=>null);L.sort((a,b)=>sc(a,b)||P.o(a,b));$("#items").innerHTML=L.length?L.map(i=>itemRow(i,false,mf)).join(""):'<div class="empty">Nothing matches.</div>'};
    draw();$("#iq").oninput=e=>{st.iq=e.target.value.toLowerCase().trim();draw()};$("#cat").onchange=e=>{st.cat=e.target.value;draw()}}
+ if(st.tab==="me"){$("#g-save").onclick=()=>{const rd=(id,lo,hi)=>{const s=$(id).value.trim();if(!s)return 0;const v=Math.round(+s);return v>=lo&&v<=hi?v:NaN};
+   const n={p:rd("#g-p",1,500),c:rd("#g-c",1,10000),cb:rd("#g-cb",1,1000),f:rd("#g-f",1,500)};
+   if(Object.values(n).some(Number.isNaN)){toast("Check the numbers: protein 1–500 g, calories 1–10,000, carbs 1–1,000 g, fat 1–500 g");return}
+   GOAL.p=n.p||180;GOAL.c=n.c;GOAL.cb=n.cb;GOAL.f=n.f;goalSave();$("#g-p").value=GOAL.p;toast("Targets saved")}}
  if(st.tab==="fav"){const draw=()=>{const foods=st.fseg!=="rest"&&st.fseg!=="meals"&&st.fseg!=="added",el=$("#fl");$("#fsort").style.display=st.fseg==="meals"||st.fseg==="added"?"none":"";
    document.querySelectorAll("#fseg button").forEach(b=>b.classList.toggle("on",b.dataset.k===(st.fseg||"foods")));if(st.fseg==="meals"){favMeals(el);return}if(st.fseg==="added"){favAdded(el);return}const SC=foods?[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["p","Protein Rank",[["r","Per 100 Cal"],["h","Total Grams"]]],["l","Calories",[["w","Fewest"],["m","Most"]]],["g","Group By Restaurant",[["a","A–Z"],["z","Z–A"]]]]:[["d","Date Added",[["n","Newest"],["o","Oldest"]]],["c","Distance",[["c","Closest"],["f","Farthest"]]],["a","Name",[["a","A–Z"],["z","Z–A"]]]];
    const FS=st.fs=st.fs||{sh:"all",d:"n",c:"",p:"",a:"",l:"",g:""};if(!foods){if(FS.sh!==undefined)st._sh=FS.sh;delete FS.sh}else if(FS.sh===undefined)FS.sh=st._sh||"all";

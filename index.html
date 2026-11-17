@@ -82,7 +82,7 @@ body{font-family:ui-rounded,"SF Pro Rounded",-apple-system,system-ui,sans-serif}
 .tgs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 0 12px}.tg{border-radius:16px;padding:10px 4px;text-align:center;color:#fff}.tg b{display:block;font-size:20px;line-height:1.1}.tg span{font-size:11px;opacity:.9}
 .rw>.av+div{flex:1;min-width:0}
 .crv{padding:18px 0}.crvh{font-size:20px;font-weight:800;margin-bottom:12px}.crvg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.crt{border:0;border-radius:18px;padding:14px;color:#fff;font:700 17px/1.1 inherit;font-family:inherit;text-align:left;display:flex;align-items:center;gap:10px;min-height:64px}.crt span{font-size:30px}.crt:active{transform:scale(.96)}
-.rx{margin:6px 0 0}.pbt{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.pbt .addb{padding:11px 4px;font-size:15px;white-space:nowrap;margin:0;width:100%}
+.rx{margin:6px 0 0}.ld{display:flex;align-items:center;gap:12px;padding:16px;border:2px solid var(--accent);border-radius:18px;background:var(--accent2);color:var(--accent);font-weight:800;font-size:17px;line-height:1.25}.ld i{flex:none;width:26px;height:26px;border-radius:50%;border:4px solid var(--accent);border-top-color:transparent;animation:ldspin .8s linear infinite}@keyframes ldspin{to{transform:rotate(360deg)}}.pbt{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}.pbt .addb{padding:11px 4px;font-size:15px;white-space:nowrap;margin:0;width:100%}
 .fe{text-align:center;padding:30px 16px}.fei{width:96px;height:96px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:46px;box-shadow:0 6px 18px rgba(0,0,0,.18)}.fet{font-size:21px;font-weight:800}.feb{color:var(--mute);margin:8px auto 18px;max-width:290px}.fgo{width:auto;padding:12px 26px;display:block;margin:0 auto}.seg button{white-space:nowrap}.seg .cn{display:inline-block;margin-left:4px;min-width:18px;padding:0 5px;border-radius:10px;background:var(--accent2);color:var(--accent);font-size:12px;font-weight:800}.seg .on .cn{background:rgba(255,255,255,.25);color:inherit}
 .empty:not([style*=padding])::before{content:"🍽️";display:block;font-size:36px;margin-bottom:6px}
 </style><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -506,6 +506,7 @@ const AVC=["#1f6f4a","#c4483a","#3a6fb0","#b07a1f","#7a4fa3","#2a8a8a","#b04a7a"
  CRV=[["🌯","Burrito","#c4483a"],["🍔","Burger","#b07a1f"],["🍗","Chicken","#d9803a"],["🥗","Salad","#3f8f4f"],["🍕","Pizza","#c4483a"],["🍳","Breakfast","#b89a2a"],["🥪","Sandwich","#8a6a3a"],["🍜","Noodles","#7a4fa3"],["🌮","Tacos","#3a8a7a"],["🥩","Steak","#8a3a3a"]],
  crvH=`<div class="crv"><div class="crvh">What are you craving?</div><div class="crvg">${CRV.map(c=>`<button class="crt" data-crv="${c[1]}" style="background:${c[2]}"><span>${c[0]}</span>${c[1]}</button>`).join("")}</div><div class="mu" style="text-align:center;margin-top:14px">or type any food or restaurant above</div></div>`,
  feH=(em,c1,c2,t,b,cta,tab)=>`<div class="fe"><div class="fei" style="background:linear-gradient(135deg,${c1},${c2})">${em}</div><div class="fet">${t}</div><div class="feb">${b}</div>${cta?`<button class="pri fgo" data-go="${tab}">${cta}</button>`:""}</div>`,
+ ldH=nm=>`<div class="ld"><i></i><span>Finding the nearest ${esc(nm)}…</span></div>`,
  ringH=(pct,sz)=>{const r=sz/2-5,c=2*Math.PI*r,v=Math.min(100,Math.max(0,pct)),col=pct>=100?"#22c55e":"var(--accent)";return`<svg class="rg" width="${sz}" height="${sz}" viewBox="0 0 ${sz} ${sz}"><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="var(--line)" stroke-width="5"/><circle cx="${sz/2}" cy="${sz/2}" r="${r}" fill="none" stroke="${col}" stroke-width="5" stroke-linecap="round" stroke-dasharray="${(c*v/100).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 ${sz/2} ${sz/2})"/><text x="50%" y="50%" text-anchor="middle" dominant-baseline="central" font-size="${Math.round(sz*.27)}" fill="currentColor">${Math.round(pct)}%</text></svg>`},
  legH=`<div class="mbk" style="margin:10px 2px 0">Bars show calories from:<span><b style="background:var(--accent)"></b>protein</span><span><b style="background:#e0a83a"></b>carbs</span><span><b style="background:#d9694f"></b>fat</span></div>`,
  mbH=i=>{const p=(i.p||0)*4,c=(i.cb||0)*4,f=(i.f||0)*9,t=p+c+f;return t>0?`<div class="mb" aria-hidden="true"><i class="p" style="width:${p/t*100}%"></i><i class="c" style="width:${c/t*100}%"></i><i class="f" style="width:${f/t*100}%"></i></div>`:""},
@@ -832,7 +833,7 @@ function wire(){
      `<button class="big" id="rlook" style="margin-top:10px"><b>Look up “${esc(st.iqRaw||q)}” online</b><span>Find it as a restaurant in the nutrition database</span></button>`;
     (st.pmx||[]).forEach(m=>{try{m.remove()}catch(e){}});st.pmx=[];
     $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=async()=>{const x=RL[+r.dataset.r],nx=r.nextElementSibling;if(nx&&nx.classList.contains("rx")){nx.remove();r.classList.remove("open");return}
-     r.classList.add("open");const bx=document.createElement("div");bx.className="rx";bx.innerHTML='<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(x.name)+'”…</div>';r.insertAdjacentElement("afterend",bx);
+     r.classList.add("open");const bx=document.createElement("div");bx.className="rx";bx.innerHTML=ldH(x.name);r.insertAdjacentElement("afterend",bx);
      const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div><div class="pbt" style="grid-template-columns:1fr"><button class="addb" id="pmenu">Open menu</button></div></div>';bx.querySelector("#pmenu").onclick=()=>openRest(x)};
      try{const j=await loadPlace(x.name);if(!bx.isConnected)return;if(!j.found)noInfo("No location details found for this one.");else showPlace(j,"",bx,"x")}catch(e){if(bx.isConnected)noInfo("Couldn't look up the location right now.")}});
     $("#rlook").onclick=()=>{st.tab="rest";st.cv=false;st.view=null;st.web={name:(st.iqRaw||q).trim()};st.iq="";render()};
@@ -876,7 +877,7 @@ function wire(){
     if(!top&&q.split(/\s+/).filter(Boolean).every(w=>FW.test(w))){box.innerHTML="";return}
     const nm=(top&&top.name)||(st.iqRaw||q),key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);
     let j=PLC.get(key);
-    if(!j){box.innerHTML=hd("Nearest location")+'<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(nm)+'”…</div>';
+    if(!j){box.innerHTML=hd("Nearest location")+ldH(nm);
      try{const r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(my!==pseq)return;if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));PLC.set(key,j)}
      catch(e){if(my!==pseq)return;
       const sn=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,""),want=sn(nm),m=((st.near&&st.near.items)||[]).filter(x=>hit(sn(x.name),want)).sort((a,b)=>a.mi-b.mi)[0];
@@ -887,7 +888,7 @@ function wire(){
     showPlace(j,q)};
    $("#fr").addEventListener("click",async e=>{if(e.target.closest("[data-fav],[data-add],.rx"))return;const row=e.target.closest("button.row");if(!row)return;const nx=row.nextElementSibling,has=nx&&nx.classList.contains("rx");
     if(!row.classList.contains("open")){if(has)nx.remove();return}if(has)return;const f=FREG[row.querySelector("[data-fav]")?.dataset.fav];if(!f||!f.r)return;
-    const bx=document.createElement("div");bx.className="rx";bx.innerHTML='<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(f.r)+'”…</div>';row.insertAdjacentElement("afterend",bx);setTimeout(()=>bx.scrollIntoView({block:"nearest",behavior:"smooth"}),50);
+    const bx=document.createElement("div");bx.className="rx";bx.innerHTML=ldH(f.r);row.insertAdjacentElement("afterend",bx);setTimeout(()=>bx.scrollIntoView({block:"nearest",behavior:"smooth"}),50);
     const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div></div>'};
     try{const j=await loadPlace(f.r);if(!bx.isConnected)return;if(!j.found)noInfo("No location details found for "+esc(f.r)+".");else {showPlace(j,"",bx,"f");setTimeout(()=>bx.scrollIntoView({block:"nearest",behavior:"smooth"}),80)}}catch(er){if(bx.isConnected)noInfo("Couldn't look up the location for "+esc(f.r)+". "+esc(String(er.message||er).slice(0,120)))}});
    draw();online(st.iq);placeLook();if(!st.near){nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(!st.near)st.near=j;if(st.tab==="find")draw()}).catch(()=>{})}

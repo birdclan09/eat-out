@@ -515,6 +515,8 @@ const AVC=["#1f6f4a","#c4483a","#3a6fb0","#b07a1f","#7a4fa3","#2a8a8a","#b04a7a"
   return T.length<2?"":`<div class="tp"><h4>Best picks · tap to jump to it</h4><div class="tps">${T.map(t=>`<div class="tc" data-jump="${esc(t.i.n)}"><div class="lb">${t.lab}</div><div class="n">${esc(t.i.n)}</div><div class="v">${t.i.p} g<small style="display:block;margin-top:3px">protein · ${t.i.cal} cal</small></div></div>`).join("")}</div></div>`};
 function lgNext(i){const p=i.parentNode;if(!p)return;if(!i.dataset.s){i.dataset.s=1;i.src="https://icons.duckduckgo.com/ip3/"+i.dataset.d+".ico"}else p.outerHTML=avH(p.dataset.fb)}
 function lgChk(i){if(i.naturalWidth<=16)lgNext(i)}
+const PLC=new Map(),PLP=new Map();try{const o=JSON.parse(localStorage.getItem("eo_plc")||"{}");Object.keys(o).forEach(k=>{if(o[k]&&Date.now()-o[k]._t<864e5)PLC.set(k,o[k])})}catch(e){}
+const plcSave=()=>{try{const o={};[...PLC.entries()].slice(-30).forEach(([k,j])=>{if(j&&j.found&&!j.fallback&&j._t)o[k]=j});localStorage.setItem("eo_plc",JSON.stringify(o))}catch(e){}};
 function itemRow(i,showR,mf){const mt=mf?mf(i):[i.p+" g","protein"];const fk=fkey(i);FREG[fk]=i;return `<button class="row" onclick="this.classList.toggle('open')"><div class="rw"><span class="fh${isFavF(fk)?" on":""}" data-fav="${fk}" role="button" aria-label="Save to favorites">${isFavF(fk)?"♥":"♡"}</span><div style="flex:1;min-width:0"><div class="t"><span class="nm">${esc(i.n)}</span></div>${showR?`<div class="mu">${esc(i.r)}</div>`:""}
 <div class="mu">${i.cal} cal · ${i.ra} g protein per 100 cal</div>${mbH(i)}
 <div class="det"><div class="mbk" style="margin:0 0 6px"><span><b style="background:var(--accent)"></b>protein</span><span><b style="background:#e0a83a"></b>carbs</span><span><b style="background:#d9694f"></b>fat</span><span>(share of calories)</span></div><b>${i.p} g</b> protein · <b>${i.cb}</b> g carbs · <b>${i.f}</b> g fat · <b>${i.cal}</b> cal<br>${Math.round(i.p/GOAL.p*100)}% of your ${GOAL.p} g protein goal${i.s?`<br>${i.v?(i.v===2?"From a third-party site, "+esc(host(i.srcu))+" · not the restaurant's own numbers":"Imported from "+(i.srcu?(offSrc(i.r,i.srcu)?"the restaurant's website, ":"")+esc(host(i.srcu)):"the restaurant")):(i.ed?"Edited by you · not verified":"Added by you · not verified")}${i.b?" · per "+esc(i.b):""}.<br><span class="del" data-del="${i.sx}" data-rn="${esc(i.r)}">Remove this item</span>`:i.b?`<br>Per ${esc(i.b)}. Online database${i.u?", unverified entry":""}.`:""}</div></div><span class="addm${mQty(fk)?" on":""}" data-add="${fk}" role="button" aria-label="Add to meal">${mQty(fk)||"+"}</span><div class="ppc"><b>${mt[0]}</b><span>${mt[1]}</span></div></div></button>`}
@@ -834,7 +836,7 @@ function wire(){
     (st.pmx||[]).forEach(m=>{try{m.remove()}catch(e){}});st.pmx=[];
     $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=async()=>{const x=RL[+r.dataset.r],nx=r.nextElementSibling;if(nx&&nx.classList.contains("rx")){nx.remove();r.classList.remove("open");return}
      r.classList.add("open");const bx=document.createElement("div");bx.className="rx";bx.innerHTML=ldH(x.name);r.insertAdjacentElement("afterend",bx);
-     const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div><div class="pbt" style="grid-template-columns:1fr 1fr"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pfind">Search online</button></div></div>';bx.querySelector("#pmenu").onclick=()=>openRest(x);bx.querySelector("#pfind").onclick=()=>{openRest(x);shOpen("search",true)}};
+     const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div><div class="pbt" style="grid-template-columns:1fr"><button class="addb" id="pmenu">Restaurant Menu</button></div></div>';bx.querySelector("#pmenu").onclick=()=>openRest(x)};
      try{const j=await loadPlace(x.name);if(!bx.isConnected)return;if(!j.found)noInfo("No location details found for this one.");else showPlace(j,"",bx,"x")}catch(e){if(bx.isConnected)noInfo("Couldn't look up the location right now.")}});
     const all=ITEMS.concat(...MENU.values()),seenI=new Set(),L=all.filter(i=>{const k=norm(i.r+i.n+i.p+i.cal);if(seenI.has(k))return false;seenI.add(k);return hit((i.n+" "+i.r+" "+i.c).toLowerCase(),q)}).sort(byFav((a,b)=>b.ra-a.ra)).slice(0,40);
     $("#fr").innerHTML=hd("Foods"+(L.length?" · favorites first, then best protein per calorie":""))+(L.length?L.map(i=>itemRow(i,true)).join(""):'<div class="empty" style="padding:8px 0">No food matched in the menus loaded so far.</div>')};
@@ -848,7 +850,7 @@ function wire(){
      const have=new Set(ITEMS.concat(...MENU.values()).map(i=>norm(i.n)+Math.round(i.cal)+Math.round(i.p))),fresh=j.items.filter(i=>!have.has(norm(i.name)+Math.round(i.n.cal||0)+Math.round(i.n.p||0)));
      box.innerHTML='<div class="sub" style="margin:16px 0 4px">More from the online database (not hand-checked)</div>'+(fresh.length?fresh.map(i=>`<button class="row" onclick="this.classList.toggle('open')"><div class="t"><span class="nm">${esc(i.name)}</span><span class="pp">${n(i.n.p)} g</span></div><div class="mu">${esc(i.brand)}${i.brand?" · ":""}${n(i.n.cal)} cal · per ${esc(i.basis)}${i.verified?"":" · unverified"}</div><div class="det"><b>${n(i.n.p)} g</b> protein · <b>${n(i.n.c)}</b> g carbs · <b>${n(i.n.f)}</b> g fat · <b>${n(i.n.cal)}</b> cal<br>Per ${esc(i.basis)}. Source: ${esc(j.source)} database, not the restaurant itself${i.verified?"":" (unverified entry)"}.</div></button>`).join(""):'<div class="empty">Nothing found online.</div>')+'<div class="foot">'+(j.source==='fatsecret'?'Powered by <a href="https://www.fatsecret.com" style="color:inherit">fatsecret</a>. ':'Source: '+esc(j.source)+'. ')+'Not hand-checked against the restaurant; check for oddities.</div>'
     }catch(e){if(my===seq)box.innerHTML=""}};
-   const PLC=new Map();let pseq=0;
+   let pseq=0;
    const dirUrl=p=>"https://maps.apple.com/?daddr="+p.la+","+p.lo+"&q="+encodeURIComponent(p.name);
    const showPlace=(j,q,box0,tag)=>{const box=box0||$("#pc");if(!box)return;const p=j.place,who=(HOME.label||"you").replace(/^from /,"");
     const hrs=p.hours?p.hours.split(/;\s*/).filter(Boolean).map(esc).join("<br>"):"";
@@ -857,19 +859,21 @@ function wire(){
      (p.phone?`<div style="margin-top:8px"><b>Phone</b><div class="mu"><a href="tel:${esc(p.phone.replace(/[^+0-9]/g,""))}" style="color:var(--accent)">${esc(p.phone)}</a></div></div>`:"")+
      (p.website&&/^https?:\/\//i.test(p.website)?`<div style="margin-top:8px"><b>Website</b><div class="mu"><a href="${esc(p.website)}" target="_blank" rel="noopener" style="color:var(--accent)">${esc(host(p.website))}</a></div></div>`:"")+
      `<div class="pm" style="height:220px;border-radius:14px;overflow:hidden;margin-top:12px"></div>`+
-     `<div class="pbt"><button class="addb" id="pmenu">Open menu</button><button class="addb" id="pdir">Directions</button><button class="addb" id="pfind">Search online</button></div>`+
+     `<div class="pbt" style="grid-template-columns:1fr 1fr"><button class="addb" id="pmenu">Restaurant Menu</button><button class="addb" id="pdir">Directions</button></div>`+
      (j.count>1?`<div class="mu" style="margin-top:10px">${j.count-1} other location${j.count>2?"s":""} nearby: ${j.others.map(o=>esc((o.addr||o.name).split(",")[0])+" ("+(Math.round(o.mi*10)/10)+" mi)").join(" · ")}${j.count>4?" …":""}</div>`:"")+
      `<div class="foot" style="margin:10px 0 0">Address, hours and phone come from OpenStreetMap data, so they can be missing or out of date.</div></div>`;
-    box.querySelector("#pmenu").onclick=()=>openRest({name:p.name});box.querySelector("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");box.querySelector("#pfind").onclick=()=>{openRest({name:p.name});shOpen("search",true)};
+    box.querySelector("#pmenu").onclick=()=>openRest({name:p.name});box.querySelector("#pdir").onclick=()=>window.open(dirUrl(p),"_blank");
     const pm=box.querySelector(".pm");if(!box0){try{if(st.pmap){st.pmap.remove();st.pmap=null}}catch(e){st.pmap=null}}
     if(window.L&&pm){const m=L.map(pm,{zoomControl:false});if(box0)(st.pmx=st.pmx||[]).push(m);else st.pmap=m;m.setView([p.la,p.lo],15);L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:"© OpenStreetMap"}).addTo(m);
      L.marker([p.la,p.lo],{icon:L.divIcon({className:"",html:'<div class="pin ok sel"></div>',iconSize:[26,26],iconAnchor:[13,13]}),interactive:false}).addTo(m);
      L.marker([HOME.la,HOME.lo],{icon:L.divIcon({className:"",html:'<div class="pin me"></div>',iconSize:[16,16],iconAnchor:[8,8]}),interactive:false}).addTo(m);
      if(p.mi>0.05)m.fitBounds([[p.la,p.lo],[HOME.la,HOME.lo]],{padding:[30,30],maxZoom:15})}else if(pm)pm.style.display="none"};
-   const loadPlace=async nm=>{const key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);let j=PLC.get(key);if(j)return j;
-    try{const ac=new AbortController(),tt=setTimeout(()=>ac.abort(),20000);let r;try{r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`,{signal:ac.signal})}catch(e){throw new Error(e.name==="AbortError"?"It took too long to respond.":e.message)}finally{clearTimeout(tt)}j=await r.json();if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));PLC.set(key,j);return j}
-    catch(e){const sn=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,""),want=sn(nm),m=((st.near&&st.near.items)||[]).filter(x=>hit(sn(x.name),want)).sort((a,b)=>a.mi-b.mi)[0];
-     if(m)return{found:true,fallback:1,count:1,others:[],place:{name:m.name,addr:m.addr||"",mi:m.mi,la:m.la,lo:m.lo,hours:"",phone:"",website:"",cuisine:m.cuisine||""}};throw e}};
+   const loadPlace=async nm=>{const key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);let j=PLC.get(key);if(j)return j;if(PLP.has(key))return PLP.get(key);
+    const pr=(async()=>{
+     try{const ac=new AbortController(),tt=setTimeout(()=>ac.abort(),20000);let r;try{r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`,{signal:ac.signal})}catch(e){throw new Error(e.name==="AbortError"?"It took too long to respond.":e.message)}finally{clearTimeout(tt)}j=await r.json();if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));j._t=Date.now();PLC.set(key,j);plcSave();return j}
+      catch(e){const sn=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,""),want=sn(nm),m=((st.near&&st.near.items)||[]).filter(x=>hit(sn(x.name),want)).sort((a,b)=>a.mi-b.mi)[0];
+       if(m)return{found:true,fallback:1,count:1,others:[],place:{name:m.name,addr:m.addr||"",mi:m.mi,la:m.la,lo:m.lo,hours:"",phone:"",website:"",cuisine:m.cuisine||""}};throw e}})();
+    PLP.set(key,pr);try{return await pr}finally{PLP.delete(key)}};
    const placeLook=async()=>{const q=st.iq,box=$("#pc");if(!box)return;const my=++pseq;
     if(q.length<3){box.innerHTML="";return}
     const top=rests(q)[0],FW=/^(salads?|burgers?|burritos?|bowls?|chicken|pizzas?|tacos?|sandwich(es)?|wings?|fries|soups?|steaks?|fish|shrimp|rice|beans?|pasta|breakfast|noodles?|wraps?|eggs?|bagels?|smoothies?|shakes?|sushi|ribs?|nuggets?|protein|vegan|healthy|lunch|dinner|and|with|the|a)$/i;
@@ -877,7 +881,7 @@ function wire(){
     const nm=(top&&top.name)||(st.iqRaw||q),key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);
     let j=PLC.get(key);
     if(!j){box.innerHTML=hd("Nearest location")+ldH(nm);
-     try{const r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(my!==pseq)return;if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));PLC.set(key,j)}
+     try{const r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(my!==pseq)return;if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));j._t=Date.now();PLC.set(key,j);plcSave()}
      catch(e){if(my!==pseq)return;
       const sn=s=>s.toLowerCase().replace(/[^a-z0-9 ]/g,""),want=sn(nm),m=((st.near&&st.near.items)||[]).filter(x=>hit(sn(x.name),want)).sort((a,b)=>a.mi-b.mi)[0];
       if(m){showPlace({found:true,fallback:1,count:1,others:[],place:{name:m.name,addr:m.addr||"",mi:m.mi,la:m.la,lo:m.lo,hours:"",phone:"",website:"",cuisine:m.cuisine||""}},q);return}

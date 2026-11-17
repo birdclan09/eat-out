@@ -93,7 +93,7 @@ module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "no-store");
   if (req.method !== "POST") return res.status(405).json({ error: "Use POST." });
   if (!process.env.ANTHROPIC_API_KEY) return res.status(501).json({ error: "ANTHROPIC_API_KEY is not set on the server." });
-  if (process.env.EDIT_KEY && req.headers["x-edit-key"] !== process.env.EDIT_KEY) return res.status(401).json({ error: "Wrong or missing edit key." });
+  if (!require("./_auth").ok(req)) return res.status(401).json({ error: "Wrong or missing edit key." });
   try {
     const b = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
     const name = String(b.name || "").slice(0, 100);

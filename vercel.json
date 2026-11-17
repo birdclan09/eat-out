@@ -1,1 +1,36 @@
-{"functions":{"api/nearby.js":{"maxDuration":15},"api/places.js":{"maxDuration":15},"api/import.js":{"maxDuration":300},"api/menus.js":{"maxDuration":20},"api/verify.js":{"maxDuration":300},"api/place.js":{"maxDuration":25},"api/geocode.js":{"maxDuration":15},"api/state.js":{"maxDuration":20}},"git":{"deploymentEnabled":{"data":false}}}
+{
+  "functions": {
+    "api/nearby.js": {
+      "maxDuration": 15
+    },
+    "api/places.js": {
+      "maxDuration": 15
+    },
+    "api/import.js": {
+      "maxDuration": 300
+    },
+    "api/menus.js": {
+      "maxDuration": 20
+    },
+    "api/verify.js": {
+      "maxDuration": 300
+    },
+    "api/place.js": {
+      "maxDuration": 25
+    },
+    "api/geocode.js": {
+      "maxDuration": 15
+    },
+    "api/state.js": {
+      "maxDuration": 20
+    },
+    "api/login.js": {
+      "maxDuration": 10
+    }
+  },
+  "git": {
+    "deploymentEnabled": {
+      "data": false
+    }
+  }
+}

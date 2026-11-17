@@ -485,7 +485,8 @@ const PICKS={
 
 /* ---- Supplemental menus: added by hand, imported from a link/PDF/photo, or found by online search. Saved to data/menus.json in the repo via /api/menus. ---- */
 let SUP=(()=>{try{return JSON.parse(localStorage.getItem("eo_sup")||"{}")}catch(e){return{}}})();
-const EK={get:()=>{try{return localStorage.getItem("eo_ek")||""}catch(e){return""}},set:v=>{try{localStorage.setItem("eo_ek",v)}catch(e){}}};
+const EK={get:()=>{try{return localStorage.getItem("eo_ek")||""}catch(e){return""}},set:v=>{try{localStorage.setItem("eo_ek",v)}catch(e){}EK.login(v)},login:v=>{if(!v)return Promise.resolve();return fetch("/api/login",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},body:JSON.stringify({key:v})}).catch(()=>{})}};
+{const k0=EK.get();if(k0)EK.login(k0)}
 const supCache=()=>{try{localStorage.setItem("eo_sup",JSON.stringify(SUP))}catch(e){}};
 const supOf=n=>SUP[norm(n)]||null;
 const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return String(u)}};

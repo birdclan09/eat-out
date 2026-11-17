@@ -16,7 +16,7 @@ module.exports = async (req, res) => {
   try {
     if (req.method === "GET") { const { menus } = await readMenus(); return res.status(200).json({ menus, configured: true, locked: !!process.env.EDIT_KEY }); }
     if (req.method !== "POST") return res.status(405).json({ error: "Use GET or POST." });
-    if (process.env.EDIT_KEY && req.headers["x-edit-key"] !== process.env.EDIT_KEY) return res.status(401).json({ error: "Wrong or missing edit key." });
+    if (!require("./_auth").ok(req)) return res.status(401).json({ error: "Wrong or missing edit key." });
     const b = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
     const name = String(b.name || "").trim().slice(0, 100), id = norm(name);
     if (!id) return res.status(400).json({ error: "Missing restaurant name." });

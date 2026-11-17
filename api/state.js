@@ -18,7 +18,7 @@ function clean(s) {
 module.exports = async (req, res) => {
   res.setHeader("Cache-Control", "no-store");
   if (!process.env.GITHUB_TOKEN) return res.status(200).json({ configured: false, state: null });
-  if (process.env.EDIT_KEY && req.headers["x-edit-key"] !== process.env.EDIT_KEY) return res.status(401).json({ error: "Wrong or missing edit key." });
+  if (!require("./_auth").ok(req)) return res.status(401).json({ error: "Wrong or missing edit key." });
   const b = req.method === "POST" ? (typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {}) : {};
   const u = String((req.method === "POST" ? b.u : req.query.u) || "me");
   if (!/^[a-z0-9_-]{1,32}$/.test(u)) return res.status(400).json({ error: "Bad user id." });

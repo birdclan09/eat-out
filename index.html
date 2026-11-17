@@ -872,7 +872,9 @@ function wire(){
      if(m)return{found:true,fallback:1,count:1,others:[],place:{name:m.name,addr:m.addr||"",mi:m.mi,la:m.la,lo:m.lo,hours:"",phone:"",website:"",cuisine:m.cuisine||""}};throw e}};
    const placeLook=async()=>{const q=st.iq,box=$("#pc");if(!box)return;const my=++pseq;
     if(q.length<3){box.innerHTML="";return}
-    const top=rests(q)[0],nm=(top&&top.name)||(st.iqRaw||q),key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);
+    const top=rests(q)[0],FW=/^(salads?|burgers?|burritos?|bowls?|chicken|pizzas?|tacos?|sandwich(es)?|wings?|fries|soups?|steaks?|fish|shrimp|rice|beans?|pasta|breakfast|noodles?|wraps?|eggs?|bagels?|smoothies?|shakes?|sushi|ribs?|nuggets?|protein|vegan|healthy|lunch|dinner|and|with|the|a)$/i;
+    if(!top&&q.split(/\s+/).filter(Boolean).every(w=>FW.test(w))){box.innerHTML="";return}
+    const nm=(top&&top.name)||(st.iqRaw||q),key=norm(nm)+"|"+HOME.la.toFixed(2)+","+HOME.lo.toFixed(2);
     let j=PLC.get(key);
     if(!j){box.innerHTML=hd("Nearest location")+'<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(nm)+'”…</div>';
      try{const r=await fetch(`/api/place?name=${encodeURIComponent(nm)}&lat=${HOME.la}&lon=${HOME.lo}`);j=await r.json();if(my!==pseq)return;if(!r.ok)throw new Error((j.error||"Lookup failed")+(j.detail?" ("+j.detail+")":""));PLC.set(key,j)}
@@ -887,7 +889,7 @@ function wire(){
     if(!row.classList.contains("open")){if(has)nx.remove();return}if(has)return;const f=FREG[row.querySelector("[data-fav]")?.dataset.fav];if(!f||!f.r)return;
     const bx=document.createElement("div");bx.className="rx";bx.innerHTML='<div class="empty" style="padding:8px 0">Finding the nearest “'+esc(f.r)+'”…</div>';row.insertAdjacentElement("afterend",bx);
     const noInfo=m=>{bx.innerHTML='<div class="supbox" style="margin:0"><div class="mu">'+m+'</div></div>'};
-    try{const j=await loadPlace(f.r);if(!bx.isConnected)return;if(!j.found)noInfo("No location details found for "+esc(f.r)+".");else showPlace(j,"",bx,"f")}catch(er){if(bx.isConnected)noInfo("Couldn't look up the location right now.")}});
+    try{const j=await loadPlace(f.r);if(!bx.isConnected)return;if(!j.found)noInfo("No location details found for "+esc(f.r)+".");else showPlace(j,"",bx,"f")}catch(er){if(bx.isConnected)noInfo("Couldn't look up the location for "+esc(f.r)+". "+esc(String(er.message||er).slice(0,120)))}});
    draw();online(st.iq);placeLook();if(!st.near){nearby(HOME.la,HOME.lo,st.rad).then(j=>{if(!st.near)st.near=j;if(st.tab==="find")draw()}).catch(()=>{})}
    $("#fq").onkeydown=e=>{if(e.key==="Enter"){e.preventDefault();clearTimeout(tm);st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();online(st.iq);placeLook();e.target.blur()}};$("#fq-go").onclick=()=>{clearTimeout(tm);const v=$("#fq").value;st.iqRaw=v.trim();st.iq=st.iqRaw.toLowerCase();draw();online(st.iq);placeLook();$("#fq").blur()};$("#fq").oninput=e=>{st.iqRaw=e.target.value.trim();st.iq=st.iqRaw.toLowerCase();draw();clearTimeout(tm);tm=setTimeout(()=>{online(st.iq);placeLook()},500)}}
 }

@@ -10620,5 +10620,909 @@
    "kept": 0,
    "t": "2026-11-17T16:19:21.226Z"
   }
+ },
+ "superchix": {
+  "name": "Super Chix",
+  "items": [
+   {
+    "n": "The Simple (breaded)",
+    "c": "Sandwiches",
+    "cal": 480,
+    "p": 44,
+    "cb": 41,
+    "f": 14,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "The Simple (grilled)",
+    "c": "Sandwiches",
+    "cal": 450,
+    "p": 48,
+    "cb": 27,
+    "f": 15,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "The Deluxe (breaded)",
+    "c": "Sandwiches",
+    "cal": 550,
+    "p": 45,
+    "cb": 42,
+    "f": 22,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "The Deluxe (grilled)",
+    "c": "Sandwiches",
+    "cal": 520,
+    "p": 49,
+    "cb": 28,
+    "f": 23,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Chicken Slider (breaded)",
+    "c": "Sandwiches",
+    "cal": 450,
+    "p": 24,
+    "cb": 44,
+    "f": 20,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Chicken Slider (grilled)",
+    "c": "Sandwiches",
+    "cal": 420,
+    "p": 27,
+    "cb": 33,
+    "f": 20,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Bacavo Ranch (breaded)",
+    "c": "Sandwiches",
+    "cal": 730,
+    "p": 59,
+    "cb": 44,
+    "f": 34,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Bacavo Ranch (grilled)",
+    "c": "Sandwiches",
+    "cal": 700,
+    "p": 63,
+    "cb": 31,
+    "f": 35,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Blackened Cajun (grilled)",
+    "c": "Sandwiches",
+    "cal": 500,
+    "p": 48,
+    "cb": 27,
+    "f": 21,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Cordon Bleu (breaded)",
+    "c": "Sandwiches",
+    "cal": 770,
+    "p": 62,
+    "cb": 48,
+    "f": 37,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Cordon Bleu (grilled)",
+    "c": "Sandwiches",
+    "cal": 740,
+    "p": 66,
+    "cb": 34,
+    "f": 37,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Cheesy BBQ (breaded)",
+    "c": "Sandwiches",
+    "cal": 920,
+    "p": 59,
+    "cb": 82,
+    "f": 44,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Cheesy BBQ (grilled)",
+    "c": "Sandwiches",
+    "cal": 890,
+    "p": 62,
+    "cb": 68,
+    "f": 44,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Nashville Hot (breaded)",
+    "c": "Sandwiches",
+    "cal": 600,
+    "p": 46,
+    "cb": 42,
+    "f": 26,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Nashville Hot (grilled)",
+    "c": "Sandwiches",
+    "cal": 570,
+    "p": 50,
+    "cb": 29,
+    "f": 27,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Buffalo Ranch (breaded)",
+    "c": "Sandwiches",
+    "cal": 530,
+    "p": 45,
+    "cb": 43,
+    "f": 21,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Buffalo Ranch (grilled)",
+    "c": "Sandwiches",
+    "cal": 500,
+    "p": 48,
+    "cb": 29,
+    "f": 21,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Crispy Avocado",
+    "c": "Sandwiches",
+    "cal": 640,
+    "p": 18,
+    "cb": 56,
+    "f": 40,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Grilled Cheese",
+    "c": "Sandwiches",
+    "cal": 390,
+    "p": 17,
+    "cb": 26,
+    "f": 24,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Korean BBQ (breaded)",
+    "c": "Sandwiches",
+    "cal": 610,
+    "p": 44,
+    "cb": 64,
+    "f": 17,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Korean BBQ (grilled)",
+    "c": "Sandwiches",
+    "cal": 580,
+    "p": 48,
+    "cb": 51,
+    "f": 18,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Super Strami (breaded)",
+    "c": "Sandwiches",
+    "cal": 590,
+    "p": 54,
+    "cb": 42,
+    "f": 21,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Super Strami (grilled)",
+    "c": "Sandwiches",
+    "cal": 560,
+    "p": 58,
+    "cb": 29,
+    "f": 22,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Hot Honey (breaded)",
+    "c": "Sandwiches",
+    "cal": 740,
+    "p": 55,
+    "cb": 68,
+    "f": 27,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Hot Honey (grilled)",
+    "c": "Sandwiches",
+    "cal": 710,
+    "p": 59,
+    "cb": 54,
+    "f": 28,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Super Parm (breaded)",
+    "c": "Sandwiches",
+    "cal": 670,
+    "p": 62,
+    "cb": 31,
+    "f": 30,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Super Parm (grilled)",
+    "c": "Sandwiches",
+    "cal": 630,
+    "p": 52,
+    "cb": 45,
+    "f": 21,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Chicken Slider (grilled) (kids menu)",
+    "c": "Kids Menu",
+    "cal": 420,
+    "p": 27,
+    "cb": 33,
+    "f": 12,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "2 Piece Chicken Tender (breaded) (kids menu)",
+    "c": "Kids Menu",
+    "cal": 240,
+    "p": 42,
+    "cb": 0,
+    "f": 7,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "2 Piece Chicken Tender (grilled) (kids menu)",
+    "c": "Kids Menu",
+    "cal": 290,
+    "p": 35,
+    "cb": 23,
+    "f": 6,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "1 Piece Chicken Tender (breaded)",
+    "c": "Tenders",
+    "cal": 150,
+    "p": 17,
+    "cb": 12,
+    "f": 3,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "1 Piece Chicken Tender (grilled)",
+    "c": "Tenders",
+    "cal": 120,
+    "p": 21,
+    "cb": 0,
+    "f": 3,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "2 Piece Chicken Tender (breaded)",
+    "c": "Tenders",
+    "cal": 290,
+    "p": 35,
+    "cb": 23,
+    "f": 6,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "2 Piece Chicken Tender (grilled)",
+    "c": "Tenders",
+    "cal": 260,
+    "p": 42,
+    "cb": 0,
+    "f": 7,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "3 Piece Chicken Tender (breaded)",
+    "c": "Tenders",
+    "cal": 440,
+    "p": 52,
+    "cb": 35,
+    "f": 9,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "3 Piece Chicken Tender (grilled)",
+    "c": "Tenders",
+    "cal": 410,
+    "p": 63,
+    "cb": 1,
+    "f": 11,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "4 Piece Chicken Tender (breaded)",
+    "c": "Tenders",
+    "cal": 580,
+    "p": 69,
+    "cb": 47,
+    "f": 12,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "4 Piece Chicken Tender (grilled)",
+    "c": "Tenders",
+    "cal": 550,
+    "p": 84,
+    "cb": 2,
+    "f": 14,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "5 Piece Chicken Tender (breaded)",
+    "c": "Tenders",
+    "cal": 700,
+    "p": 83,
+    "cb": 56,
+    "f": 14,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "5 Piece Chicken Tender (grilled)",
+    "c": "Tenders",
+    "cal": 670,
+    "p": 101,
+    "cb": 2,
+    "f": 17,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "6 Piece Chicken Tender (breaded)",
+    "c": "Tenders",
+    "cal": 880,
+    "p": 104,
+    "cb": 70,
+    "f": 18,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "6 Piece Chicken Tender (grilled)",
+    "c": "Tenders",
+    "cal": 850,
+    "p": 126,
+    "cb": 3,
+    "f": 22,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Southwest Salad (breaded)",
+    "c": "Salads",
+    "cal": 680,
+    "p": 45,
+    "cb": 45,
+    "f": 36,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Southwest Salad (grilled)",
+    "c": "Salads",
+    "cal": 640,
+    "p": 49,
+    "cb": 31,
+    "f": 37,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Southwest Salad (no chicken)",
+    "c": "Salads",
+    "cal": 400,
+    "p": 8,
+    "cb": 30,
+    "f": 30,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "House Salad (breaded)",
+    "c": "Salads",
+    "cal": 800,
+    "p": 57,
+    "cb": 45,
+    "f": 45,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "House Salad (grilled)",
+    "c": "Salads",
+    "cal": 760,
+    "p": 61,
+    "cb": 31,
+    "f": 46,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "House Salad (no chicken)",
+    "c": "Salads",
+    "cal": 520,
+    "p": 20,
+    "cb": 30,
+    "f": 39,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Buffalo Ranch Salad (breaded)",
+    "c": "Salads",
+    "cal": 650,
+    "p": 49,
+    "cb": 33,
+    "f": 37,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Buffalo Ranch Salad (grilled)",
+    "c": "Salads",
+    "cal": 610,
+    "p": 52,
+    "cb": 20,
+    "f": 38,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Buffalo Ranch Salad (no chicken)",
+    "c": "Salads",
+    "cal": 370,
+    "p": 11,
+    "cb": 19,
+    "f": 31,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Nashville Hot Salad (breaded)",
+    "c": "Salads",
+    "cal": 750,
+    "p": 50,
+    "cb": 32,
+    "f": 48,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Nashville Hot Salad (grilled)",
+    "c": "Salads",
+    "cal": 720,
+    "p": 54,
+    "cb": 19,
+    "f": 49,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Nashville Hot Salad (no chicken)",
+    "c": "Salads",
+    "cal": 480,
+    "p": 13,
+    "cb": 18,
+    "f": 42,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Asian Sesame Salad (breaded)",
+    "c": "Salads",
+    "cal": 690,
+    "p": 47,
+    "cb": 67,
+    "f": 28,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Asian Sesame Salad (grilled)",
+    "c": "Salads",
+    "cal": 650,
+    "p": 50,
+    "cb": 54,
+    "f": 28,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Asian Sesame Salad (no chicken)",
+    "c": "Salads",
+    "cal": 410,
+    "p": 9,
+    "cb": 53,
+    "f": 21,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Crispy Avo Salad",
+    "c": "Salads",
+    "cal": 1100,
+    "p": 34,
+    "cb": 76,
+    "f": 77,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Vanilla Custard (kids)",
+    "c": "Premium Frozen Custard",
+    "cal": 260,
+    "p": 6,
+    "cb": 26,
+    "f": 31,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Vanilla Custard (single)",
+    "c": "Premium Frozen Custard",
+    "cal": 300,
+    "p": 6,
+    "cb": 32,
+    "f": 16,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Vanilla Custard (double)",
+    "c": "Premium Frozen Custard",
+    "cal": 600,
+    "p": 12,
+    "cb": 64,
+    "f": 32,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Chocolate Custard (kids)",
+    "c": "Premium Frozen Custard",
+    "cal": 270,
+    "p": 6,
+    "cb": 28,
+    "f": 14,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Chocolate Custard (single)",
+    "c": "Premium Frozen Custard",
+    "cal": 340,
+    "p": 7,
+    "cb": 45,
+    "f": 16,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Chocolate Custard (double)",
+    "c": "Premium Frozen Custard",
+    "cal": 680,
+    "p": 14,
+    "cb": 90,
+    "f": 32,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Strawberry Shake",
+    "c": "Premium Frozen Custard",
+    "cal": 930,
+    "p": 21,
+    "cb": 106,
+    "f": 46,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Mint Shake",
+    "c": "Premium Frozen Custard",
+    "cal": 930,
+    "p": 21,
+    "cb": 106,
+    "f": 46,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Vanilla Shake",
+    "c": "Premium Frozen Custard",
+    "cal": 860,
+    "p": 21,
+    "cb": 91,
+    "f": 46,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Chocolate Shake",
+    "c": "Premium Frozen Custard",
+    "cal": 900,
+    "p": 21,
+    "cb": 114,
+    "f": 42,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Mint Oreo Cold Fusion",
+    "c": "Premium Frozen Custard",
+    "cal": 1100,
+    "p": 19,
+    "cb": 137,
+    "f": 53,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Pretzel M&M's Cold Fusion",
+    "c": "Premium Frozen Custard",
+    "cal": 1190,
+    "p": 23,
+    "cb": 151,
+    "f": 55,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Reese's Cold Fusion",
+    "c": "Premium Frozen Custard",
+    "cal": 1250,
+    "p": 26,
+    "cb": 134,
+    "f": 69,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Fries (large)",
+    "c": "Sides",
+    "cal": 1150,
+    "p": 16,
+    "cb": 131,
+    "f": 68,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Fries (regular)",
+    "c": "Sides",
+    "cal": 570,
+    "p": 8,
+    "cb": 66,
+    "f": 34,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Fries (kids)",
+    "c": "Sides",
+    "cal": 290,
+    "p": 4,
+    "cb": 33,
+    "f": 17,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Cheese Fry (regular)",
+    "c": "Sides",
+    "cal": 690,
+    "p": 9,
+    "cb": 71,
+    "f": 42,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Cheese Fry (large)",
+    "c": "Sides",
+    "cal": 1260,
+    "p": 17,
+    "cb": 137,
+    "f": 76,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Loaded Fry (regular)",
+    "c": "Sides",
+    "cal": 790,
+    "p": 17,
+    "cb": 73,
+    "f": 50,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Loaded Fry (large)",
+    "c": "Sides",
+    "cal": 1370,
+    "p": 24,
+    "cb": 138,
+    "f": 84,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Fried Pickle (regular)",
+    "c": "Sides",
+    "cal": 890,
+    "p": 7,
+    "cb": 99,
+    "f": 53,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Fried Pickle (large)",
+    "c": "Sides",
+    "cal": 1790,
+    "p": 15,
+    "cb": 198,
+    "f": 106,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Single Chicken Filet (breaded)",
+    "c": "Sides",
+    "cal": 270,
+    "p": 37,
+    "cb": 15,
+    "f": 6,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Single Chicken Filet (grilled)",
+    "c": "Sides",
+    "cal": 240,
+    "p": 41,
+    "cb": 0,
+    "f": 6,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Coleslaw (regular)",
+    "c": "Sides",
+    "cal": 180,
+    "p": 2,
+    "cb": 15,
+    "f": 13,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Coleslaw (large)",
+    "c": "Sides",
+    "cal": 360,
+    "p": 3,
+    "cb": 30,
+    "f": 26,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Mandarin Oranges",
+    "c": "Sides",
+    "cal": 45,
+    "p": 0,
+    "cb": 11,
+    "f": 0,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Fudge Brownie",
+    "c": "Sides",
+    "cal": 350,
+    "p": 5,
+    "cb": 42,
+    "f": 19,
+    "b": "",
+    "v": 2
+   },
+   {
+    "n": "Rice Crispy Square",
+    "c": "Sides",
+    "cal": 220,
+    "p": 2,
+    "cb": 42,
+    "f": 4.5,
+    "b": "",
+    "v": 2
+   }
+  ],
+  "source": {
+   "url": "https://irp.cdn-website.com/cc1c115d/files/uploaded/Nutritional%20Info_042123-1.pdf",
+   "kind": "pdf",
+   "t": "2026-11-18T05:47:09.278Z",
+   "official": false
+  },
+  "updated": "2026-11-18T05:47:09.278Z",
+  "log": [
+   {
+    "t": "2026-11-18T05:47:09.278Z",
+    "n": 87,
+    "how": "pdf",
+    "replace": false,
+    "check": {
+     "ok": true,
+     "n": 87,
+     "held": 0,
+     "kept": 0,
+     "t": "2026-11-18T05:47:09.278Z"
+    }
+   }
+  ],
+  "check": {
+   "ok": true,
+   "n": 87,
+   "held": 0,
+   "kept": 0,
+   "t": "2026-11-18T05:47:09.278Z"
+  }
  }
 }

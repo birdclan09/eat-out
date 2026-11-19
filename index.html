@@ -675,7 +675,7 @@ SH.busy=false;clearInterval(SH.tm);shDraw()}
 let isDupF=()=>false;
 function shDraw(){const s=$("#sheet");if(!s)return;isDupF=()=>false;const name=SH.name,r=st.rev&&st.rev.name===name?st.rev:null,H=SH.hand||{};
  const TABS=[["search","Online"],["link","Link"],["file","File Import"],["hand","Manual Entry"]],note=SH.note?`<div class="mu" style="margin-top:12px">${esc(SH.note)}</div>`:"";
- const TB={search:`<div class="mu" style="margin:4px 0">Looks for ${esc(name)}'s own published nutrition numbers. You review them before anything is saved.</div><button class="pri" id="t-search">Import now</button>`,
+ const TB={search:`<div class="mu" style="margin:4px 0">Looks for ${esc(name)}'s own published nutrition numbers. You review them before anything is saved.</div><button class="pri" id="t-search">Search Online</button>`,
   link:`<div class="mu" style="margin:4px 0 10px">A menu or nutrition page, or a link to a PDF.</div><input class="search" id="s-url" placeholder="https://" inputmode="url" autocapitalize="off"><button class="pri" id="t-link">Import link</button>`,
   file:`<div class="mu" style="margin:4px 0">A nutrition PDF (up to 3 MB) or a photo of the menu.</div><button class="pri" id="t-file">Choose File</button><input type="file" id="s-f" accept="application/pdf,image/*" hidden>`,
   hand:`<input class="search" id="m-n" placeholder="Item name" value="${esc(H.n||"")}"><div class="bar"><input id="m-c" inputmode="decimal" placeholder="Cal" value="${esc(H.c||"")}"><input id="m-p" inputmode="decimal" placeholder="Protein" value="${esc(H.p||"")}"><input id="m-cb" inputmode="decimal" placeholder="Carbs" value="${esc(H.cb||"")}"><input id="m-f" inputmode="decimal" placeholder="Fat" value="${esc(H.f||"")}"></div><div class="mu" style="margin-top:6px">Grams for protein, carbs and fat.</div><button class="pri" id="t-hand">Add item</button>`};
@@ -705,7 +705,7 @@ function shDraw(){const s=$("#sheet");if(!s)return;isDupF=()=>false;const name=S
    `<div style="text-align:center;margin-top:12px"><a href="#" id="rv-no" style="color:var(--mute)">Discard</a></div>`+note}
  else if(r)body=`<div class="empty">${esc([].concat(r.notes||[]).join(" ")||"No items with calories and protein were found.")}</div><div style="text-align:center"><a href="#" id="rv-no" style="color:var(--tx)">Try another way</a></div>`+note;
  else body=`<div class="seg" id="sh-t" style="margin-bottom:12px">${TABS.map(t=>`<button data-k="${t[0]}"${SH.tab===t[0]?' class="on"':""}>${t[1]}</button>`).join("")}</div>`+TB[SH.tab]+note;
- s.innerHTML=`<div class="sh"><div class="shh"><b>Add items</b><span class="mu">${esc(name)}</span><button id="sh-x" aria-label="Close">✕</button></div>${body}</div>`;
+ s.innerHTML=`<div class="sh"><div class="shh"><b>Add Items</b><span class="mu">${esc(name)}</span><button id="sh-x" aria-label="Close">✕</button></div>${body}</div>`;
  const g=id=>s.querySelector(id);
  g("#sh-x").onclick=shClose;
  s.querySelectorAll("#sh-t button").forEach(b=>b.onclick=()=>{SH.tab=b.dataset.k;SH.note="";shDraw()});

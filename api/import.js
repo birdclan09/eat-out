@@ -137,7 +137,7 @@ module.exports = async (req, res) => {
     // mode "match": look up only the wanted items (the user picked near-duplicates) in the official source; same pipeline as "search".
     let matchPrompt = "";
     if (b.mode === "match") {
-      const want = (Array.isArray(b.want) ? b.want : []).slice(0, 30);
+      const want = (Array.isArray(b.want) ? b.want : []).slice(0, 100);
       if (!want.length) return send(400, { error: "No items to look up." });
       matchPrompt = MATCH + "\n\nWANTED ITEMS:\n" + want.map((w, x) => [x, String(w[0] || "").replace(/\|/g, "/").slice(0, 120), w[1] ?? "", w[2] ?? "", w[3] ?? "", w[4] ?? ""].join("|")).join("\n");
       b.mode = "search";

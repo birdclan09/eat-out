@@ -5,6 +5,8 @@ const PROMPT = `Extract nutrition facts for menu items from the source. Return O
 {"items":[["name","category","serving",calories,protein,carbs,fat]],"notes":["",""]}
 Each item is one array in that order. Use null for carbs or fat if not stated, and "" for category or serving if not stated.
 Rules: only include items where the source states calories and protein (grams). Never estimate or invent numbers. Use the numbers exactly as printed; if protein (or carbs or fat) is printed as "<1", "less than 1" or "trace", still include the item and enter 0 for that value (never skip an item for that reason), and add one short note naming how many items had "<1" and that they were saved as 0; if a size is listed, make the size part of the item name. Carbs and fat may be null if not stated. "notes" is a list of at most 5 short plain-English bullets (under 15 words each) the user should double-check: first the date or revision shown on the source if any, then any items whose printed numbers look inconsistent (name the item), then anything skipped. Leave it as [] if nothing needs checking.`;
+const MATCH = `You are matching menu items to a restaurant's official nutrition source. WANTED items are listed below, one per line as: index|name|calories|protein_g|carbs_g|fat_g. They came from an unreliable online database, so names and numbers may be slightly off; the size (small, medium, large) matters.
+For each wanted item, find the same item and size in the source. Return ONLY compact JSON on one line: {"items":[["name as printed in the source",index,"serving",calories,protein,carbs,fat]],"notes":[]}. The second value of each item is the WANTED index (a number). Use null for carbs or fat if not stated. Use the numbers exactly as printed (treat "<1" or "trace" as 0). Never estimate or invent numbers. Include only wanted items you actually found in the source, and skip the rest. If the source has the item at several sizes, return the size that matches the wanted name. "notes" is up to 3 short bullets, for example the date of the source.`;
 const { loadUrl } = require("./_src");
 
 // Reads the model's reply. If the JSON is cut off (a very long table) or has stray text, keep every complete item.
@@ -72,7 +74,7 @@ async function ask(content, tools) {
 const { candidates } = require("./_find");
 const BLOCK = d => d.kind === "pdf" ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: d.data } } : d.kind === "image" ? { type: "image", source: { type: "base64", media_type: d.mime, data: d.data } } : { type: "text", text: "SOURCE PAGE TEXT:\n" + d.text };
 // Step 1: a small web search only to locate the restaurant's official site / guide. Step 2: read its newest nutrition guide in full.
-async function findOfficial(name, near, emit) {
+async function findOfficial(name, near, emit, prompt) {
   const t0 = Date.now();
   emit({ step: 1, msg: "Looking for the official website" });
   const r = await run([{ type: "text", text: `Find the official website of the restaurant "${name}"${near ? " near " + String(near).slice(0, 60) : ""} and its own published nutrition (or nutrition and allergen) guide, usually a PDF on the restaurant's own domain. Reply with ONLY URLs, one per line: any official nutrition guide PDF or nutrition page first, then the official homepage. No other text.` }], [{ type: "web_search_20250305", name: "web_search", max_uses: 3 }]);
@@ -87,7 +89,7 @@ async function findOfficial(name, near, emit) {
       let hh = ""; try { hh = new URL(u).hostname.replace(/^www\./, ""); } catch (e) {}
       emit({ step: 2, msg: best ? "Comparing with another edition" : "Reading the nutrition guide on " + hh });
       const d = await loadUrl(u);
-      const o = await ask([BLOCK(d), { type: "text", text: `Restaurant: ${name}\n\n${PROMPT}` }]);
+      const o = await ask([BLOCK(d), { type: "text", text: `Restaurant: ${name}\n\n${prompt || PROMPT}` }]);
       if ((o.items || []).length > (best ? best.out.items.length : 0)) best = { out: o, url: u, kind: d.kind };
     } catch (e) { /* this candidate had no usable numbers; try the next */ }
   }
@@ -132,11 +134,20 @@ module.exports = async (req, res) => {
   try {
     const b = typeof req.body === "string" ? JSON.parse(req.body || "{}") : req.body || {};
     const name = String(b.name || "").slice(0, 100);
+    // mode "match": look up only the wanted items (the user picked near-duplicates) in the official source; same pipeline as "search".
+    let matchPrompt = "";
+    if (b.mode === "match") {
+      const want = (Array.isArray(b.want) ? b.want : []).slice(0, 30);
+      if (!want.length) return send(400, { error: "No items to look up." });
+      matchPrompt = MATCH + "\n\nWANTED ITEMS:\n" + want.map((w, x) => [x, String(w[0] || "").replace(/\|/g, "/").slice(0, 120), w[1] ?? "", w[2] ?? "", w[3] ?? "", w[4] ?? ""].join("|")).join("\n");
+      b.mode = "search";
+    }
     let content, tools, source = null;
     if (b.mode === "search") {
       if (!name) return send(400, { error: "Missing restaurant name." });
       tools = [{ type: "web_search_20250305", name: "web_search", max_uses: 5 }];
-      content = [{ type: "text", text: `Find published nutrition information (calories, protein, carbs, fat) for the menu of the restaurant "${name}"${b.near ? " near " + String(b.near).slice(0, 60) : ""}. First choice: the restaurant's own website or official nutrition PDF. If it has no nutrition numbers, you may use a third-party page that republishes the restaurant's published nutrition numbers (for example a nutrition database or a delivery/menu listing that shows calories and protein). Never use pages that say their numbers are estimates or AI-generated, and skip reviews and forums. Use ONE best page for all items, and copy numbers exactly as printed there. Add "source":"<the exact URL you used>" to the JSON. If no page has real nutrition numbers, return {"items":[],"notes":["No page with published nutrition numbers was found."]} and do not guess.\n\n${PROMPT}` }];
+      if (matchPrompt) content = [{ type: "text", text: `Restaurant: "${name}"${b.near ? " near " + String(b.near).slice(0, 60) : ""}. Find its own published nutrition numbers (official website or nutrition PDF first) for the wanted items below.\n\n${matchPrompt}` }];
+      else content = [{ type: "text", text: `Find published nutrition information (calories, protein, carbs, fat) for the menu of the restaurant "${name}"${b.near ? " near " + String(b.near).slice(0, 60) : ""}. First choice: the restaurant's own website or official nutrition PDF. If it has no nutrition numbers, you may use a third-party page that republishes the restaurant's published nutrition numbers (for example a nutrition database or a delivery/menu listing that shows calories and protein). Never use pages that say their numbers are estimates or AI-generated, and skip reviews and forums. Use ONE best page for all items, and copy numbers exactly as printed there. Add "source":"<the exact URL you used>" to the JSON. If no page has real nutrition numbers, return {"items":[],"notes":["No page with published nutrition numbers was found."]} and do not guess.\n\n${PROMPT}` }];
     } else if (b.mode === "file") {
       if (!b.data || !/^(application\/pdf|image\/(png|jpeg|gif|webp))$/.test(b.mime)) return send(400, { error: "Upload a PDF, PNG or JPEG." });
       content = [b.mime === "application/pdf" ? { type: "document", source: { type: "base64", media_type: b.mime, data: b.data } } : { type: "image", source: { type: "base64", media_type: b.mime, data: b.data } }, { type: "text", text: `Restaurant: ${name}\n\n${PROMPT}` }];
@@ -147,7 +158,7 @@ module.exports = async (req, res) => {
       content = [d.kind === "pdf" ? { type: "document", source: { type: "base64", media_type: "application/pdf", data: d.data } } : d.kind === "image" ? { type: "image", source: { type: "base64", media_type: d.mime, data: d.data } } : { type: "text", text: "SOURCE PAGE TEXT:\n" + d.text }, { type: "text", text: `Restaurant: ${name}\n\n${PROMPT}` }];
     }
     let out, official = null;
-    if (b.mode === "search") { try { official = await findOfficial(name, b.near, emit); } catch (e) { official = null; } }
+    if (b.mode === "search") { try { official = await findOfficial(name, b.near, emit, matchPrompt); } catch (e) { official = null; } }
     if (b.mode !== "search") emit({ step: 2, msg: b.mode === "file" ? "Reading your file" : "Reading the page" });
     if (official) out = official.out;
     else if (b.mode === "search") { emit({ step: 1, msg: "Searching the web for nutrition numbers" }); out = await ask(content, tools).catch(e => (e.trace ? { items: [], notes: [], trace: e.trace } : Promise.reject(e))); }

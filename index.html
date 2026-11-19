@@ -27,6 +27,7 @@ h1{font-size:24px;margin:6px 0 2px}.sub{color:var(--mute);font-size:14px;margin-
 .det b{color:var(--ink)}.ppc.pg{color:var(--pg)}.mt4{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin:6px 0 7px}.mt4>div{background:var(--bg);border-radius:9px;padding:5px 1px 4px;text-align:center;min-width:0}.mt4 b{display:block;font-size:15px;font-weight:800;color:var(--ink);line-height:1.1;white-space:nowrap}.mt4 b small{font-size:10px;font-weight:700;margin-left:1px;color:var(--mute)}.mt4 span{display:block;font-size:10px;margin-top:1px;color:var(--mute);font-weight:500}.mt4 .pp b,.mt4 .pp b small{color:var(--pg)}.open .det{display:block}
 .tabs{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom)}
 .tabs button{flex:1;background:none;border:0;padding:10px 0 9px;color:var(--mute);font-size:12px}
+#rr:has(.row.open[data-top])+#pc{display:none}
 .rlink{color:var(--tx);font-weight:600;white-space:nowrap}
 .tabs button.on{color:var(--tab);font-weight:700}.tabs button.on svg{stroke-width:2.5}.tabs svg{display:block;margin:0 auto 2px;width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
 .bar{display:flex;gap:8px;margin-top:10px}
@@ -872,7 +873,7 @@ function wire(){
    const draw=()=>{const q=st.iq;
     if(q.length<2){$("#rr").innerHTML="";$("#fr").innerHTML=crvH;return}
     const RL=rests(q);
-    $("#rr").innerHTML=(RL.length?hd("Restaurants"):"")+RL.map((x,n)=>`<div class="row" data-r="${n}"><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
+    $("#rr").innerHTML=(RL.length?hd("Restaurants"):"")+RL.map((x,n)=>`<div class="row" data-r="${n}"${n===0?' data-top="1"':""}><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
      "";
     (st.pmx||[]).forEach(m=>{try{m.remove()}catch(e){}});st.pmx=[];
     $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=async()=>{const x=RL[+r.dataset.r],nx=r.nextElementSibling;if(nx&&nx.classList.contains("rx")){nx.remove();r.classList.remove("open");return}

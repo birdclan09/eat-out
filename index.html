@@ -873,7 +873,7 @@ function wire(){
    const draw=()=>{const q=st.iq;
     if(q.length<2){$("#rr").innerHTML="";$("#fr").innerHTML=crvH;return}
     const RL=rests(q);
-    $("#rr").innerHTML=(RL.length?hd("Restaurants"):"")+RL.map((x,n)=>`<div class="row" data-r="${n}"${n===0?' data-top="1"':""}><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
+    $("#rr").innerHTML=(RL.length>1?hd("Restaurants"):"")+(RL.length>1?RL:[]).map((x,n)=>`<div class="row" data-r="${n}"${n===0?' data-top="1"':""}><div class="t"><span class="nm">${isFavR(x.name)?"♥ ":""}${esc(x.name)}</span><span class="mu">${x.mi!=null?(Math.round(x.mi*10)/10)+" mi":""}</span></div><div class="mu">${esc(x.sub)}</div></div>`).join("")+
      "";
     (st.pmx||[]).forEach(m=>{try{m.remove()}catch(e){}});st.pmx=[];
     $("#rr").querySelectorAll("[data-r]").forEach(r=>r.onclick=async()=>{const x=RL[+r.dataset.r],nx=r.nextElementSibling;if(nx&&nx.classList.contains("rx")){nx.remove();r.classList.remove("open");return}
@@ -906,7 +906,7 @@ function wire(){
       if(m){showPlace({found:true,fallback:1,count:1,others:[],place:{name:m.name,addr:m.addr||"",mi:m.mi,la:m.la,lo:m.lo,hours:"",phone:"",website:"",cuisine:m.cuisine||""}},q);return}
       box.innerHTML=hd("Nearest location")+'<div class="empty" style="padding:8px 0">Couldn\'t look up the location right now.<br><span class="mu">'+esc(String(e.message||e).slice(0,160))+'</span></div>'+mbtn(nm);return}}
     if(my!==pseq)return;
-    if(!j.found){box.innerHTML=top?"":hd("Restaurant")+mbtn(nm);return}
+    if(!j.found){box.innerHTML=top&&rests(q).length>1?"":hd("Restaurant")+mbtn(nm);return}
     showPlace(j,q)};
    $("#fr").addEventListener("click",async e=>{if(e.target.closest("[data-fav],[data-add],.rx"))return;const row=e.target.closest("button.row");if(!row)return;const nx=row.nextElementSibling,has=nx&&nx.classList.contains("rx");
     if(!row.classList.contains("open")){if(has)nx.remove();return}if(has)return;const f=FREG[row.querySelector("[data-fav]")?.dataset.fav];if(!f||!f.r)return;

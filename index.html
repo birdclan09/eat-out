@@ -566,7 +566,7 @@ function selBar(){let b=$("#vbar");if(!st.sel){if(b)b.remove();return}
  const n=st.sel.size;b.innerHTML=`<button id="vgo"${n?"":" disabled"}>${n?"Verify "+n+" item"+(n>1?"s":"")+" online":"Tap items to select"}</button><button id="vx">Cancel</button>`;
  $("#vgo").onclick=vRun;$("#vx").onclick=()=>{st.sel=null;selBar();const y=scrollY;render();scrollTo(0,y)}}
 document.addEventListener("click",e=>{if(!st.sel)return;const r=e.target.closest("#items .row");if(!r)return;e.preventDefault();e.stopPropagation();e.stopImmediatePropagation();const k=+r.dataset.sid;if(!k)return;if(st.sel.has(k))st.sel.delete(k);else st.sel.add(k);r.classList.toggle("picked");selBar()},true);
-const VS={items:[],name:"",res:null,err:"",busy:false,t0:0,msg:"",tm:0};
+const VS={ro:false,items:[],name:"",res:null,err:"",busy:false,t0:0,msg:"",tm:0};
 const jac=(a,b)=>{const A=new Set(String(a).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean)),B=new Set(String(b).toLowerCase().split(/[^a-z0-9]+/).filter(Boolean));let k=0;A.forEach(w=>{if(B.has(w))k++});return k/Math.max(1,A.size+B.size-k)};
 function vGroups(){const rs=(VS.res&&VS.res.items)||[],idx=rs.some(o=>/^\d+$/.test(String(o.c))),by=new Map(),miss=[];
  VS.items.forEach((it,x)=>{let o=idx?rs.find(q=>String(q.c)===String(x)):null;
@@ -583,16 +583,16 @@ function vDraw(){const sh=$("#sheet");if(!sh)return;const nm=o=>`${fmt(o.cal)} c
  else if(VS.err)b=`<div class="supbox"><b>Couldn't verify</b><div class="mu" style="margin-top:6px">${esc(VS.err)}</div></div><button class="pri" id="v-retry">Try again</button>`;
  else{const {groups,miss}=vGroups(),src=VS.res&&VS.res.source&&VS.res.source.url,off=src&&offSrc(VS.name,src);
   if(!groups.length)b=`<div class="supbox"><b>Not found</b><div class="mu" style="margin-top:6px">None of the selected items turned up in an official source, so nothing was changed.</div></div>${(VS.res&&VS.res.notes||[]).map(x=>`<div class="mu" style="margin-top:6px">${esc(x)}</div>`).join("")}`;
-  else b=`<div class="mu" style="margin:0 0 10px">${src?(off?"<b>Official numbers</b> from ":"<b>Third-party source</b>, not the restaurant's own: ")+`<a href="${esc(src)}" target="_blank" rel="noopener" style="color:var(--tx)">${esc(host(src))}</a>`:"Source not named"}. Review, then confirm.</div>`+
+  else b=`<div class="mu" style="margin:0 0 10px">${src?(off?"<b>Official numbers</b> from ":"<b>Third-party source</b>, not the restaurant's own: ")+`<a href="${esc(src)}" target="_blank" rel="noopener" style="color:var(--tx)">${esc(host(src))}</a>`:"Source not named"}. ${VS.ro?"Check only.":"Review, then confirm."}</div>`+
    groups.map(g=>`<div class="vg"><div class="vo">${esc(g.o.n)}${g.o.b&&!g.o.n.toLowerCase().includes(g.o.b.toLowerCase())?` <span class="mu" style="font-weight:400">· ${esc(g.o.b)}</span>`:""}</div><div class="vn"><span>${fmt(g.o.cal)} cal</span><span style="color:var(--pg)">${fmt(g.o.p)} g protein</span><span>${g.o.cb==null?"–":fmt(g.o.cb)} g carbs</span><span>${g.o.f==null?"–":fmt(g.o.f)} g fat</span></div>`+g.ws.map(w=>{const same=Math.round(w.cal)===Math.round(g.o.cal)&&Math.round(w.p)===Math.round(g.o.p);return`<div class="vr">${same?"✓ matches":'<span class="vd">differs</span>'}: <b>${esc(w.n)}</b> · ${nm(w)}</div>`}).join("")+`</div>`).join("")+
    (miss.length?`<div class="mu" style="margin:8px 0">Not found in the official source (left unchanged): ${miss.map(w=>esc(w.n)).join("; ")}</div>`:"")+
-   `<button class="pri" id="v-ok">Use official numbers · replace ${groups.reduce((a,g)=>a+g.ws.length,0)} with ${groups.length}</button>`+(VS.res&&VS.res.notes&&VS.res.notes.length?VS.res.notes.map(x=>`<div class="foot" style="margin:8px 0 0">${esc(x)}</div>`).join(""):"");
-  b+=`<button class="addb" id="v-no" style="width:100%;margin-top:10px">${VS.err||VS.busy?"Close":"Keep as is"}</button>`}
+   (VS.ro?`<div class="foot" style="margin:8px 0 0">Check only: these are built-in, hand-checked numbers, so nothing was changed.</div>`:`<button class="pri" id="v-ok">Use official numbers · replace ${groups.reduce((a,g)=>a+g.ws.length,0)} with ${groups.length}</button>`)+(VS.res&&VS.res.notes&&VS.res.notes.length?VS.res.notes.map(x=>`<div class="foot" style="margin:8px 0 0">${esc(x)}</div>`).join(""):"");
+  b+=`<button class="addb" id="v-no" style="width:100%;margin-top:10px">${VS.ro||VS.err||VS.busy?"Close":"Keep as is"}</button>`}
  sh.innerHTML=`<div class="sh"><div class="shh"><b>Verify items</b><span class="mu">${esc(VS.name)}</span><button id="v-x" aria-label="Close">✕</button></div>${b}</div>`;
  $("#v-x").onclick=()=>shClose();const vn=$("#v-no");if(vn)vn.onclick=()=>shClose();
  const rt=$("#v-retry");if(rt)rt.onclick=vRun;const ok=$("#v-ok");if(ok)ok.onclick=vApply}
 async function vRun(){const its=[...(st.sel||[])].map(k=>SIDREG[k]).filter(Boolean);if(!its.length)return;
- VS.items=its;VS.name=curName();VS.res=null;VS.err="";VS.busy=true;VS.t0=Date.now();VS.msg="Looking for the official website";vOpen();
+ VS.items=its;VS.name=curName();VS.ro=!!st.view;VS.res=null;VS.err="";VS.busy=true;VS.t0=Date.now();VS.msg="Looking for the official website";vOpen();
  try{VS.res=await apiS("/api/import",{name:VS.name,mode:"match",near:near(),want:its.map(i=>[i.n,i.cal,i.p,i.cb==="–"?null:i.cb,i.f==="–"?null:i.f])},o=>{VS.msg=o.msg||VS.msg;vDraw()})}catch(e){VS.err=String(e.message||e)}
  VS.busy=false;vDraw()}
 async function vApply(){const btn=$("#v-ok");if(btn){btn.disabled=true;btn.textContent="Saving…"}
@@ -621,7 +621,7 @@ const supParts=()=>{const n=curName(),m=supOf(n),cnt=m?m.items.length:0;
   head=su?(ck?(kp?"<b>Compared with the source</b> · "+kp+" item"+(kp>1?"s":"")+" kept despite a mismatch · ":off?"<b>✓ Verified from the restaurant's website</b> · ":"<b>Third-party source</b>, compared with it · ")+lk:(off?"From the restaurant's website: ":"<b>Third-party source</b>: ")+lk+" (not compared)"):ck?"<b>✓ Compared with the uploaded file</b>":"",
   src=su||ck?head+" · Updated "+fmtD(upd)+(su?` · <a href="#" id="s-ref" style="color:var(--tx)">Refresh</a>`:""):cnt?cnt+" added by you"+(upd?" · Updated "+fmtD(upd):""):"";
  const ned=m?m.items.filter(i=>i.ed).length:0;
- return{txt:src+(ned?(src?" · ":"")+ned+" item"+(ned>1?"s":"")+" edited by you":""),btns:`<div class="sbt" style="grid-template-columns:repeat(${m?3:2},1fr)">${m?'<button class="addb" id="s-edit">Edit</button>':""}<button class="addb" id="s-find">Online Import</button><button class="addb" id="s-open">+ Add Items</button>${st.web?`<button class="addb" id="s-sel" style="grid-column:1/-1">${st.sel?"Stop Selecting":"☑ Select Items to Verify Online"}</button>${st.web&&st.sel?`<button class="addb" id="s-all" style="grid-column:1/-1">Verify All Menu Items</button>`:""}`:""}</div>`}},
+ return{txt:src+(ned?(src?" · ":"")+ned+" item"+(ned>1?"s":"")+" edited by you":""),btns:`<div class="sbt" style="grid-template-columns:repeat(${m?3:2},1fr)">${m?'<button class="addb" id="s-edit">Edit</button>':""}<button class="addb" id="s-find">Online Import</button><button class="addb" id="s-open">+ Add Items</button>${st.web||st.view?`<button class="addb" id="s-sel" style="grid-column:1/-1">${st.sel?"Stop Selecting":"☑ Select Items to Verify Online"}</button>${(st.web||st.view)&&st.sel?`<button class="addb" id="s-all" style="grid-column:1/-1">Verify All Menu Items</button>`:""}`:""}</div>`}},
  supBar=()=>{const p=supParts();return `<div class="supbar"><div class="mu">${p.txt}</div>${p.btns}</div>`},
  infH=(name,k,sub,note)=>{const p=supParts();return `<div class="hrow"><h1 id="inf-t" class="tgl">${logoH(name)}${esc(name)}<span class="chv">▸</span></h1><button class="heart${isFavR(name)?" on":""}" data-fr="${esc(name)}" data-k="${k||""}" aria-label="Favorite restaurant">${isFavR(name)?"♥":"♡"}</button></div><div id="inf-b" class="infb" hidden><div class="sub">${sub}</div>${note?`<div class="mu" style="margin-bottom:8px">${esc(note)}</div>`:""}${p.txt?`<div class="mu" style="margin-bottom:8px">${p.txt}</div>`:""}<div id="inf-pc"></div></div>`};
 const emptyHtml=why=>`<div class="empty">${why}</div><button class="big s-search"><b>Import nutrition info online</b><span>Official numbers, reviewed by you before saving</span></button><div style="text-align:center"><a href="#" id="s-open2" style="color:var(--tx)">Add items another way</a></div>`;
@@ -810,7 +810,7 @@ function infWire(){const t=$("#inf-t");if(!t)return;t.onclick=async()=>{const b=
  if(r)showPlace({found:true,count:1,others:[],place:{name:r.n,addr:r.a,mi:dist(r),la:r.la,lo:r.lo,hours:"",phone:"",website:""}},"",pc,"m");else pc.innerHTML=ldH(nm);
  try{const j=await loadPlace(nm);if(!pc.isConnected)return;if(j.found)showPlace(j,"",pc,"m");else if(!r)pc.innerHTML='<div class="mu">No location details found for this restaurant.</div>'}catch(e){if(!r&&pc.isConnected)pc.innerHTML='<div class="mu">Couldn\'t look up the location. '+esc(String(e.message||e).slice(0,100))+'</div>'}}}
 function render(){
- if(st.sel&&!(st.tab==="rest"&&st.web))st.sel=null;selBar();
+ if(st.sel&&!(st.tab==="rest"&&(st.web||st.view)))st.sel=null;selBar();
  document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.t===st.tab));
  let h="";
  if(st.tab==="rest"){

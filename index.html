@@ -671,7 +671,7 @@ async function shRun(body,label){SH.busy=true;SH.note="";const sr=body.mode==="s
 SH.busy=false;clearInterval(SH.tm);shDraw()}
 let isDupF=()=>false;
 function shDraw(){const s=$("#sheet");if(!s)return;isDupF=()=>false;const name=SH.name,r=st.rev&&st.rev.name===name?st.rev:null,H=SH.hand||{};
- const TABS=[["search","Online"],["link","Link"],["file","PDF/photo"],["hand","By hand"]],note=SH.note?`<div class="mu" style="margin-top:12px">${esc(SH.note)}</div>`:"";
+ const TABS=[["search","Online"],["link","Link"],["file","PDF/photo"],["hand","Manual Entry"]],note=SH.note?`<div class="mu" style="margin-top:12px">${esc(SH.note)}</div>`:"";
  const TB={search:`<div class="mu" style="margin:4px 0">Looks for ${esc(name)}'s own published nutrition numbers. You review them before anything is saved.</div><button class="pri" id="t-search">Import now</button>`,
   link:`<div class="mu" style="margin:4px 0 10px">A menu or nutrition page, or a link to a PDF.</div><input class="search" id="s-url" placeholder="https://" inputmode="url" autocapitalize="off"><button class="pri" id="t-link">Import link</button>`,
   file:`<div class="mu" style="margin:4px 0">A nutrition PDF (up to 3 MB) or a photo of the menu.</div><button class="pri" id="t-file">Choose file</button><input type="file" id="s-f" accept="application/pdf,image/*" hidden>`,

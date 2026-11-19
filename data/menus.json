@@ -11524,5 +11524,30 @@
    "kept": 0,
    "t": "2026-11-18T05:47:09.278Z"
   }
+ },
+ "jamba": {
+  "name": "Jamba",
+  "items": [
+   {
+    "n": "PB + Banana Protein (Whey) Smoothie, Small",
+    "c": "",
+    "cal": 540,
+    "p": 42,
+    "cb": 44,
+    "f": 23,
+    "b": "Small",
+    "v": 0
+   }
+  ],
+  "source": null,
+  "updated": "2026-11-19T22:14:12.796Z",
+  "log": [
+   {
+    "t": "2026-11-19T22:14:12.796Z",
+    "n": 1,
+    "how": "manual",
+    "replace": false
+   }
+  ]
  }
 }

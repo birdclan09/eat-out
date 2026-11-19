@@ -38,7 +38,7 @@ module.exports = async (req, res) => {
         const ci = x => Math.max(0, Math.min(9999, parseInt(x, 10) || 0));
         const ck = b.check && typeof b.check === "object" ? { ok: !!b.check.ok, n: ci(b.check.n), held: ci(b.check.held), kept: ci(b.check.kept), t: now } : null;
         const log = [{ t: now, n: items.length, how: src ? src.kind : "manual", replace: !!b.replace, ...(ck ? { check: ck } : {}) }].concat(cur.log || []).slice(0, 10);
-        menus[id] = { name: cur.name || name, items: keep.concat(items).slice(0, 600), source: src || cur.source || null, updated: now, log, ...((ck || cur.check) ? { check: ck || cur.check } : {}) };
+        menus[id] = { name: cur.name || name, ...(cur.aliases ? { aliases: cur.aliases } : {}), items: keep.concat(items).slice(0, 600), source: src || cur.source || null, updated: now, log, ...((ck || cur.check) ? { check: ck || cur.check } : {}) };
       } else if (b.action === "edit") {
         // Edit a saved menu: rename it, change its source link, edit items by index (edits:[{x,...fields}]) and/or remove items by index (remove:[x]).
         // Edited items lose any "imported/verified" flag (v:0) and are marked ed:1, so the app never calls an edited number verified.
@@ -52,6 +52,7 @@ module.exports = async (req, res) => {
           if (!newId) return res.status(400).json({ error: "Name can't be empty." });
           if (newId !== id && menus[newId]) return res.status(409).json({ error: "A saved menu named that already exists." });
           out.name = nn;
+          out.aliases = [...new Set([...(cur.aliases || []), cur.name])].filter(a => norm(a) !== newId).slice(0, 10);
         }
         if (b.source !== undefined) {
           const u = b.source && b.source.url ? String(b.source.url).trim().slice(0, 500) : "";

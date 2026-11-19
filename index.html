@@ -349,7 +349,12 @@ function cmpToggle(x){const id=norm(x.name),i=st.cmp.findIndex(c=>c.id===id);
  st.cmp.push({id,name:x.name,k:x.ok?x.k:null});if(!x.ok)fetchMenu(x.name).catch(()=>MENU.set(id,supItems(x.name)))}
 const cmpHas=x=>st.cmp.some(c=>c.id===norm(x.name));
 const OV=["https://overpass-api.de/api/interpreter","https://overpass.kumi.systems/api/interpreter","https://overpass.private.coffee/api/interpreter"];
-async function nearby(la,lo,rad){
+const aliasOf=n=>{const k=norm(n);if(!k)return null;let h=null;for(const id in SUP){const m=SUP[id];if(!m||!m.name)continue;if((m.aliases||[]).some(a=>norm(a)===k))return m.name;
+  // menus renamed before aliases were recorded: "Jamba" -> "Jamba Juice" (only when the saved name starts with the place name)
+  const mk=norm(m.name);if(!m.aliases&&!h&&k.length>=5&&mk!==k&&mk.startsWith(k))h=m.name}return h};
+const fixNear=j=>{if(j&&j.items)j.items.forEach(x=>{const a=aliasOf(x.name);if(a)x.name=a});return j};
+async function nearby(la,lo,rad){return fixNear(await nearby0(la,lo,rad))}
+async function nearby0(la,lo,rad){
  try{const r=await fetch(`/api/places?v=2&lat=${la}&lon=${lo}&r=${rad}`);if(r.ok){const j=await r.json();if(j.items)return j}}catch(e){}
  try{const r=await fetch(`/api/nearby?v=2&lat=${la}&lon=${lo}&r=${rad}`);const j=await r.json();if(r.ok&&j.items)return j;throw new Error(j.detail||j.error||r.status)}catch(e){try{return await nearbyOSM(la,lo,rad)}catch(e2){throw new Error(String(e.message||e).slice(0,160))}}}
 async function nearbyOSM(la,lo,rad){const dl=rad/111320,dn=rad/(111320*Math.cos(la*Math.PI/180));
@@ -542,7 +547,7 @@ const supOf=n=>SUP[norm(n)]||null;
 const host=u=>{try{return new URL(u).hostname.replace(/^www\./,"")}catch(e){return String(u)}};
 const fmtD=t=>{try{return new Date(t).toLocaleDateString(undefined,{month:"short",day:"numeric",year:"numeric"})}catch(e){return""}};
 const supItems=n=>{const m=supOf(n);return m?m.items.map((i,x)=>({n:i.n,r:m.name||n,c:i.c||"Added",p:i.p,cal:i.cal,cb:i.cb==null?"–":i.cb,f:i.f==null?"–":i.f,ra:+(i.p/i.cal*100).toFixed(1),b:i.b||"",s:1,sx:x,v:i.v||0,ed:i.ed||0,srcu:i.v&&m.source&&m.source.url})):[]};
-function applySup(){for(let x=ITEMS.length-1;x>=0;x--)if(ITEMS[x].s)ITEMS.splice(x,1);
+function applySup(){if(st.near)fixNear(st.near);for(let x=ITEMS.length-1;x>=0;x--)if(ITEMS[x].s)ITEMS.splice(x,1);
  Object.keys(R).forEach(k=>supItems(R[k].n).forEach(i=>{i.k=k;ITEMS.push(i)}));
  for(const [id,o] of ONL)MENU.set(id,o.L.concat(supItems(o.nm)));
  for(const id of Object.keys(SUP))if(!ONL.has(id)&&MENU.has(id))MENU.set(id,supItems(SUP[id].name))}
